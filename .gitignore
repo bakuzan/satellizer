@@ -2,7 +2,7 @@
 build/
 elm.js
 *.css
-
+.env
 
 # elm-package generated files
 elm-stuff
