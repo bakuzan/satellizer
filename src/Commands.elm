@@ -1,19 +1,19 @@
 module Commands exposing (..)
 
 import Http
-import Json.Encode as Encode
+-- import Json.Encode as Encode
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
 import Msgs exposing (Msg)
-import Models exposing (PlayerId, Player)
+import Models exposing (Count)
 import RemoteData
 
 
--- fetchPlayers : Cmd Msg
--- fetchPlayers =
---     Http.get fetchPlayersUrl playersDecoder
---         |> RemoteData.sendRequest
---         |> Cmd.map Msgs.OnFetchPlayers
+fetchData : Cmd Msg
+fetchData =
+    Http.get (fetchGraphqlUrl getCountString) dataDecoder
+        |> RemoteData.sendRequest
+        |> Cmd.map Msgs.OnFetchData
 
 
 fetchGraphqlUrl : String -> String
@@ -21,20 +21,22 @@ fetchGraphqlUrl graphqlString =
     "http://localhost:9003/graphql=" ++ graphqlString
 
 
--- playersDecoder : Decode.Decoder (List Player)
--- playersDecoder =
---     Decode.list playerDecoder
+dataDecoder : Decode.Decoder (List Count)
+dataDecoder =
+    Decode.list countDecoder
 
 
--- playerDecoder : Decode.Decoder Player
--- playerDecoder =
---     decode Player
---         |> required "id" Decode.string
---         |> required "name" Decode.string
---         |> required "level" Decode.int
+countDecoder : Decode.Decoder Count
+countDecoder =
+    decode Count
+        |> required "name" Decode.string
+        |> required "count" Decode.int
+
+getCountString : String
+getCountString =
+  "{ ongoing: animeConnection(filter: { isAdult: false, status: 1 }) { count } onhold: animeConnection(filter: { isAdult: false, status: 3 }) { count } complete: animeConnection(filter: { isAdult: false, status: 2 }) { count } }"
 
 
---
 -- savePlayerRequest : Player -> Bool -> Http.Request Player
 -- savePlayerRequest player isNewPlayer =
 --     let
