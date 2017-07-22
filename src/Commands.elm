@@ -18,7 +18,7 @@ fetchData =
 
 fetchGraphqlUrl : String -> String
 fetchGraphqlUrl graphqlString =
-    "http://localhost:9003/graphql=" ++ graphqlString
+    "http://localhost:9003/graphql?query=" ++ graphqlString
 
 
 dataDecoder : Decode.Decoder (List Count)
@@ -36,6 +36,7 @@ getCountString : String
 getCountString =
   "{ ongoing: animeConnection(filter: { isAdult: false, status: 1 }) { count } onhold: animeConnection(filter: { isAdult: false, status: 3 }) { count } complete: animeConnection(filter: { isAdult: false, status: 2 }) { count } }"
 
+-- this response: "{\"data\":{\"ongoing\":{\"count\":54},\"onhold\":{\"count\":12},\"complete\":{\"count\":1691}}}"
 
 -- savePlayerRequest : Player -> Bool -> Http.Request Player
 -- savePlayerRequest player isNewPlayer =
