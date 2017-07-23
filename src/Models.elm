@@ -3,21 +3,31 @@ import RemoteData exposing (WebData)
 
 
 type alias Model =
-    { data : WebData (List Count)
+    { status : WebData CountData
     , route: Route
     }
 
 
 initialModel : Route -> Model
 initialModel route =
-    { data = RemoteData.Loading
+    { status = RemoteData.Loading
     , route = route
     }
 
-type alias Count =
-    { name: String
-    , count: Int
+type alias CountData =
+  { data: Counts
+  }
+
+type alias Counts =
+    { ongoing: Count
+    , complete: Count
+    , onhold: Count
+    , total: Count
     }
+
+type alias Count =
+  { count: Int
+  }
 
 type Route
     = StatisticsRoute

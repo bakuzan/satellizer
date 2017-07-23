@@ -17,8 +17,8 @@ update msg model =
       in
         ( { model | route = newRoute }, Cmd.none )
 
-    Msgs.OnFetchData response ->
-      ( { model | data = response }, Cmd.none )
+    Msgs.OnFetchStatus response ->
+      ( { model | status = response }, Cmd.none )
 
     _ ->
       ( model, Cmd.none )
