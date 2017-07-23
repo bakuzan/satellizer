@@ -18,8 +18,8 @@ fetchData =
 
 fetchGraphqlUrl : String -> String
 fetchGraphqlUrl graphqlString =
-    "http://localhost:9003/graphql?query=" ++ graphqlString
-
+    "/graphql?query=" ++ graphqlString
+-- http://localhost:9003
 
 dataDecoder : Decode.Decoder (List Count)
 dataDecoder =
