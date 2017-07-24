@@ -1,7 +1,7 @@
 module Msgs exposing (..)
 
 -- import Http
-import Models exposing (CountData)
+import Models exposing (Counts)
 import Navigation exposing (Location)
 import RemoteData exposing (WebData)
 
@@ -9,4 +9,4 @@ import RemoteData exposing (WebData)
 type Msg
     = NoOp
     | OnLocationChange Location
-    | OnFetchStatus (WebData CountData)
+    | OnFetchStatus (WebData Counts)

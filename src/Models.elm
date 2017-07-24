@@ -3,7 +3,7 @@ import RemoteData exposing (WebData)
 
 
 type alias Model =
-    { status : WebData CountData
+    { status : WebData Counts
     , route: Route
     }
 

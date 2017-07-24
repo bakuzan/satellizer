@@ -6,6 +6,7 @@ import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
 import Msgs exposing (Msg)
 import Models exposing (CountData, Counts, Count)
+import Task
 import RemoteData
 
 
@@ -20,10 +21,11 @@ fetchGraphqlUrl : String -> String
 fetchGraphqlUrl graphqlString =
     "/graphql?query=" ++ graphqlString
 
-dataDecoder : Decode.Decoder CountData
+dataDecoder : Decode.Decoder Counts
 dataDecoder =
-  decode CountData
-    |> required "data" countsDecoder
+  (decode CountData
+      |> required "data" countsDecoder)
+      |> Task.map (Counts << .data)
 
 countsDecoder : Decode.Decoder Counts
 countsDecoder =
