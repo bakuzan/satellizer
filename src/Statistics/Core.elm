@@ -4,18 +4,18 @@ import Html exposing (..)
 import Html.Attributes exposing (class, style)
 -- import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
-import Models exposing (Counts)
+import Models exposing (Counts, CountData)
 import RemoteData exposing (WebData)
 
 
-view : WebData Counts -> Html Msg
-view data =
+view : WebData CountData -> Html Msg
+view status =
     div []
-        [ viewStatusBreakdown data
-        , viewHistoryTable data
+        [ viewStatusBreakdown status.data
+        , viewHistoryTable status.data
         ]
 
-viewStatusBreakdown : WebData Counts -> Html Msg
+viewStatusBreakdown : Counts -> Html Msg
 viewStatusBreakdown data =
     let
       counts =
@@ -30,7 +30,7 @@ viewStatusBreakdown data =
       div [ class "percentage-breakdown" ]
           (List.map progressSegment counts)
 
-viewHistoryTable : WebData Counts -> Html Msg
+viewHistoryTable : WebData CountData -> Html Msg
 viewHistoryTable data =
     div [ class "history-breakdown" ]
         [ table [ class "history-breakdown__table" ]
