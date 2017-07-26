@@ -2,8 +2,8 @@ module Statistics.Filter exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, classList, href)
-
 import Msgs exposing (Msg)
+import Utils.Constants as Constants
 
 
 view : Html Msg
@@ -11,8 +11,8 @@ view =
     div [ class "list-filter" ]
         [ text "LIST FILTERS WILL GO HERE"
         , div [ class "button-group" ]
-              [ viewFilterLink "anime" 
-              , viewFilterLink "manga"
+              [ viewFilterLink Constants.type.anime
+              , viewFilterLink Constants.type.manga
               ]
         ]
 
