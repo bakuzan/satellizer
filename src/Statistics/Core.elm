@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (class, style)
 -- import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
+import Statistics.Filter
 import Models exposing (Counts, CountData)
 import RemoteData exposing (WebData)
 
@@ -11,7 +12,8 @@ import RemoteData exposing (WebData)
 view : WebData CountData -> Html Msg
 view status =
     div []
-        [ viewStatusBreakdown status.data
+        [ Statistics.Filter.view
+		, viewStatusBreakdown status.data
         , viewHistoryTable status.data
         ]
 
