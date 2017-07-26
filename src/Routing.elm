@@ -20,3 +20,18 @@ parseLocation location =
 
         Nothing ->
             NotFoundRoute
+
+
+-- app ui paths
+
+basePath : String
+basePath = 
+  "statistics/"
+
+animePath : String
+animePath = 
+  basePath ++ "anime"
+  
+mangaPath : String
+mangaPath = 
+  basePath ++ "manga"
