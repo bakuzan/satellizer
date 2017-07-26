@@ -7,18 +7,19 @@ import Json.Decode.Pipeline exposing (decode, required)
 import Msgs exposing (Msg)
 import Models exposing (CountData, Counts, Count)
 import RemoteData
-
+import Utils.Common as Common
 
 fetchData : Cmd Msg
 fetchData =
-    Http.get (fetchGraphqlUrl getCountString) dataDecoder
+    Http.get (fetchGraphqlUrl "anime" False) dataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchStatus
 
 
-fetchGraphqlUrl : String -> String
-fetchGraphqlUrl graphqlString =
-    "/graphql?query=" ++ graphqlString
+fetchGraphqlUrl : String -> Bool -> String
+fetchGraphqlUrl type isAdult =
+    Common.replace ":type" type "/api/statistics/status-counts/:type/:isAdult"
+      |> Common.replace ":isAdult" (toString isAdult)
 
 dataDecoder : Decode.Decoder CountData
 dataDecoder =
