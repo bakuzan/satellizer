@@ -7,6 +7,7 @@ import Msgs exposing (Msg)
 import Statistics.Filter
 import Models exposing (Counts, CountData)
 import RemoteData exposing (WebData)
+import Utils.Constants as Constants
 
 
 view : WebData CountData -> Html Msg
@@ -49,6 +50,28 @@ viewHistoryTable : WebData CountData -> Html Msg
 viewHistoryTable data =
     div [ class "history-breakdown" ]
         [ table [ class "history-breakdown__table" ]
-                [
+                [ viewHistoryTableHeader Constants.months
+                , viewHistoryTableBody
                 ]
         ]
+        
+        
+viewHistoryTableHeader : List Constants.Header -> Html Msg
+viewHistoryTableHeader headers =
+    let
+      displayHeader obj =
+        th [] [text obj.name]
+      
+    in
+    thead []
+          [ th [] []
+          , List.map displayHeader headers
+          ]
+    
+    
+viewHistoryTableBody : Html Msg
+viewHistoryTableBody =
+  tbody [] 
+        [
+        ]
+        
