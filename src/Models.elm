@@ -30,5 +30,5 @@ type alias Count =
   }
 
 type Route
-    = StatisticsRoute
+    = StatisticsRoute String
     | NotFoundRoute
