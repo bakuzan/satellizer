@@ -5,9 +5,9 @@ import Html.Attributes exposing (class, style)
 -- import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
 import Statistics.Filter
+import Statistics.HistoryTable
 import Models exposing (Counts, CountData)
 import RemoteData exposing (WebData)
-import Utils.Constants as Constants
 
 
 view : WebData CountData -> Html Msg
@@ -16,7 +16,7 @@ view status =
         [ Statistics.Filter.view
         , div [ class "flex-column flex-grow" ]
               [ viewStatusBreakdown status.data
-              , viewHistoryTable status.data
+              , Statistics.HistoryTable.view status.data
               ]
         ]
 
@@ -44,34 +44,4 @@ viewProgressSegment num =
       []
 
 
--- History breakdown
-
-viewHistoryTable : WebData CountData -> Html Msg
-viewHistoryTable data =
-    div [ class "history-breakdown" ]
-        [ table [ class "history-breakdown__table" ]
-                [ viewHistoryTableHeader Constants.months
-                , viewHistoryTableBody
-                ]
-        ]
-        
-        
-viewHistoryTableHeader : List Constants.Header -> Html Msg
-viewHistoryTableHeader headers =
-    let
-      displayHeader obj =
-        th [] [text obj.name]
-      
-    in
-    thead []
-          [ th [] []
-          , List.map displayHeader headers
-          ]
-    
-    
-viewHistoryTableBody : Html Msg
-viewHistoryTableBody =
-  tbody [] 
-        [
-        ]
-        
+  
