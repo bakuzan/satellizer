@@ -9,9 +9,8 @@ type alias ItemType =
 
 itemType : ItemType
 itemType =
-  { anime = "anime"
-  , manga = "manga"
-  }
+  ItemType "anime" "manga"
+
 
 type alias Header = 
   { name: String

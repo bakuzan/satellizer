@@ -24,7 +24,7 @@ fetchGraphqlUrl itemType isAdult =
 dataDecoder : Decode.Decoder CountData
 dataDecoder =
   decode CountData
-      |> required "data" countsDecoder
+
 
 {-
 countsDecoder : Decode.Decoder Counts
@@ -35,7 +35,8 @@ countsDecoder =
         |> required "onhold" countDecoder
         |> required "total" countDecoder
 -}
-	
+
+
 countDecoder : Decode.Decoder Count
 countDecoder =
     decode Count

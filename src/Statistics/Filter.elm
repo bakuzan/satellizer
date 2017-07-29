@@ -11,11 +11,11 @@ view =
     div [ class "list-filter" ]
         [ text "LIST FILTERS WILL GO HERE"
         , div [ class "button-group" ]
-              [ viewFilterLink Constants.itemType.anime
-              , viewFilterLink Constants.itemType.manga
+              [ viewFilterLink (Constants.itemType |> .anime)
+              , viewFilterLink (Constants.itemType |> .manga)
               ]
         ]
 
-viewFilterLink : Html Msg
+viewFilterLink : String -> Html Msg
 viewFilterLink str =
     a [ class "button-link", classList [("active", False)], href ("" ++ str) ] [ text str ]
