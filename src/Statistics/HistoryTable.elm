@@ -2,7 +2,9 @@ module Statistics.HistoryTable exposing (view)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Msgs exposing (Msg)
 import RemoteData exposing (WebData)
+import Models exposing (Count, CountData)
 import Utils.Constants as Constants
 import Utils.Common as Common
 
@@ -25,12 +27,11 @@ viewHeader headers =
       
     in
     thead []
-          [ th [] []
-          , List.map displayHeader headers
-          ]
+          ([ th [] []
+          ] ++ List.map displayHeader headers)
     
     
-viewBody : List a -> Html Msg
+viewBody : WebData CountData -> Html Msg
 viewBody data =
   let
     createRows = 
@@ -38,20 +39,18 @@ viewBody data =
       
   in
   tbody [] 
-        [ List.map viewRow createRows
-        ]
+        ([] ++ List.map viewRow createRows)
 
 
-viewRow : List a -> Html msg
+viewRow : List Count -> Html msg
 viewRow cells = 
  tr []
-    [ th [] [text "YEAR"]
-    , List.map viewCell cells
-    ]
+    ([ th [] [text "YEAR"]
+    ] ++ List.map viewCell cells)
  
  
- viewCell : a -> Html msg
- viewCell cell = 
+viewCell : Count -> Html msg
+viewCell cell = 
    td []
       [ text cell.key
       ]

@@ -11,8 +11,8 @@ view =
     div [ class "list-filter" ]
         [ text "LIST FILTERS WILL GO HERE"
         , div [ class "button-group" ]
-              [ viewFilterLink Constants.type.anime
-              , viewFilterLink Constants.type.manga
+              [ viewFilterLink Constants.itemType.anime
+              , viewFilterLink Constants.itemType.manga
               ]
         ]
 

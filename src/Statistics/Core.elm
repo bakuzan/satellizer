@@ -15,12 +15,12 @@ view status =
     div []
         [ Statistics.Filter.view
         , div [ class "flex-column flex-grow" ]
-              [ viewStatusBreakdown status.data
-              , Statistics.HistoryTable.view status.data
+              [ viewStatusBreakdown status
+              , Statistics.HistoryTable.view status
               ]
         ]
 
-viewStatusBreakdown : Counts -> Html Msg
+viewStatusBreakdown : CountData -> Html Msg
 viewStatusBreakdown data =
     let
       counts =

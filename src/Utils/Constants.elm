@@ -2,14 +2,14 @@ module Utils.Constants exposing (..)
 
 
 
-type alias Type = 
+type alias ItemType = 
   { anime: String
   , manga: String
   }
 
-type : Type
-type =
-  { anime = "anime
+itemType : ItemType
+itemType =
+  { anime = "anime"
   , manga = "manga"
   }
 
@@ -39,7 +39,7 @@ seasons =
   [{ name = "Winter", number = 3 }
   ,{ name = "Spring", number = 6 }
   ,{ name = "Summer", number = 9 }
-  ,{ name = "Fall" number = 12 }
+  ,{ name = "Fall", number = 12 }
   ]
   
   

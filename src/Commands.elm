@@ -5,7 +5,7 @@ import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
 import Msgs exposing (Msg)
-import Models exposing (CountData, Counts, Count)
+import Models exposing (CountData, Count)
 import RemoteData
 import Utils.Common as Common
 
@@ -17,8 +17,8 @@ fetchData =
 
 
 fetchGraphqlUrl : String -> Bool -> String
-fetchGraphqlUrl type isAdult =
-    Common.replace ":type" type "/api/statistics/status-counts/:type/:isAdult"
+fetchGraphqlUrl itemType isAdult =
+    Common.replace ":type" itemType "/api/statistics/status-counts/:type/:isAdult"
       |> Common.replace ":isAdult" (toString isAdult)
 
 dataDecoder : Decode.Decoder CountData
@@ -26,6 +26,7 @@ dataDecoder =
   decode CountData
       |> required "data" countsDecoder
 
+{-
 countsDecoder : Decode.Decoder Counts
 countsDecoder =
     decode Counts
@@ -33,7 +34,8 @@ countsDecoder =
         |> required "complete" countDecoder
         |> required "onhold" countDecoder
         |> required "total" countDecoder
-
+-}
+	
 countDecoder : Decode.Decoder Count
 countDecoder =
     decode Count

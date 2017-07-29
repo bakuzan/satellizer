@@ -15,18 +15,12 @@ initialModel route =
     }
 
 type alias CountData =
-  { data: Counts
-  }
+  List Count
 
-type alias Counts =
-    { ongoing: Count
-    , complete: Count
-    , onhold: Count
-    , total: Count
-    }
 
 type alias Count =
-  { count: Int
+  { key: String
+  , value: Int
   }
 
 type Route
