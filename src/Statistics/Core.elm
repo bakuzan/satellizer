@@ -6,17 +6,33 @@ import Html.Attributes exposing (class, style)
 import Msgs exposing (Msg)
 import Statistics.Filter
 import Statistics.HistoryTable
-import Models exposing (Counts, CountData)
+import Models exposing (Model, CountData)
 import RemoteData exposing (WebData)
 
 
-view : WebData CountData -> Html Msg
-view status =
+viewRender : WebData CountData -> CountData
+viewRender model =
+  case model of
+    RemoteData.NotAsked -> []
+
+    RemoteData.Loading -> []
+
+    RemoteData.Failure err -> []
+
+    RemoteData.Success model -> model
+
+
+view : Model -> Html Msg
+view model =
+  let
+    status =
+      model.status
+  in
     div []
         [ Statistics.Filter.view
         , div [ class "flex-column flex-grow" ]
-              [ viewStatusBreakdown status
-              , Statistics.HistoryTable.view status
+              [ viewRender status |> viewStatusBreakdown
+              , viewRender status |> Statistics.HistoryTable.view
               ]
         ]
 

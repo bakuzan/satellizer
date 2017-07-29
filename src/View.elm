@@ -14,14 +14,19 @@ view model =
         [ page model ]
 
 
+
 page : Model -> Html Msg
 page model =
     case model.route of
-        Models.StatisticsRoute ->
-            Statistics.Core.view model.status
+        Models.StatisticsRoute "manga" ->
+            Statistics.Core.view model
+
+        Models.StatisticsRoute "anime" ->
+            Statistics.Core.view model
 
         Models.NotFoundRoute ->
             notFoundView model.route
+
 
 
 notFoundView : Models.Route -> Html msg

@@ -3,13 +3,12 @@ module Statistics.HistoryTable exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Msgs exposing (Msg)
-import RemoteData exposing (WebData)
 import Models exposing (Count, CountData)
 import Utils.Constants as Constants
 import Utils.Common as Common
 
 
-view : WebData CountData -> Html Msg
+view : CountData -> Html Msg
 view data =
     div [ class "history-breakdown" ]
         [ table [ class "history-breakdown__table" ]
@@ -31,7 +30,7 @@ viewHeader headers =
           ] ++ List.map displayHeader headers)
     
     
-viewBody : WebData CountData -> Html Msg
+viewBody : CountData -> Html Msg
 viewBody data =
   let
     createRows = 
