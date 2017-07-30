@@ -10,3 +10,4 @@ type Msg
     = NoOp
     | OnLocationChange Location
     | OnFetchStatus (WebData CountData)
+    | OnFetchHistory (WebData CountData)

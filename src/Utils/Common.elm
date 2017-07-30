@@ -12,3 +12,8 @@ splitList i list =
   case List.take i list of
     [] -> []
     listHead -> listHead :: splitList i (List.drop i list)
+
+divide : Int -> Int -> Float
+divide part total =
+  (toFloat part) / (toFloat total)
+  

@@ -1,7 +1,15 @@
 $test-colour: #293c4b;
 $white: #fff;
 $black: #000;
+$green: #0f0;
+$red: #f00;
+$blue: #00f;
 
+$colours: $green $red $blue;
+
+
+$history-table-cell-background: $black;
+$history-table-cell-border: $black;
 
 //z-index
 $z-index: (

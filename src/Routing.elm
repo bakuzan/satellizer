@@ -8,7 +8,7 @@ import UrlParser exposing (..)
 matchers : Parser (Route -> a) a
 matchers =
     oneOf
-        [ map StatisticsRoute (s "statistics" </> string)
+        [ map StatisticsRoute top
         ]
 
 
@@ -25,13 +25,13 @@ parseLocation location =
 -- app ui paths
 
 basePath : String
-basePath = 
+basePath =
   "statistics/"
 
 animePath : String
-animePath = 
+animePath =
   basePath ++ "anime"
-  
+
 mangaPath : String
-mangaPath = 
+mangaPath =
   basePath ++ "manga"

@@ -1,9 +1,9 @@
 module Statistics.Core exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, style)
--- import Html.Events exposing (onClick)
+import Html.Attributes exposing (id, class, style)
 import Msgs exposing (Msg)
+import General.ProgressBar
 import Statistics.Filter
 import Statistics.HistoryTable
 import Models exposing (Model, CountData)
@@ -14,9 +14,7 @@ viewRender : WebData CountData -> CountData
 viewRender model =
   case model of
     RemoteData.NotAsked -> []
-
     RemoteData.Loading -> []
-
     RemoteData.Failure err -> []
 
     RemoteData.Success model -> model
@@ -27,37 +25,28 @@ view model =
   let
     status =
       model.status
+
+    history =
+      model.history
+
   in
-    div []
+    div [class "flex-row"]
         [ Statistics.Filter.view
         , div [ class "flex-column flex-grow" ]
-              [ viewRender status |> viewStatusBreakdown
-              , viewRender status |> Statistics.HistoryTable.view
+              [ viewRender status |> viewStatus
+              , viewRender history |> Statistics.HistoryTable.view
               ]
         ]
 
-viewStatusBreakdown : CountData -> Html Msg
-viewStatusBreakdown data =
-    let
-      counts =
-        [1,2,3,4,5]
 
-    in
-      viewProgressBar counts
+viewStatus : CountData -> Html Msg
+viewStatus list =
+  let
+    total =
+     List.map (\x -> x.value) list
+      |> List.foldr (+) 0
 
-
--- Progress bar
-
-viewProgressBar : List Int -> Html Msg
-viewProgressBar values =
-  div [ class "percentage-breakdown" ]
-      (List.map viewProgressSegment values)  
-
-
-viewProgressSegment : Int -> Html Msg
-viewProgressSegment num =
-  div [ class "percentage-breakdown__bar", style [("width", (toString num) ++ "%")] ]
-      []
-
-
-  
+  in
+    div [id "status-container"]
+        [General.ProgressBar.viewProgressBar total list
+        ]

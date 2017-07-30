@@ -4,6 +4,7 @@ import RemoteData exposing (WebData)
 
 type alias Model =
     { status : WebData CountData
+    , history: WebData CountData
     , route: Route
     }
 
@@ -11,6 +12,7 @@ type alias Model =
 initialModel : Route -> Model
 initialModel route =
     { status = RemoteData.Loading
+    , history = RemoteData.Loading
     , route = route
     }
 
@@ -24,5 +26,5 @@ type alias Count =
   }
 
 type Route
-    = StatisticsRoute String
+    = StatisticsRoute
     | NotFoundRoute

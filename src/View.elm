@@ -18,10 +18,7 @@ view model =
 page : Model -> Html Msg
 page model =
     case model.route of
-        Models.StatisticsRoute "manga" ->
-            Statistics.Core.view model
-
-        Models.StatisticsRoute "anime" ->
+        Models.StatisticsRoute ->
             Statistics.Core.view model
 
         Models.NotFoundRoute ->

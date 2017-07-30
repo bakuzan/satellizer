@@ -1,4 +1,4 @@
-@import './_variables.scss';
+@import "./_variables.scss";
 
 body {
   font: {
@@ -10,7 +10,69 @@ body {
   color: $test-colour;
 }
 
-img {
-  max-width: 200px;
-  margin: 20px 0;
+#satellizer {
+  padding: 50px 5px 5px;
+}
+
+#status-container {
+  margin-top: 10px;
+}
+
+// Progress bar
+.percentage-breakdown {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  height: 30px;
+  width: 100%;
+
+  .percentage-breakdown__bar {
+    height: 100%;
+
+    @for $i from 1 through length($colours) {
+      &:nth-child(#{$i}) {
+        background: nth($colours, $i);
+      }
+    }
+  }
+
+}
+
+//History table
+.history-breakdown {
+
+}
+.history-breakdown-header {
+
+}
+
+.history-breakdown-body {
+  &__row {
+
+  }
+  &__data-cell {
+    width: 25px;
+    background: $history-table-cell-background;
+    border: $history-table-cell-border;
+  }
+}
+
+
+/* TEMPORARY STYLE */
+.flex-grow {
+  flex-grow: 1;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.list-filter {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 20%;
+  padding: 20px 5px;
 }
