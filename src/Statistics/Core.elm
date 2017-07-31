@@ -72,8 +72,9 @@ viewRatings list =
     
   in
     div [id "status-container"]
-        [ List.map viewRatingBar ratings
-        ]
+        ([] 
+        ++ List.map viewRatingBar ratings)
+
 
 
 viewSingleRating : Int -> CountData -> Html Msg
