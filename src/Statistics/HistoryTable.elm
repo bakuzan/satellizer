@@ -87,7 +87,12 @@ viewRow total data =
 
 viewCell : Int -> Count -> Html Msg
 viewCell total obj =
-   td [ title ((toString obj.value) ++ " of " ++ (toString total) ++ " series")
+  let
+    viewDate str = 
+      (getMonthName str) ++ " " ++ (getYear str)
+      
+  in
+   td [ title ((toString obj.value) ++ " in " ++ (viewDate obj.key))
       , class "history-breakdown-body__data-cell"
       , style [("opacity", toString (Common.divide obj.value total))]
       ]
@@ -122,3 +127,26 @@ notMatchHead head obj =
 getYear : String -> String
 getYear str =
   String.slice 0 4 str
+
+
+getMonthName : String -> String
+getMonthName str =
+  getMonthHeader str
+    |> .name
+
+
+getMonthHeader : String -> Constants.Header
+getMonthHeader str = 
+  let
+    grabListItem num = 
+      List.drop (num - 1) Constants.months
+        |> List.head
+        |> Maybe.withDefault { name = "Invalid", number = 0 }
+        
+  in
+  slice 5 (length str) str
+    |> toInt
+    |> Result.withDefault 0
+    |> grabListItem
+    
+    
