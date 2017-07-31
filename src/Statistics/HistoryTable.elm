@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Msgs exposing (Msg)
 import Models exposing (Count, CountData)
+import General.RadioButton exposing (viewRadioOption)
 import Utils.Constants as Constants
 import Utils.Common as Common
 
@@ -11,11 +12,21 @@ import Utils.Common as Common
 view : CountData -> Html Msg
 view data =
     div [ class "history-breakdown" ]
-        [ viewTable data
+        [ viewBreakdownToggle "MONTHS"
+        , viewTable data "MONTHS"
         ]
 
-viewTable : CountData -> Html Msg
-viewTable countData =
+
+viewBreakdownToggle : String -> Html Msg
+viewBreakdownToggle state =
+  div [class "radio-group", role "radiogroup"]
+      [ viewRadioOption "Months" "MONTHS" state
+      , viewRadioOption "Season" "SEASON" state
+      ]
+
+
+viewTable : CountData -> String -> Html Msg
+viewTable countData breakdown =
   let
     total =
      List.map (\x -> x.value) data
@@ -24,11 +35,13 @@ viewTable countData =
     data =
       List.sortBy .key countData
        |> List.reverse
-
+    
+    headers = 
+      if breakdown == "MONTHS" then Constants.months else Constants.seasons
 
   in
   table [ class "history-breakdown__table" ]
-          [ viewHeader Constants.months
+          [ viewHeader headers
           , viewBody total data
           ]
 
