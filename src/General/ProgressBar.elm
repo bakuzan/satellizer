@@ -15,7 +15,9 @@ viewProgressBar total values =
 
 viewProgressSegment : Int -> Count -> Html Msg
 viewProgressSegment total pair =
-  div [ class "percentage-breakdown__bar", style [("width", (getPercentage pair.value total))], title ((toString pair.value) ++ " " ++ pair.key) ]
+  div [ class ("percentage-breakdown__bar" ++ " " ++ pair.key)
+      , style [("width", (getPercentage pair.value total))], title ((toString pair.value) ++ " " ++ pair.key) 
+      ]
       []
 
 getPercentage : Int -> Int -> String
