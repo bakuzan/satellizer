@@ -51,7 +51,7 @@ body {
 
   }
   &__data-cell {
-    width: 25px;
+    width: calc(100% / 12); //25px;
     background: $history-table-cell-background;
     border: $history-table-cell-border;
   }
