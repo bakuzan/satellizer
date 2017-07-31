@@ -16,4 +16,11 @@ splitList i list =
 divide : Int -> Int -> Float
 divide part total =
   (toFloat part) / (toFloat total)
-  
+
+maxOfField : (a -> comparable) -> List a -> Maybe a
+maxOfField field =
+  let f x acc =
+    case acc of
+      Nothing -> Just x
+      Just y -> if field x > field y then Just x else Just y
+  in List.foldr f Nothing

@@ -18,10 +18,10 @@ fetchStatusData =
 fetchStatusUrl : String -> Bool -> String
 fetchStatusUrl itemType isAdult =
   constructUrl "status-counts" itemType isAdult
-  
-  
-fetchHistoryData : Cmd Msg
-fetchHistoryData =
+
+
+fetchRatingData : Cmd Msg
+fetchRatingData =
     Http.get (fetchRatingUrl "anime" False) countDataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchRating

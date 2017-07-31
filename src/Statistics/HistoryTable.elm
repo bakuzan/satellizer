@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Msgs exposing (Msg)
 import Models exposing (Count, CountData)
-import General.RadioButton exposing (viewRadioOption)
+import General.RadioButton exposing (viewRadioGroup)
 import Utils.Constants as Constants
 import Utils.Common as Common
 
@@ -19,24 +19,22 @@ view data =
 
 viewBreakdownToggle : String -> Html Msg
 viewBreakdownToggle state =
-  div [class "radio-group", role "radiogroup"]
-      [ viewRadioOption "Months" "MONTHS" state
-      , viewRadioOption "Season" "SEASON" state
-      ]
+  viewRadioGroup "breakdown" state [{ label = "Months", optionValue = "MONTHS" }, { label = "Season", optionValue = "SEASON" }]
 
 
 viewTable : CountData -> String -> Html Msg
 viewTable countData breakdown =
   let
     total =
-     List.map (\x -> x.value) data
-      |> List.foldr (+) 0
+      Common.maxOfField .value data
+        |> Maybe.withDefault { key = "Empty", value = 0 }
+        |> .value
 
     data =
       List.sortBy .key countData
        |> List.reverse
-    
-    headers = 
+
+    headers =
       if breakdown == "MONTHS" then Constants.months else Constants.seasons
 
   in
@@ -88,15 +86,15 @@ viewRow total data =
 viewCell : Int -> Count -> Html Msg
 viewCell total obj =
   let
-    viewDate str = 
+    viewDate str =
       (getMonthName str) ++ " " ++ (getYear str)
-      
+
   in
-   td [ title ((toString obj.value) ++ " in " ++ (viewDate obj.key))
+   td [ attribute "hover-data" ((toString obj.value) ++ " in " ++ (viewDate obj.key))
       , class "history-breakdown-body__data-cell"
-      , style [("opacity", toString (Common.divide obj.value total))]
       ]
-      [ text ""
+      [ div [style [("opacity", toString (Common.divide obj.value total))]]
+            []
       ]
 
 
@@ -136,17 +134,15 @@ getMonthName str =
 
 
 getMonthHeader : String -> Constants.Header
-getMonthHeader str = 
+getMonthHeader str =
   let
-    grabListItem num = 
+    grabListItem num =
       List.drop (num - 1) Constants.months
         |> List.head
         |> Maybe.withDefault { name = "Invalid", number = 0 }
-        
+
   in
-  slice 5 (length str) str
-    |> toInt
+  String.slice 5 (String.length str) str
+    |> String.toInt
     |> Result.withDefault 0
     |> grabListItem
-    
-    

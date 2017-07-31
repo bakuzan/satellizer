@@ -41,7 +41,7 @@ view model =
 
 
 calculateTotalOfValues : CountData -> Int
-calculateTotalOfValues list = 
+calculateTotalOfValues list =
   List.map (\x -> x.value) list
     |> List.foldr (+) 0
 
@@ -63,21 +63,20 @@ viewRatings list =
   let
     total =
       calculateTotalOfValues list
-    
-    ratings = 
-      Common.split 1 list
-    
-    viewRatingBar = 
+
+    ratings =
+      Common.splitList 1 list
+
+    viewRatingBar =
       viewSingleRating total
-    
+
   in
     div [id "status-container"]
-        ([] 
+        ([]
         ++ List.map viewRatingBar ratings)
 
 
 
 viewSingleRating : Int -> CountData -> Html Msg
-viewSingleRating total rating = 
+viewSingleRating total rating =
   General.ProgressBar.viewProgressBar total rating
-  

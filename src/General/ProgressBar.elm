@@ -1,7 +1,7 @@
 module General.ProgressBar exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, style, title)
+import Html.Attributes exposing (class, style, title, attribute)
 import Msgs exposing(Msg)
 import Models exposing(CountData, Count)
 import Utils.Common exposing (divide)
@@ -16,7 +16,8 @@ viewProgressBar total values =
 viewProgressSegment : Int -> Count -> Html Msg
 viewProgressSegment total pair =
   div [ class ("percentage-breakdown__bar" ++ " " ++ pair.key)
-      , style [("width", (getPercentage pair.value total))], title ((toString pair.value) ++ " " ++ pair.key) 
+      , style [("width", (getPercentage pair.value total))]
+      , attribute "hover-data" ((toString pair.value) ++ " " ++ pair.key)
       ]
       []
 
