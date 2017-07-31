@@ -11,3 +11,4 @@ type Msg
     | OnLocationChange Location
     | OnFetchStatus (WebData CountData)
     | OnFetchHistory (WebData CountData)
+    | OnFetchRating (WebData CountData)
