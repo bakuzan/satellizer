@@ -22,6 +22,9 @@ update msg model =
 
     Msgs.OnFetchHistory response ->
       ( { model | history = response }, Cmd.none )
+      
+    Msgs.OnFetchRating response ->
+      ( { model | rating = response }, Cmd.none )
 
     _ ->
       ( model, Cmd.none )
