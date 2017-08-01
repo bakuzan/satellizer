@@ -1,21 +1,18 @@
 module Utils.Constants exposing (..)
 
-
+import Models exposing (Header, RadioOption)
 
 type alias ItemType = 
   { anime: String
   , manga: String
   }
 
+
 itemType : ItemType
 itemType =
   ItemType "anime" "manga"
 
 
-type alias Header = 
-  { name: String
-  , number: Int
-  }
 
 months : List Header
 months = 
@@ -41,4 +38,11 @@ seasons =
   ,{ name = "Fall", number = 12 }
   ]
   
+
+
+breakdownOptions : List RadioOption
+breakdownOptions = 
+  [{ label = "Months", optionValue = "MONTHS" }
+  , { label = "Season", optionValue = "SEASON" }
+  ]  
   
