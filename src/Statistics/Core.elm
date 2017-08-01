@@ -25,6 +25,9 @@ viewRender model =
 view : Model -> Html Msg
 view model =
   let
+    breakdownType = 
+      model.breakdownType
+    
     activeTab =
       model.activeTab
       
@@ -42,7 +45,7 @@ view model =
         [ Statistics.Filter.view
         , div [ class "flex-column flex-grow" ]
               [ viewRender status |> viewStatus
-              , viewTabContainer activeTab [("History", viewRender history |> Statistics.HistoryTable.view)
+              , viewTabContainer activeTab [("History", viewRender history |> Statistics.HistoryTable.view breakdownType)
                                            ,("Ratings", viewRender ratings |> viewRatings)
                                            ]
               ]
