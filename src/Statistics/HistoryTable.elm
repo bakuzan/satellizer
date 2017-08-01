@@ -9,11 +9,11 @@ import Utils.Constants as Constants
 import Utils.Common as Common
 
 
-view : CountData -> Html Msg
-view data =
+view : String -> CountData -> Html Msg
+view breakdownType data =
     div [ class "history-breakdown" ]
-        [ viewBreakdownToggle "MONTHS"
-        , viewTable data "MONTHS"
+        [ viewBreakdownToggle breakdownType
+        , viewTable data breakdownType
         ]
 
 
