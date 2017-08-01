@@ -12,3 +12,4 @@ type Msg
     | OnFetchStatus (WebData CountData)
     | OnFetchHistory (WebData CountData)
     | OnFetchRating (WebData CountData)
+    | UpdateActiveTab String
