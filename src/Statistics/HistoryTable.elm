@@ -19,7 +19,7 @@ view breakdownType data =
 
 viewBreakdownToggle : String -> Html Msg
 viewBreakdownToggle state =
-  viewRadioGroup "breakdown" state [{ label = "Months", optionValue = "MONTHS" }, { label = "Season", optionValue = "SEASON" }]
+  viewRadioGroup "breakdown" state Msgs.UpdateBreakdownType Constants.breakdownOptions
 
 
 viewTable : CountData -> String -> Html Msg
