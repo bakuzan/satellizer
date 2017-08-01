@@ -33,6 +33,21 @@ type alias Count =
   }
 
 
+-- Constant models
+
+type alias Header = 
+  { name: String
+  , number: Int
+  }
+
+type alias RadioOption =
+  { label: String
+  , optionValue: String
+  }
+
+
+-- Routing
+
 type Route
     = StatisticsRoute
     | NotFoundRoute
