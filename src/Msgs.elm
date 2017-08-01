@@ -13,3 +13,4 @@ type Msg
     | OnFetchHistory (WebData CountData)
     | OnFetchRating (WebData CountData)
     | UpdateActiveTab String
+    | UpdateBreakdownType String
