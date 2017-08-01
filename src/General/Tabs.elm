@@ -3,7 +3,7 @@ module General.Tabs exposing (viewTabContainer)
 import Html exposing (..)
 import Html.Attributes exposing (type_, class)
 import Html.Events exposing (onClick)
-import Msgs exposing (UpdateActiveTab)
+import Msgs
 import Utils.Common as Common
 
 
@@ -21,7 +21,7 @@ viewTabControls activeTab tabList =
   let
     generateTabButton tab = 
       li [classList [("active", (getTabName tab) == activeTab)], Common.setRole "tab"] 
-         [ button [type_ "button", class "button", onClick (UpdateActiveTab (getTabName tab))] 
+         [ button [type_ "button", class "button", onClick (Msgs.UpdateActiveTab (getTabName tab))] 
                   [text (getTabName tab)]
          ]
 
