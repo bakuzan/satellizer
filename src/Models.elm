@@ -7,6 +7,7 @@ type alias Model =
     , history: WebData CountData
     , rating: WebData CountData
     , route: Route
+    , activeTab: String
     }
 
 
@@ -16,6 +17,7 @@ initialModel route =
     , history = RemoteData.Loading
     , rating = RemoteData.Loading
     , route = route
+    , activeTab = "History"
     }
 
 
