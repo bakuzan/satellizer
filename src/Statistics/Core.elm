@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (id, class, style)
 import Msgs exposing (Msg)
 import General.ProgressBar
+import General.Tabs exposing (..)
 import Statistics.Filter
 import Statistics.HistoryTable
 import Models exposing (Model, CountData)
@@ -29,13 +30,18 @@ view model =
 
     history =
       model.history
+      
+    ratings =
+      model.rating
 
   in
     div [class "flex-row"]
         [ Statistics.Filter.view
         , div [ class "flex-column flex-grow" ]
               [ viewRender status |> viewStatus
-              , viewRender history |> Statistics.HistoryTable.view
+              , viewTabContainer [("History", viewRender history |> Statistics.HistoryTable.view)
+                                 ,("Ratings", viewRender ratings |> viewRatings)
+                                 ]
               ]
         ]
 
