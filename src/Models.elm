@@ -8,6 +8,7 @@ type alias Model =
     , rating: WebData CountData
     , route: Route
     , activeTab: String
+    , breakdownType: String
     }
 
 
@@ -18,6 +19,7 @@ initialModel route =
     , rating = RemoteData.Loading
     , route = route
     , activeTab = "History"
+    , breakdownType = "MONTHS"
     }
 
 
