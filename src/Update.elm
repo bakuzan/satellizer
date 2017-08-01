@@ -37,6 +37,9 @@ update msg model =
       
     Msgs.UpdateActiveTab name ->
       ( { model | activeTab = name }, fetchStatusData )
-
+    
+    Msgs.UpdateBreakdownType type ->
+      ( { model | breakdownType = type }, fetchHistoryData )
+    
     _ ->
       ( model, Cmd.none )
