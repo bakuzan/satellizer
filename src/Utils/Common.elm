@@ -1,5 +1,6 @@
 module Utils.Common exposing (..)
 
+import Html exposing (Attribute)
 import Html.Attributes exposing (attribute)
 
 replace : String -> String -> String -> String

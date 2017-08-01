@@ -15,9 +15,9 @@ viewProgressBar total values =
 
 viewProgressSegment : Int -> Count -> Html Msg
 viewProgressSegment total pair =
-  div [ class ("percentage-breakdown__bar" ++ " " ++ pair.key)
+  div [ class ("percentage-breakdown__bar tooltip-bottom" ++ " " ++ pair.key)
       , style [("width", (getPercentage pair.value total))]
-      , attribute "hover-data" ((toString pair.value) ++ " " ++ pair.key)
+      , attribute "hover-data" ((toString pair.value) ++ " series " ++ pair.key)
       ]
       []
 

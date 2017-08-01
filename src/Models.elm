@@ -1,4 +1,5 @@
 module Models exposing (..)
+
 import RemoteData exposing (WebData)
 
 
@@ -35,15 +36,12 @@ type alias Count =
 
 -- Constant models
 
-type alias Header = 
+type alias Header =
   { name: String
   , number: Int
   }
 
-type alias RadioOption =
-  { label: String
-  , optionValue: String
-  }
+
 
 
 -- Routing

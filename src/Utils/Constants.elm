@@ -1,8 +1,11 @@
 module Utils.Constants exposing (..)
 
-import Models exposing (Header, RadioOption)
+import General.RadioButton exposing (RadioOption)
+import Models exposing (Header)
+import Msgs
 
-type alias ItemType = 
+
+type alias ItemType =
   { anime: String
   , manga: String
   }
@@ -15,7 +18,7 @@ itemType =
 
 
 months : List Header
-months = 
+months =
   [{ name = "Jan", number = 0 }
   ,{ name = "Feb", number = 1 }
   ,{ name = "Mar", number = 2 }
@@ -29,20 +32,20 @@ months =
   ,{ name = "Nov", number = 10 }
   ,{ name = "Dec", number = 11 }
   ]
-  
+
+
 seasons : List Header
-seasons = 
+seasons =
   [{ name = "Winter", number = 3 }
   ,{ name = "Spring", number = 6 }
   ,{ name = "Summer", number = 9 }
   ,{ name = "Fall", number = 12 }
   ]
-  
+
 
 
 breakdownOptions : List RadioOption
-breakdownOptions = 
-  [{ label = "Months", optionValue = "MONTHS" }
-  , { label = "Season", optionValue = "SEASON" }
-  ]  
-  
+breakdownOptions =
+  [{ label = "Months", optionValue = "MONTHS", action = Msgs.UpdateBreakdownType "MONTHS" }
+  ,{ label = "Season", optionValue = "SEASON", action = Msgs.UpdateBreakdownType "SEASON" }
+  ]

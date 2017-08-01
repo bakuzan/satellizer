@@ -19,27 +19,27 @@ update msg model =
 
     Msgs.OnFetchStatus response ->
       let
-        name = 
+        name =
           model.activeTab
-          
-        callApi = 
+
+        callApi =
           if name == "History" then fetchHistoryData else
           if name == "Ratings" then fetchRatingData else Cmd.none
-          
+
       in
       ( { model | status = response }, callApi )
 
     Msgs.OnFetchHistory response ->
       ( { model | history = response }, Cmd.none )
-      
+
     Msgs.OnFetchRating response ->
       ( { model | rating = response }, Cmd.none )
-      
+
     Msgs.UpdateActiveTab name ->
       ( { model | activeTab = name }, fetchStatusData )
-    
-    Msgs.UpdateBreakdownType type ->
-      ( { model | breakdownType = type }, fetchHistoryData )
-    
+
+    Msgs.UpdateBreakdownType breakdown ->
+      ( { model | breakdownType = breakdown }, fetchHistoryData )
+
     _ ->
       ( model, Cmd.none )

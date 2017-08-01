@@ -1,47 +1,47 @@
 module General.Tabs exposing (viewTabContainer)
 
 import Html exposing (..)
-import Html.Attributes exposing (type_, class)
+import Html.Attributes exposing (type_, class, classList)
 import Html.Events exposing (onClick)
-import Msgs
+import Msgs exposing (Msg)
 import Utils.Common as Common
 
 
 
 viewTabContainer : String -> List (String, List (Html Msg)) -> Html Msg
-viewTabContainer activeTab tabList = 
-  div [ class "tab-container" ] 
+viewTabContainer activeTab tabList =
+  div [ class "tab-container" ]
       [ viewTabControls activeTab tabList
       , viewTabBodys activeTab tabList
       ]
-      
-      
+
+
 viewTabControls : String -> List (String, List (Html Msg)) -> Html Msg
-viewTabControls activeTab tabList = 
+viewTabControls activeTab tabList =
   let
-    generateTabButton tab = 
-      li [classList [("active", (getTabName tab) == activeTab)], Common.setRole "tab"] 
-         [ button [type_ "button", class "button", onClick (Msgs.UpdateActiveTab (getTabName tab))] 
+    generateTabButton tab =
+      li [classList [("active", (getTabName tab) == activeTab)], Common.setRole "tab"]
+         [ button [type_ "button", class "button", onClick (Msgs.UpdateActiveTab (getTabName tab))]
                   [text (getTabName tab)]
          ]
 
   in
   ul [class "tab-controls row", Common.setRole "tablist"]
      ([] ++ List.map generateTabButton tabList)
-     
-     
+
+
 viewTabBodys : String -> List (String, List (Html Msg)) -> Html Msg
-viewTabBodys activeTab tabList = 
+viewTabBodys activeTab tabList =
   let
-    generateTabBody tab = 
-      div [class "tab", classList [("active", (getTabName tab) == activeTab)], Common.setRole "tabpanel"]
+    generateTabBody tab =
+      div [class "tab-view", classList [("active", (getTabName tab) == activeTab)], Common.setRole "tabpanel"]
           ([] ++ Tuple.second tab)
-    
+
   in
-  div [class "tabs"] 
+  div [class "tabs"]
       ([] ++ List.map generateTabBody tabList)
 
 
 getTabName : (String, List (Html Msg)) -> String
-getTabName tab = 
+getTabName tab =
   Tuple.first tab

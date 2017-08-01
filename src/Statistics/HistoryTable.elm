@@ -19,7 +19,7 @@ view breakdownType data =
 
 viewBreakdownToggle : String -> Html Msg
 viewBreakdownToggle state =
-  viewRadioGroup "breakdown" state Msgs.UpdateBreakdownType Constants.breakdownOptions
+  viewRadioGroup "breakdown" state Constants.breakdownOptions
 
 
 viewTable : CountData -> String -> Html Msg

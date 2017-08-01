@@ -25,18 +25,18 @@ viewRender model =
 view : Model -> Html Msg
 view model =
   let
-    breakdownType = 
+    breakdownType =
       model.breakdownType
-    
+
     activeTab =
       model.activeTab
-      
+
     status =
       model.status
 
     history =
       model.history
-      
+
     ratings =
       model.rating
 
@@ -45,8 +45,8 @@ view model =
         [ Statistics.Filter.view
         , div [ class "flex-column flex-grow" ]
               [ viewRender status |> viewStatus
-              , viewTabContainer activeTab [("History", viewRender history |> Statistics.HistoryTable.view breakdownType)
-                                           ,("Ratings", viewRender ratings |> viewRatings)
+              , viewTabContainer activeTab [("History", [viewRender history |> Statistics.HistoryTable.view breakdownType])
+                                           ,("Ratings", [viewRender ratings |> viewRatings])
                                            ]
               ]
         ]
@@ -83,7 +83,7 @@ viewRatings list =
       viewSingleRating total
 
   in
-    div [id "status-container"]
+    div [id "rating-container"]
         ([]
         ++ List.map viewRatingBar ratings)
 
