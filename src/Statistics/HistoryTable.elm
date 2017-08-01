@@ -3,7 +3,7 @@ module Statistics.HistoryTable exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Msgs exposing (Msg)
-import Models exposing (Count, CountData)
+import Models exposing (Count, CountData, Header)
 import General.RadioButton exposing (viewRadioGroup)
 import Utils.Constants as Constants
 import Utils.Common as Common
@@ -44,7 +44,7 @@ viewTable countData breakdown =
           ]
 
 
-viewHeader : List Constants.Header -> Html Msg
+viewHeader : List Header -> Html Msg
 viewHeader headers =
     let
       displayHeader obj =
@@ -133,7 +133,7 @@ getMonthName str =
     |> .name
 
 
-getMonthHeader : String -> Constants.Header
+getMonthHeader : String -> Header
 getMonthHeader str =
   let
     grabListItem num =
