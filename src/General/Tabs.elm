@@ -2,37 +2,46 @@ module General.Tabs exposing (viewTabContainer)
 
 import Html exposing (..)
 import Html.Attributes exposing (type_, class)
+import Html.Events exposing (onClick)
+import Msgs exposing (UpdateActiveTab)
+import Utils.Common as Common
 
 
 
-viewTabContainer : List (String, List (Html Msg)) -> Html Msg
-viewTabContainer tabList = 
+viewTabContainer : String -> List (String, List (Html Msg)) -> Html Msg
+viewTabContainer activeTab tabList = 
   div [ class "tab-container" ] 
-      [ viewTabControls tabList
-      , viewTabBodys tabList
+      [ viewTabControls activeTab tabList
+      , viewTabBodys activeTab tabList
       ]
       
-viewTabControls : List (String, List (Html Msg)) -> Html Msg
-viewTabControls tabList = 
+      
+viewTabControls : String -> List (String, List (Html Msg)) -> Html Msg
+viewTabControls activeTab tabList = 
   let
     generateTabButton tab = 
-      li [classList [("active", (first tab) == "history")]] 
-         [ button [type_ "button", class "button"] 
-                  [text (first tab)]
+      li [classList [("active", (getTabName tab) == activeTab)], Common.setRole "tab"] 
+         [ button [type_ "button", class "button", onClick (UpdateActiveTab (getTabName tab))] 
+                  [text (getTabName tab)]
          ]
-    --, role "tab"
+
   in
-  ul [class "tab-controls row", role "tablist"]
+  ul [class "tab-controls row", Common.setRole "tablist"]
      ([] ++ List.map generateTabButton tabList)
      
      
-viewTabBodys : List (String, List (Html Msg)) -> Html Msg
-viewTabBodys tabList = 
+viewTabBodys : String -> List (String, List (Html Msg)) -> Html Msg
+viewTabBodys activeTab tabList = 
   let
     generateTabBody tab = 
-      div [class "tab"]
-          [(second tab)]
-    --, role "tabpanel"
+      div [class "tab", classList [("active", (getTabName tab) == activeTab)], Common.setRole "tabpanel"]
+          ([] ++ Tuple.second tab)
+    
   in
   div [class "tabs"] 
       ([] ++ List.map generateTabBody tabList)
+
+
+getTabName : (String, List (Html Msg)) -> String
+getTabName tab = 
+  Tuple.first tab
