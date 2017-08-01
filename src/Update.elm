@@ -3,7 +3,7 @@ module Update exposing (..)
 import Routing exposing (parseLocation)
 import Msgs exposing (Msg)
 import Models exposing (Model)
-import Commands exposing (fetchHistoryData)
+import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -18,13 +18,25 @@ update msg model =
         ( { model | route = newRoute }, Cmd.none )
 
     Msgs.OnFetchStatus response ->
-      ( { model | status = response }, fetchHistoryData )
+      let
+        name = 
+          model.activeTab
+          
+        callApi = 
+          if name == "History" then fetchHistoryData else
+          if name == "Ratings" then fetchRatingData else Cmd.none
+          
+      in
+      ( { model | status = response }, callApi )
 
     Msgs.OnFetchHistory response ->
       ( { model | history = response }, Cmd.none )
       
     Msgs.OnFetchRating response ->
       ( { model | rating = response }, Cmd.none )
+      
+    Msgs.UpdateActiveTab name ->
+      ( { model | activeTab = name }, fetchStatusData )
 
     _ ->
       ( model, Cmd.none )
