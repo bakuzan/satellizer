@@ -3,14 +3,9 @@ module General.RadioButton exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Models exposing (RadioOption)
 import Msgs exposing (Msg)
 import Utils.Common as Common
-
-
-type alias RadioOption =
-  { label: String
-  , optionValue: String
-  }
 
 
 viewRadioGroup : String -> String -> Msg -> List RadioOption -> Html Msg
