@@ -31,15 +31,15 @@ fetchRatingUrl itemType isAdult =
   constructUrl "rating-counts" itemType isAdult
 
 
-fetchHistoryData : Cmd Msg
-fetchHistoryData =
-    Http.get (fetchHistoryUrl "anime" False) countDataDecoder
+fetchHistoryData : String -> Cmd Msg
+fetchHistoryData breakdown =
+    Http.get (fetchHistoryUrl "anime" False breakdown) countDataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchHistory
 
-fetchHistoryUrl : String -> Bool -> String
-fetchHistoryUrl itemType isAdult =
-  constructUrl "history-counts" itemType isAdult
+fetchHistoryUrl : String -> Bool -> String -> String
+fetchHistoryUrl itemType isAdult breakdown =
+  (constructUrl "history-counts" itemType isAdult) ++ "/" ++ (String.toLower breakdown)
 
 
 constructUrl : String -> String -> Bool -> String

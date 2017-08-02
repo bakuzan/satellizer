@@ -7,19 +7,27 @@ body {
   }
   margin: 0;
   text-align: center;
-  color: $test-colour;
 }
 
-#satellizer {
-  padding: 50px 5px 5px;
-}
 
 #status-container {
   margin-top: 10px;
 }
 
 #rating-container {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  > div {
+    display: inline-flex;
+    flex-direction: row;
+  }
+  .rating-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+  }
 }
 
 // Progress bar
@@ -33,14 +41,8 @@ body {
   .percentage-breakdown__bar {
     height: 100%;
 
-    @for $i from 1 through length($colours) {
-      &:nth-child(#{$i}) {
-        background: nth($colours, $i);
-      }
-    }
-
-    @each $class, $colour in $grade-colours {
-      &.#{$class} {
+    @each $key, $colour in $rating-colours {
+      &.#{$key} {
         background: $colour;
       }
     }
@@ -57,17 +59,11 @@ body {
     width: 25%;
   }
 }
-.history-breakdown-header {
-
-}
 
 .history-breakdown-body {
-  &__row {
-
-  }
   &__data-cell {
     width: calc(100% / 12); //25px;
-    border: $history-table-cell-border;
+    border: 1px solid $history-table-cell-border;
     cursor: pointer;
     > div {
       width: 100%;
@@ -288,121 +284,4 @@ body {
 .tooltip-right:after {
   margin-left: 0;
   margin-bottom: -16px;
-}
-
-
-/* TEMPORARY STYLE */
-.flex-grow {
-  flex-grow: 1;
-}
-.flex-row {
-  display: flex;
-  flex-direction: row;
-}
-.flex-column {
-  display: flex;
-  flex-direction: column;
-}
-.list-filter {
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 20%;
-  padding: 20px 5px;
-}
-
-
-.radio-group {
-	  display: flex;
-	  justify-content: space-around;
-	  align-items: center;
-	  padding: 5px;
-}
-.radio {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-
-  input[type="radio"] {
-    appearance: none;
-    padding-right: 2px;
-    margin: 0;
-    pointer-events: none;
-
-    &::after {
-      content: "\25ef";
-      color: #aaa;
-      font-size: 1.2rem;
-      vertical-align: middle;
-    }
-
-    &:checked::after {
-      content: "\25c9";
-      color: #000;
-      font-size: 1.5rem;
-    }
-  }
-
-}
-
-
-$tab-controls-height: 31px;
-
-.tab-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  margin: 5px 0;
-  .tabs {
-    position: relative;
-    height: calc(100% - #{$tab-controls-height});
-    border-top: 1px solid $primary-colour;
-  }
-}
-
-.tab-controls {
-  display: flex;
-  height: $tab-controls-height;
-  padding: 0 5px;
-  margin: 0;
-  white-space: nowrap;
-  list-style-type: none;
-  li {
-    display: inline-flex;
-    padding: 2px;
-    margin: 0 1px;
-    border: {
-      width: 1px;
-      style: solid;
-      color: $grey80;
-      bottom-color: $white;
-    };
-    z-index: map-get($z-index, above-siblings);
-  }
-  li.active {
-    border: {
-      color: $primary-colour;
-      bottom-color: $white;
-    };
-    margin-bottom: -1px;
-  }
-}
-
-.tab-view {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  width: 100%;
-  height: 100%;
-  padding: 5px;
-  margin: 0;
-  opacity: 0;
-  transition: all 1s ease-in-out;
-  pointer-events: none;
-  &.active {
-    position: relative;
-    opacity: 1;
-    z-index: map-get($z-index, above-siblings);
-    pointer-events: auto;
-  }
 }

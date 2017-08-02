@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (id, class, style)
 import Msgs exposing (Msg)
 import General.ProgressBar
-import Models exposing (Model, CountData)
+import Models exposing (Model, CountData, Count)
 import Utils.Common as Common
 
 
@@ -33,15 +33,22 @@ viewSingleRating total rating =
   let
     getRatingText obj =
       if obj.key == "0" then "-" else obj.key
-    
+
     number =
       List.head rating
         |> Maybe.withDefault { key = "-", value = 0 }
         |> getRatingText
-  
+
+    updatedRating =
+      List.map (\x -> { x | key = (setRatingKey x) }) rating
+
   in
   div []
-      [ span [] [text number]
-      , General.ProgressBar.viewProgressBar total rating
+      [ div [class "rating-label"] [text number]
+      , General.ProgressBar.viewProgressBar total updatedRating
       ]
-      
+
+
+setRatingKey : Count -> String
+setRatingKey obj =
+  if obj.key == "0" then "unrated" else obj.key ++ "-star"

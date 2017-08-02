@@ -19,11 +19,14 @@ update msg model =
 
     Msgs.OnFetchStatus response ->
       let
+        breakdown =
+          model.breakdownType
+
         name =
           model.activeTab
 
         callApi =
-          if name == "History" then fetchHistoryData else
+          if name == "History" then (fetchHistoryData breakdown) else
           if name == "Ratings" then fetchRatingData else Cmd.none
 
       in
@@ -39,7 +42,7 @@ update msg model =
       ( { model | activeTab = name }, fetchStatusData )
 
     Msgs.UpdateBreakdownType breakdown ->
-      ( { model | breakdownType = breakdown }, fetchHistoryData )
+      ( { model | breakdownType = breakdown }, (fetchHistoryData breakdown))
 
     _ ->
       ( model, Cmd.none )

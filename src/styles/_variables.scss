@@ -9,19 +9,22 @@ $gold: #fc0;
 $silver: #ccc;
 $bronze: #c63;
 
-$colours: $green $red $blue;
-$grade-colours: (
-  10: $gold,
-  9: $gold,
-  8: $silver,
-  7: $silver,
-  6: $bronze,
-  5: $bronze,
-  4: $bronze,
-  3: $black,
-  2: $black,
-  1: $black,
-  0: $blue
+
+$rating-colours: (
+  "onhold": $blue,
+  "completed": $red,
+  "ongoing": $green,
+  "10-star": $gold,
+  "9-star": $gold,
+  "8-star": $silver,
+  "7-star": $silver,
+  "6-star": $bronze,
+  "5-star": $bronze,
+  "4-star": $bronze,
+  "3-star": $black,
+  "2-star": $black,
+  "1-star": $black,
+  "unrated": $blue
 );
 
 $history-table-cell-background: $black;
