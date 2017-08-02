@@ -7,6 +7,7 @@ import General.ProgressBar
 import General.Tabs exposing (..)
 import Statistics.Filter
 import Statistics.HistoryTable
+import Statistics.Ratings
 import Models exposing (Model, CountData)
 import RemoteData exposing (WebData)
 import Utils.Common as Common
@@ -46,23 +47,18 @@ view model =
         , div [ class "flex-column flex-grow" ]
               [ viewRender status |> viewStatus
               , viewTabContainer activeTab [("History", [viewRender history |> Statistics.HistoryTable.view breakdownType])
-                                           ,("Ratings", [viewRender ratings |> viewRatings])
+                                           ,("Ratings", [viewRender ratings |> Statistics.Ratings.view])
                                            ]
               ]
         ]
 
-
-calculateTotalOfValues : CountData -> Int
-calculateTotalOfValues list =
-  List.map (\x -> x.value) list
-    |> List.foldr (+) 0
 
 
 viewStatus : CountData -> Html Msg
 viewStatus list =
   let
     total =
-      calculateTotalOfValues list
+      Common.calculateTotalOfValues list
 
   in
     div [id "status-container"]
@@ -70,39 +66,3 @@ viewStatus list =
         ]
 
 
-viewRatings : CountData -> Html Msg
-viewRatings list =
-  let
-    total =
-      calculateTotalOfValues list
-
-    ratings =
-      Common.splitList 1 list
-
-    viewRatingBar =
-      viewSingleRating total
-
-  in
-    div [id "rating-container"]
-        ([]
-        ++ List.map viewRatingBar ratings)
-
-
-
-viewSingleRating : Int -> CountData -> Html Msg
-viewSingleRating total rating =
-  let
-    getRatingText obj =
-      if obj.key == "0" then "-" else obj.key
-    
-    number =
-      List.head rating
-        |> Maybe.withDefault { key = "-", value = 0 }
-        |> getRatingText
-  
-  in
-  div []
-      [ span [] [text number]
-      , General.ProgressBar.viewProgressBar total rating
-      ]
-      
