@@ -11,6 +11,8 @@ matchers =
         [ map StatisticsRoute top
         ]
 
+-- Need a way to route the url from "/" to "/statistics" OR "/statistics/:type" so the below will work
+-- map StatisticsRoute (s "statistics" </> string) , for "/anime" OR "/manga"
 
 parseLocation : Location -> Route
 parseLocation location =
