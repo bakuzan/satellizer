@@ -91,4 +91,18 @@ viewRatings list =
 
 viewSingleRating : Int -> CountData -> Html Msg
 viewSingleRating total rating =
-  General.ProgressBar.viewProgressBar total rating
+  let
+    getRatingText obj =
+      if obj.key == "0" then "-" else obj.key
+    
+    number =
+      List.head rating
+        |> Maybe.withDefault { key = "-", value = 0 }
+        |> getRatingText
+  
+  in
+  div []
+      [ span [] [text number]
+      , General.ProgressBar.viewProgressBar total rating
+      ]
+      
