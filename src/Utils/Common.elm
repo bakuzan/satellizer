@@ -2,6 +2,8 @@ module Utils.Common exposing (..)
 
 import Html exposing (Attribute)
 import Html.Attributes exposing (attribute)
+import Models exposing (CountData)
+
 
 replace : String -> String -> String -> String
 replace from to str =
@@ -15,9 +17,11 @@ splitList i list =
     [] -> []
     listHead -> listHead :: splitList i (List.drop i list)
 
+
 divide : Int -> Int -> Float
 divide part total =
   (toFloat part) / (toFloat total)
+
 
 maxOfField : (a -> comparable) -> List a -> Maybe a
 maxOfField field =
@@ -31,3 +35,9 @@ maxOfField field =
 setRole : String -> Attribute msg
 setRole value = 
   attribute "role" value
+
+
+calculateTotalOfValues : CountData -> Int
+calculateTotalOfValues list =
+  List.map (\x -> x.value) list
+    |> List.foldr (+) 0
