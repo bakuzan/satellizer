@@ -38,7 +38,7 @@ viewTable countData breakdown =
       if breakdown == "MONTHS" then Constants.months else Constants.seasons
 
   in
-  table [ class "history-breakdown__table" ]
+  table [ class ("history-breakdown__table " ++ (String.toLower breakdown)) ]
           [ viewHeader headers
           , viewBody total data
           ]

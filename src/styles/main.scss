@@ -60,6 +60,12 @@ body {
   }
 }
 
+.season > .history-breakdown-header {
+  th:not(:first-child) {
+    width: 25%;
+  }
+}
+
 .history-breakdown-body {
   &__data-cell {
     width: calc(100% / 12); //25px;
