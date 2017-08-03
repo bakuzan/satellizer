@@ -49,3 +49,19 @@ breakdownOptions =
   [{ label = "Months", optionValue = "MONTHS", action = Msgs.UpdateBreakdownType "MONTHS" }
   ,{ label = "Season", optionValue = "SEASON", action = Msgs.UpdateBreakdownType "SEASON" }
   ]
+
+
+numberNames : List String
+numberNames = 
+ [ "one"
+ , "two"
+ , "three"
+ , "four"
+ , "five"
+ , "six"
+ , "seven"
+ , "eight"
+ , "nine"
+ , "ten"
+ ]
+
