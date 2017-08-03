@@ -1,4 +1,4 @@
-$test-colour: #293c4b;
+$teal: #008080;
 $white: #fff;
 $black: #000;
 $grey80: #ccc;
@@ -14,17 +14,17 @@ $rating-colours: (
   "onhold": $blue,
   "completed": $red,
   "ongoing": $green,
-  "10-star": $gold,
-  "9-star": $gold,
-  "8-star": $silver,
-  "7-star": $silver,
-  "6-star": $bronze,
-  "5-star": $bronze,
-  "4-star": $bronze,
-  "3-star": $black,
-  "2-star": $black,
-  "1-star": $black,
-  "unrated": $blue
+  "ten": $gold,
+  "nine": $gold,
+  "eight": $silver,
+  "seven": $silver,
+  "six": $bronze,
+  "five": $bronze,
+  "four": $bronze,
+  "three": $black,
+  "two": $black,
+  "one": $black,
+  "unrated": $teal
 );
 
 $history-table-cell-background: $black;
