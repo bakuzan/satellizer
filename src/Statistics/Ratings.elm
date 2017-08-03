@@ -6,7 +6,7 @@ import Msgs exposing (Msg)
 import General.ProgressBar
 import Models exposing (Model, CountData, Count)
 import Utils.Common as Common
-
+import Utils.Constants as Constants
 
 
 view : CountData -> Html Msg
@@ -51,4 +51,13 @@ viewSingleRating total rating =
 
 setRatingKey : Count -> String
 setRatingKey obj =
-  if obj.key == "0" then "unrated" else obj.key ++ "-star"
+  if obj.key == "0" then "unrated" else (getNumberName obj.key)
+  
+  
+getNumberName : String -> String
+getNumberName str = 
+  String.toInt str
+    |> Result.withDefault 0
+    |> (\x -> List.drop (x - 1) Constants.numberNames)
+    |> List.head
+    |> Maybe.withDefault "missing"
