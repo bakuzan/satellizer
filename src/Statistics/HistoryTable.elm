@@ -40,7 +40,7 @@ viewTable countData breakdown =
   in
   table [ class ("history-breakdown__table " ++ (String.toLower breakdown)) ]
           [ viewHeader headers
-          , viewBody total data
+          , viewBody breakdown total data
           ]
 
 
@@ -56,19 +56,19 @@ viewHeader headers =
           ] ++ List.map displayHeader headers)
 
 
-viewBody : Int -> CountData -> Html Msg
-viewBody total data =
+viewBody : String -> Int -> CountData -> Html Msg
+viewBody breakdown total data =
   let
     displayRow =
-      viewRow total
+      viewRow breakdown total
 
   in
   tbody [class "history-breakdown-body"]
         ([] ++ List.map displayRow (split data))
 
 
-viewRow : Int -> List Count -> Html Msg
-viewRow total data =
+viewRow : String -> Int -> List Count -> Html Msg
+viewRow breakdown total data =
  let
    cells =
     List.sortBy .key data
@@ -79,15 +79,15 @@ viewRow total data =
           [text (getYear (getListFirst data))
           ]
      ]
-    ++ List.map (viewCell total) cells
+    ++ List.map (viewCell breakdown total) cells
     )
 
 
-viewCell : Int -> Count -> Html Msg
-viewCell total obj =
+viewCell : String -> Int -> Count -> Html Msg
+viewCell breakdown total obj =
   let
     viewDate str =
-      (getMonthName str) ++ " " ++ (getYear str)
+      (getBreakdownName breakdown str) ++ " " ++ (getYear str)
 
   in
    td [ attribute "hover-data" ((toString obj.value) ++ " in " ++ (viewDate obj.key))
@@ -127,6 +127,11 @@ getYear str =
   String.slice 0 4 str
 
 
+getBreakdownName : String -> String -> String
+getBreakdownName breakdown str =
+ if breakdown == "MONTHS" then (getMonthName str) else (getSeasonName str)
+
+
 getMonthName : String -> String
 getMonthName str =
   getMonthHeader str
@@ -138,11 +143,48 @@ getMonthHeader str =
   let
     grabListItem num =
       List.drop (num - 1) Constants.months
-        |> List.head
-        |> Maybe.withDefault { name = "Invalid", number = 0 }
+        |> shiftHeader
 
   in
-  String.slice 5 (String.length str) str
-    |> String.toInt
-    |> Result.withDefault 0
+  prepareMonthAsInt str
     |> grabListItem
+
+
+
+getSeasonName : String -> String
+getSeasonName str = 
+  getSeasonHeader str
+    |> .name
+
+
+getSeasonHeader : String -> Header
+getSeasonHeader str =
+  let
+    getDrop n =
+      if n < 4  then 0 else
+      if n < 7  then 1 else
+      if n < 10 then 2 else
+                     3
+    
+    grabListItem num =
+      List.drop (getDrop num) Constants.seasons
+        |> shiftHeader
+
+  in
+  prepareMonthAsInt str
+    |> grabListItem
+
+
+prepareMonthAsInt : String -> Int
+prepareMonthAsInt str = 
+    String.slice 5 (String.length str) str
+      |> String.toInt
+      |> Result.withDefault 0
+
+
+shiftHeader : List Header -> Header
+shiftHeader list = 
+  List.head list
+    |> Maybe.withDefault { name = "Invalid", number = 0 }
+
+    
