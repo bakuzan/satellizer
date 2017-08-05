@@ -3,7 +3,7 @@ module Update exposing (..)
 import Routing exposing (parseLocation)
 import Msgs exposing (Msg)
 import Models exposing (Model)
-import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData)
+import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData, fetchHistoryDetailData)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -43,6 +43,9 @@ update msg model =
 
     Msgs.UpdateBreakdownType breakdown ->
       ( { model | breakdownType = breakdown }, (fetchHistoryData breakdown))
+
+    Msgs.DisplayHistoryDetail datePart ->
+      ( model, (fetchHistoryDetailData datePart model.breakdownType) )
 
     _ ->
       ( model, Cmd.none )

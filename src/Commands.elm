@@ -41,6 +41,10 @@ fetchHistoryUrl : String -> Bool -> String -> String
 fetchHistoryUrl itemType isAdult breakdown =
   (constructUrl "history-counts" itemType isAdult) ++ "/" ++ (String.toLower breakdown)
 
+fetchHistoryDetailData : String -> String -> Cmd Msg
+fetchHistoryDetailData date breakdown =
+
+
 
 constructUrl : String -> String -> Bool -> String
 constructUrl urlType itemType isAdult =
