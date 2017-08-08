@@ -13,7 +13,7 @@ import RemoteData exposing (WebData)
 import Utils.Common as Common
 
 
-viewRender : WebData CountData -> CountData
+viewRender : WebData (List a) -> List a
 viewRender model =
   case model of
     RemoteData.NotAsked -> []
@@ -36,7 +36,13 @@ view model =
       model.status
 
     history =
-      model.history
+      viewRender model.history
+
+    detail =
+      viewRender model.historyDetail
+
+    detailGroup =
+      model.detailGroup
 
     ratings =
       model.rating
@@ -46,7 +52,7 @@ view model =
         [ Statistics.Filter.view
         , div [ class "flex-column flex-grow" ]
               [ viewRender status |> viewStatus
-              , viewTabContainer activeTab [("History", [viewRender history |> Statistics.HistoryTable.view breakdownType])
+              , viewTabContainer activeTab [("History", [Statistics.HistoryTable.view breakdownType history detailGroup detail])
                                            ,("Ratings", [viewRender ratings |> Statistics.Ratings.view])
                                            ]
               ]
@@ -64,5 +70,3 @@ viewStatus list =
     div [id "status-container"]
         [General.ProgressBar.viewProgressBar total list
         ]
-
-

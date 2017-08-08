@@ -2,18 +2,22 @@ module Statistics.HistoryTable exposing (view)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
-import Models exposing (Count, CountData, Header)
+import Models exposing (Count, CountData, HistoryDetailData, Header)
 import General.RadioButton exposing (viewRadioGroup)
+import Statistics.HistoryTableDetail
 import Utils.Constants as Constants
 import Utils.Common as Common
+import Utils.TableFunctions exposing (getBreakdownName, getYear)
 
 
-view : String -> CountData -> Html Msg
-view breakdownType data =
+view : String -> CountData -> String -> HistoryDetailData -> Html Msg
+view breakdownType data detailGroup detail =
     div [ class "history-breakdown" ]
         [ viewBreakdownToggle breakdownType
         , viewTable data breakdownType
+        , Statistics.HistoryTableDetail.view breakdownType detailGroup detail
         ]
 
 
@@ -93,8 +97,12 @@ viewCell breakdown total obj =
    td [ attribute "hover-data" ((toString obj.value) ++ " in " ++ (viewDate obj.key))
       , class "history-breakdown-body__data-cell"
       ]
-      [ div [style [("opacity", toString (Common.divide obj.value total))]]
-            []
+      [ button [onClick (Msgs.DisplayHistoryDetail obj.key)]
+               [ div [ class"history-breakdown-body__data-cell__background"
+                     , style [("opacity", toString (Common.divide obj.value total))]
+                     ]
+                     []
+               ]
       ]
 
 
@@ -120,71 +128,3 @@ matchHead head obj =
 notMatchHead : String -> Count -> Bool
 notMatchHead head obj =
  not (matchHead head obj)
-
-
-getYear : String -> String
-getYear str =
-  String.slice 0 4 str
-
-
-getBreakdownName : String -> String -> String
-getBreakdownName breakdown str =
- if breakdown == "MONTHS" then (getMonthName str) else (getSeasonName str)
-
-
-getMonthName : String -> String
-getMonthName str =
-  getMonthHeader str
-    |> .name
-
-
-getMonthHeader : String -> Header
-getMonthHeader str =
-  let
-    grabListItem num =
-      List.drop (num - 1) Constants.months
-        |> shiftHeader
-
-  in
-  prepareMonthAsInt str
-    |> grabListItem
-
-
-
-getSeasonName : String -> String
-getSeasonName str = 
-  getSeasonHeader str
-    |> .name
-
-
-getSeasonHeader : String -> Header
-getSeasonHeader str =
-  let
-    getDrop n =
-      if n < 4  then 0 else
-      if n < 7  then 1 else
-      if n < 10 then 2 else
-                     3
-    
-    grabListItem num =
-      List.drop (getDrop num) Constants.seasons
-        |> shiftHeader
-
-  in
-  prepareMonthAsInt str
-    |> grabListItem
-
-
-prepareMonthAsInt : String -> Int
-prepareMonthAsInt str = 
-    String.slice 5 (String.length str) str
-      |> String.toInt
-      |> Result.withDefault 0
-
-
-shiftHeader : List Header -> Header
-shiftHeader list = 
-  List.head list
-    |> Maybe.withDefault { name = "Invalid", number = 0 }
-
-    

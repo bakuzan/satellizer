@@ -11,6 +11,7 @@ type alias Model =
     , route: Route
     , activeTab: String
     , breakdownType: String
+    , detailGroup: String
     }
 
 
@@ -23,6 +24,7 @@ initialModel route =
     , route = route
     , activeTab = "History"
     , breakdownType = "MONTHS"
+    , detailGroup = ""
     }
 
 
@@ -41,7 +43,7 @@ type alias HistoryDetailData =
 
 
 type alias HistoryDetail =
-  { _id: String
+  { id: String
   , title: String
   , rating: Int
   }

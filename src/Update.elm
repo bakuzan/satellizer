@@ -4,7 +4,7 @@ import Routing exposing (parseLocation)
 import Msgs exposing (Msg)
 import Models exposing (Model)
 import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData, fetchHistoryDetailData)
-
+import RemoteData
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -42,13 +42,21 @@ update msg model =
       ( { model | rating = response }, Cmd.none )
 
     Msgs.UpdateActiveTab name ->
-      ( { model | activeTab = name }, fetchStatusData )
+      ( { model
+         | activeTab = name
+         , detailGroup = ""
+         , historyDetail = RemoteData.Loading
+         }, fetchStatusData )
 
     Msgs.UpdateBreakdownType breakdown ->
-      ( { model | breakdownType = breakdown }, (fetchHistoryData breakdown))
+      ( { model
+        | breakdownType = breakdown
+        , detailGroup = ""
+        , historyDetail = RemoteData.Loading
+        }, (fetchHistoryData breakdown))
 
     Msgs.DisplayHistoryDetail datePart ->
-      ( model, (fetchHistoryDetailData datePart model.breakdownType) )
+      ( { model | detailGroup = datePart }, (fetchHistoryDetailData datePart model.breakdownType) )
 
     _ ->
       ( model, Cmd.none )
