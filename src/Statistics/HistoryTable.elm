@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
-import Models exposing (Count, CountData, HistoryDetailData, Header)
+import Models exposing (Count, CountData, HistoryDetailData, Header, Settings)
 import General.RadioButton exposing (viewRadioGroup)
 import Statistics.HistoryTableDetail
 import Utils.Constants as Constants
@@ -12,12 +12,17 @@ import Utils.Common as Common
 import Utils.TableFunctions exposing (getBreakdownName, getYear)
 
 
-view : String -> CountData -> String -> HistoryDetailData -> Html Msg
-view breakdownType data detailGroup detail =
+view : Settings -> CountData -> HistoryDetailData -> Html Msg
+view settings data detail =
+  let
+    breakdownType =
+      settings.breakdownType
+
+  in
     div [ class "history-breakdown" ]
         [ viewBreakdownToggle breakdownType
         , viewTable data breakdownType
-        , Statistics.HistoryTableDetail.view breakdownType detailGroup detail
+        , Statistics.HistoryTableDetail.view settings detail
         ]
 
 

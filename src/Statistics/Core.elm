@@ -26,11 +26,8 @@ viewRender model =
 view : Model -> Html Msg
 view model =
   let
-    breakdownType =
-      model.breakdownType
-
     activeTab =
-      model.activeTab
+      model.settings.activeTab
 
     status =
       model.status
@@ -41,18 +38,15 @@ view model =
     detail =
       viewRender model.historyDetail
 
-    detailGroup =
-      model.detailGroup
-
     ratings =
       model.rating
 
   in
     div [class "flex-row"]
-        [ Statistics.Filter.view
+        [ Statistics.Filter.view model.settings
         , div [ class "flex-column flex-grow" ]
               [ viewRender status |> viewStatus
-              , viewTabContainer activeTab [("History", [Statistics.HistoryTable.view breakdownType history detailGroup detail])
+              , viewTabContainer activeTab [("History", [Statistics.HistoryTable.view model.settings history detail])
                                            ,("Ratings", [viewRender ratings |> Statistics.Ratings.view])
                                            ]
               ]

@@ -9,10 +9,22 @@ type alias Model =
     , historyDetail: WebData HistoryDetailData
     , rating: WebData CountData
     , route: Route
-    , activeTab: String
-    , breakdownType: String
-    , detailGroup: String
+    , settings: Settings
     }
+
+
+type alias Settings =
+  { activeTab: String
+  , breakdownType: String
+  , detailGroup: String
+  , sorting: Sort
+  }
+
+
+type alias Sort =
+  { field: String
+  , isDesc: Bool
+  }
 
 
 initialModel : Route -> Model
@@ -22,9 +34,15 @@ initialModel route =
     , historyDetail = RemoteData.Loading
     , rating = RemoteData.Loading
     , route = route
-    , activeTab = "History"
-    , breakdownType = "MONTHS"
-    , detailGroup = ""
+    , settings =
+      { activeTab = "History"
+      , breakdownType = "MONTHS"
+      , detailGroup = ""
+      , sorting =
+        { field = "TITLE"
+        , isDesc = False
+        }
+      }
     }
 
 

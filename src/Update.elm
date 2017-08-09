@@ -20,10 +20,10 @@ update msg model =
     Msgs.OnFetchStatus response ->
       let
         breakdown =
-          model.breakdownType
+          model.settings.breakdownType
 
         name =
-          model.activeTab
+          model.settings.activeTab
 
         callApi =
           if name == "History" then (fetchHistoryData breakdown) else
@@ -42,21 +42,84 @@ update msg model =
       ( { model | rating = response }, Cmd.none )
 
     Msgs.UpdateActiveTab name ->
+      let
+        settings =
+          model.settings
+      in
       ( { model
-         | activeTab = name
-         , detailGroup = ""
-         , historyDetail = RemoteData.Loading
+         | historyDetail = RemoteData.Loading
+         , settings =
+           { settings
+           | activeTab = name
+           , detailGroup = ""
+           }
          }, fetchStatusData )
 
     Msgs.UpdateBreakdownType breakdown ->
+      let
+        settings =
+          model.settings
+      in
       ( { model
-        | breakdownType = breakdown
-        , detailGroup = ""
-        , historyDetail = RemoteData.Loading
+        | historyDetail = RemoteData.Loading
+        , settings =
+          { settings
+          | breakdownType = breakdown
+          , detailGroup = ""
+          }
         }, (fetchHistoryData breakdown))
 
     Msgs.DisplayHistoryDetail datePart ->
-      ( { model | detailGroup = datePart }, (fetchHistoryDetailData datePart model.breakdownType) )
+      let
+        settings =
+          model.settings
+      in
+      ( { model
+        | settings =
+          { settings
+          | detailGroup = datePart
+          }
+      }, (fetchHistoryDetailData datePart model.settings.breakdownType) )
+
+
+    Msgs.UpdateSortField field ->
+      let
+        settings =
+          model.settings
+
+        sorting =
+          model.settings.sorting
+
+      in
+      ( { model
+        | settings =
+          { settings
+          | sorting =
+            { sorting
+            | field = field
+            }
+          }
+      }, Cmd.none)
+
+
+    Msgs.UpdateSortDirection direction ->
+      let
+        settings =
+          model.settings
+
+        sorting =
+          model.settings.sorting
+
+      in
+      ( { model
+        | settings =
+          { settings
+          | sorting =
+            { sorting
+            | isDesc = direction
+            }
+          }
+      }, Cmd.none)
 
     _ ->
       ( model, Cmd.none )

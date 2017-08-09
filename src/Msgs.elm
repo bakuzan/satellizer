@@ -14,5 +14,7 @@ type Msg
     | OnFetchRating (WebData CountData)
     | UpdateActiveTab String
     | UpdateBreakdownType String
+    | UpdateSortField String
+    | UpdateSortDirection Bool
     | DisplayHistoryDetail String
     | OnFetchHistoryDetail (WebData HistoryDetailData)
