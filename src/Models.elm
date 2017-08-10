@@ -67,6 +67,11 @@ type alias HistoryDetail =
   }
 
 
+emptyHistoryDetail : HistoryDetail
+emptyHistoryDetail =
+  HistoryDetail "" "" 0
+
+
 -- Constant models
 
 type alias Header =

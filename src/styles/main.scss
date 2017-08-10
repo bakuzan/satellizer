@@ -92,6 +92,7 @@ body {
 }
 
 .history-detail {
+  margin: 0 10px;
   box-shadow: 5px 1px 10px 1px #000;
 
   h2 {
@@ -99,8 +100,17 @@ body {
     margin: 10px 5px;
     text-align: left;
   }
+  .history-detail-list {
+    width: 50%;
+  }
+  .history-detail-breakdown {
+    li {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
   a {
-    width: 25%;
+    width: 75%;
     text-align: left;
   }
 }

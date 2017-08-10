@@ -9,7 +9,7 @@ import General.RadioButton exposing (viewRadioGroup)
 import Statistics.HistoryTableDetail
 import Utils.Constants as Constants
 import Utils.Common as Common
-import Utils.TableFunctions exposing (getBreakdownName, getYear)
+import Utils.TableFunctions exposing (getBreakdownName)
 
 
 view : Settings -> CountData -> HistoryDetailData -> Html Msg
@@ -85,7 +85,7 @@ viewRow breakdown total data =
  in
  tr [class "history-breakdown-body__row"]
     ([ th []
-          [text (getYear (getListFirst data))
+          [text (Common.getYear (Common.getListFirst data))
           ]
      ]
     ++ List.map (viewCell breakdown total) cells
@@ -96,7 +96,7 @@ viewCell : String -> Int -> Count -> Html Msg
 viewCell breakdown total obj =
   let
     viewDate str =
-      (getBreakdownName breakdown str) ++ " " ++ (getYear str)
+      (getBreakdownName breakdown str) ++ " " ++ (Common.getYear str)
 
   in
    td [ attribute "hover-data" ((toString obj.value) ++ " in " ++ (viewDate obj.key))
@@ -111,23 +111,16 @@ viewCell breakdown total obj =
       ]
 
 
-getListFirst : List Count -> String
-getListFirst list =
-  List.head list
-   |> Maybe.withDefault { key = "", value = 0 }
-   |> .key
-
-
 split : CountData -> List CountData
 split list =
-  case getListFirst list of
+  case Common.getListFirst list of
     "" -> []
     listHead -> (List.filter (matchHead listHead) list) :: split (List.filter (notMatchHead listHead) list)
 
 
 matchHead : String -> Count -> Bool
 matchHead head obj =
- (getYear obj.key) == (getYear head)
+ (Common.getYear obj.key) == (Common.getYear head)
 
 
 notMatchHead : String -> Count -> Bool

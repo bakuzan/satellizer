@@ -1,13 +1,9 @@
-module Utils.TableFunctions exposing (getBreakdownName, getYear)
+module Utils.TableFunctions exposing (getBreakdownName)
 
 import Models exposing (Header)
 import Utils.Constants as Constants
+import Utils.Common exposing (getYear)
 
-
-
-getYear : String -> String
-getYear str =
-  String.slice 0 4 str
 
 
 getBreakdownName : String -> String -> String
