@@ -4,7 +4,7 @@ import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
 import Msgs exposing (Msg)
-import Models exposing (CountData, Count, HistoryDetailData, HistoryDetail)
+import Models exposing (CountData, Count, HistoryDetailData, HistoryDetail, HistoryYearData, HistoryYear)
 import RemoteData
 import Utils.Common as Common
 
@@ -57,6 +57,18 @@ fetchHistoryDetailUrl itemType isAdult breakdown date =
   (constructUrl "history-detail" itemType isAdult) ++ "/" ++ (String.toLower breakdown) ++ "/" ++ date
 
 
+fetchHistoryYearData : String -> String -> Cmd Msg
+fetchHistoryYearData date breakdown =
+  Http.get (fetchHistoryYearUrl "anime" False breakdown date) historyYearDataDecoder
+      |> RemoteData.sendRequest
+      |> Cmd.map Msgs.OnFetchHistoryYear
+
+
+fetchHistoryYearUrl : String -> Bool -> String -> String -> String
+fetchHistoryYearUrl itemType isAdult breakdown date =
+  (constructUrl "history-years" itemType isAdult) ++ "/" ++ (String.toLower breakdown) ++ "/" ++ date
+
+
 constructUrl : String -> String -> Bool -> String
 constructUrl urlType itemType isAdult =
     Common.replace ":type" itemType ("/api/statistics/" ++ urlType ++ "/:type/:isAdult")
@@ -86,3 +98,18 @@ historyDetailDecoder =
     |> required "_id" Decode.string
     |> required "title" Decode.string
     |> required "rating" Decode.int
+
+
+historyYearDataDecoder : Decode.Decoder HistoryYearData
+historyYearDataDecoder =
+  Decode.list historyYearDecoder
+
+
+historyYearDecoder : Decode.Decoder HistoryYear
+historyYearDecoder =
+  decode HistoryYear
+    |> required "_id" Decode.string
+    |> required "average" Decode.int
+    |> required "highest" Decode.int
+    |> required "lowest" Decode.int
+    |> required "ratings" (Decode.list Decode.int)

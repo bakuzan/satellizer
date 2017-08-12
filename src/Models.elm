@@ -7,6 +7,7 @@ type alias Model =
     { status : WebData CountData
     , history: WebData CountData
     , historyDetail: WebData HistoryDetailData
+    , historyYears: WebData HistoryYearData
     , rating: WebData CountData
     , route: Route
     , settings: Settings
@@ -32,6 +33,7 @@ initialModel route =
     { status = RemoteData.Loading
     , history = RemoteData.Loading
     , historyDetail = RemoteData.Loading
+    , historyYears = RemoteData.Loading
     , rating = RemoteData.Loading
     , route = route
     , settings =
@@ -70,6 +72,25 @@ type alias HistoryDetail =
 emptyHistoryDetail : HistoryDetail
 emptyHistoryDetail =
   HistoryDetail "" "" 0
+
+
+type alias HistoryYearData =
+  List HistoryYear
+
+
+type alias HistoryYear =
+  { id: String
+  , value: Int
+  , average: Int
+  , highest: Int
+  , lowest: Int
+  , ratings: List Int
+  }
+
+
+emptyHistoryYear : HistoryYear
+emptyHistoryYear =
+  HistoryYear "" 0 0 0 0 []
 
 
 -- Constant models

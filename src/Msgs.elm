@@ -1,7 +1,7 @@
 module Msgs exposing (..)
 
 -- import Http
-import Models exposing (CountData, HistoryDetailData)
+import Models exposing (CountData, HistoryDetailData, HistoryYearData)
 import Navigation exposing (Location)
 import RemoteData exposing (WebData)
 
@@ -18,3 +18,4 @@ type Msg
     | UpdateSortDirection Bool
     | DisplayHistoryDetail String
     | OnFetchHistoryDetail (WebData HistoryDetailData)
+    | OnFetchHistoryYear (WebData HistoryYearData)

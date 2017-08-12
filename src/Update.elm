@@ -3,7 +3,7 @@ module Update exposing (..)
 import Routing exposing (parseLocation)
 import Msgs exposing (Msg)
 import Models exposing (Model)
-import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData, fetchHistoryDetailData)
+import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData, fetchHistoryDetailData, fetchHistoryYearData)
 import RemoteData
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -37,6 +37,9 @@ update msg model =
 
     Msgs.OnFetchHistoryDetail response ->
       ( { model | historyDetail = response }, Cmd.none )
+
+    Msgs.OnFetchHistoryYear response ->
+      ( { model | historyYear = response }, Cmd.none )
 
     Msgs.OnFetchRating response ->
       ( { model | rating = response }, Cmd.none )
@@ -73,13 +76,18 @@ update msg model =
       let
         settings =
           model.settings
+
+        fetchHistoryPartition =
+          if (String.contains "-" datePart) == True
+            then (fetchHistoryDetailData datePart model.settings.breakdownType)
+            else (fetchHistoryYearData datePart model.settings.breakdownType)
       in
       ( { model
         | settings =
           { settings
           | detailGroup = datePart
           }
-      }, (fetchHistoryDetailData datePart model.settings.breakdownType) )
+      }, (fetchHistoryPartition) )
 
 
     Msgs.UpdateSortField field ->
