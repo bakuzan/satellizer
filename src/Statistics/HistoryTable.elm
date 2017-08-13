@@ -4,16 +4,17 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
-import Models exposing (Count, CountData, HistoryDetailData, Header, Settings)
+import Models exposing (Count, CountData, HistoryDetailData, HistoryYearData, Header, Settings)
 import General.RadioButton exposing (viewRadioGroup)
 import Statistics.HistoryTableDetail
+import Statistics.HistoryTableDetailYear
 import Utils.Constants as Constants
 import Utils.Common as Common
 import Utils.TableFunctions exposing (getBreakdownName)
 
 
-view : Settings -> CountData -> HistoryDetailData -> Html Msg
-view settings data detail =
+view : Settings -> CountData -> HistoryDetailData -> HistoryYearData -> Html Msg
+view settings data detail yearDetail =
   let
     breakdownType =
       settings.breakdownType
@@ -22,13 +23,20 @@ view settings data detail =
     div [ class "history-breakdown" ]
         [ viewBreakdownToggle breakdownType
         , viewTable data breakdownType
-        , Statistics.HistoryTableDetail.view settings detail
+        , viewTableDetail settings detail yearDetail
         ]
 
 
 viewBreakdownToggle : String -> Html Msg
 viewBreakdownToggle state =
   viewRadioGroup "breakdown" state Constants.breakdownOptions
+
+  
+viewTableDetail : Settings -> HistoryDetailData -> HistoryYearData -> Html Msg 
+viewTableDetail settings detail yearDetail = 
+  if (String.contains "-" settings.detailGroup) == True
+    then Statistics.HistoryTableDetail.view settings detail
+    else Statistics.HistoryTableDetailYear.view settings yearDetail
 
 
 viewTable : CountData -> String -> Html Msg
@@ -81,11 +89,16 @@ viewRow breakdown total data =
  let
    cells =
     List.sortBy .key data
+ 
+   rowYear = 
+    Common.getYear (Common.getListFirst data)
 
  in
  tr [class "history-breakdown-body__row"]
     ([ th []
-          [text (Common.getYear (Common.getListFirst data))
+          [ button [class "button", onClick (Msgs.DisplayHistoryDetail rowYear)]
+                   [text rowYear
+                   ]
           ]
      ]
     ++ List.map (viewCell breakdown total) cells

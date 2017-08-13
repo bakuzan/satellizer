@@ -2,7 +2,7 @@ module Utils.Common exposing (..)
 
 import Html exposing (Attribute)
 import Html.Attributes exposing (attribute)
-import Models exposing (Count, CountData, HistoryDetail, HistoryDetailData)
+import Models exposing (Count, CountData, HistoryDetail, HistoryDetailData, HistoryYearData)
 import Round
 
 
@@ -48,9 +48,17 @@ setRole value =
   attribute "role" value
 
 
+
 calculateTotalOfValues : CountData -> Int
 calculateTotalOfValues list =
-  List.map (\x -> x.value) list
+  List.map .value list
+    |> List.foldr (+) 0
+
+
+
+calculateTotalOfValuesTemp : HistoryYearData -> Int
+calculateTotalOfValuesTemp list =
+  List.map .value list
     |> List.foldr (+) 0
 
 

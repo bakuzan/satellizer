@@ -51,6 +51,7 @@ update msg model =
       in
       ( { model
          | historyDetail = RemoteData.Loading
+         , historyYear = RemoteData.Loading
          , settings =
            { settings
            | activeTab = name
@@ -65,6 +66,7 @@ update msg model =
       in
       ( { model
         | historyDetail = RemoteData.Loading
+        , historyYear = RemoteData.Loading
         , settings =
           { settings
           | breakdownType = breakdown

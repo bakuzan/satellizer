@@ -109,7 +109,8 @@ historyYearDecoder : Decode.Decoder HistoryYear
 historyYearDecoder =
   decode HistoryYear
     |> required "_id" Decode.string
-    |> required "average" Decode.int
+    |> required "value" Decode.int
+    |> required "average" Decode.float
     |> required "highest" Decode.int
     |> required "lowest" Decode.int
-    |> required "ratings" (Decode.list Decode.int)
+    |> required "mode" Decode.int
