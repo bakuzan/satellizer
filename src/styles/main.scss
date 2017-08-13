@@ -58,6 +58,9 @@ body {
   .radio-group {
     width: 25%;
   }
+  .history-breakdown__table {
+    width: 100%;
+  }
 }
 
 .season > .history-breakdown-header {
@@ -67,6 +70,15 @@ body {
 }
 
 .history-breakdown-body {
+
+  &__row.year-breakdown {
+    border-spacing: 0;
+    &:hover {
+      background: lighten($history-table-cell-background, $lighten-percentage);
+      color: $history-table-cell-constrast;
+    }
+  }
+
   &__data-cell {
     width: calc(100% / 12); //25px;
     border: 1px solid $history-table-cell-border;
@@ -88,6 +100,9 @@ body {
       height: 100%;
       background: $history-table-cell-background;
     }
+  }
+  &__year-statistic {
+    text-align: left;
   }
 }
 

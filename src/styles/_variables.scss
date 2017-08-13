@@ -30,6 +30,8 @@ $rating-colours: (
 $history-table-cell-background: $black;
 $history-table-cell-border: $black;
 
+$history-table-cell-constrast: $white;
+
 //z-index
 $z-index: (
   wafer: 1,
@@ -38,6 +40,8 @@ $z-index: (
   popover: 100,
   menu: 250
 );
+
+$lighten-percentage: 10%;
 
 // temporary!
 $primary-colour: $red;
