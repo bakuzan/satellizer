@@ -82,6 +82,11 @@ getYear str =
   String.slice 0 4 str
 
 
+getMonth : String -> String
+getMonth str =
+  String.right 2 str
+
+
 getListFirst : List Count -> String
 getListFirst list =
   List.head list

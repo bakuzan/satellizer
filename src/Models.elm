@@ -58,6 +58,11 @@ type alias Count =
   }
 
 
+emptyCount : Count
+emptyCount =
+  Count "" 0
+
+
 type alias HistoryDetailData =
   List HistoryDetail
 
@@ -93,7 +98,7 @@ emptyHistoryYear =
   HistoryYear "" 0 0.0 0 0 0
 
 
-type ObjectsWithValue 
+type ObjectsWithValue
   = HistoryYearData
   | CountData
 

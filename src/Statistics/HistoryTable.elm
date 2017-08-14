@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
-import Models exposing (Count, CountData, HistoryDetailData, HistoryYearData, Header, Settings)
+import Models exposing (Count, CountData, HistoryDetailData, HistoryYearData, Header, Settings, emptyCount)
 import General.RadioButton exposing (viewRadioGroup)
 import Statistics.HistoryTableDetail
 import Statistics.HistoryTableDetailYear
@@ -31,9 +31,9 @@ viewBreakdownToggle : String -> Html Msg
 viewBreakdownToggle state =
   viewRadioGroup "breakdown" state Constants.breakdownOptions
 
-  
-viewTableDetail : Settings -> HistoryDetailData -> HistoryYearData -> Html Msg 
-viewTableDetail settings detail yearDetail = 
+
+viewTableDetail : Settings -> HistoryDetailData -> HistoryYearData -> Html Msg
+viewTableDetail settings detail yearDetail =
   if (String.contains "-" settings.detailGroup) == True
     then Statistics.HistoryTableDetail.view settings detail
     else Statistics.HistoryTableDetailYear.view settings yearDetail
@@ -87,10 +87,29 @@ viewBody breakdown total data =
 viewRow : String -> Int -> List Count -> Html Msg
 viewRow breakdown total data =
  let
+   fixValue =
+     if breakdown == "MONTHS" then 1 else -2
+     
+   getKey x =
+     String.right 2 ("0" ++ (toString (x.number + fixValue)))
+
+   fixedData =
+     let
+       values =
+         List.map (\x -> (Common.getMonth x.key)) data
+
+     in
+     List.filter (\x -> not (List.member (getKey x) values)) headers
+       |> List.map (\x -> { emptyCount | key = (rowYear ++ "-" ++ (getKey x)) })
+       |> List.append data
+
+   headers =
+     if breakdown == "MONTHS" then Constants.months else Constants.seasons
+
    cells =
-    List.sortBy .key data
- 
-   rowYear = 
+    List.sortBy .key fixedData
+
+   rowYear =
     Common.getYear (Common.getListFirst data)
 
  in
