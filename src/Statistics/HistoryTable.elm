@@ -129,12 +129,16 @@ viewCell breakdown total obj =
   let
     viewDate str =
       (getBreakdownName breakdown str) ++ " " ++ (Common.getYear str)
+      
+    isDisabled = 
+      obj.value == 0
 
   in
    td [ attribute "hover-data" ((toString obj.value) ++ " in " ++ (viewDate obj.key))
       , class "history-breakdown-body__data-cell"
+      , classList [("disabled", isDisabled)]
       ]
-      [ button [onClick (Msgs.DisplayHistoryDetail obj.key)]
+      [ button [onClick (Msgs.DisplayHistoryDetail obj.key), disabled isDisabled]
                [ div [ class"history-breakdown-body__data-cell__background"
                      , style [("opacity", toString (Common.divide obj.value total))]
                      ]
