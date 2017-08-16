@@ -10,18 +10,18 @@ import Round
 
 viewProgressBar : Int -> CountData -> Html Msg
 viewProgressBar total values =
-let
-  segments = 
-    List.map (viewProgressSegment total) values
-    
-  progressItems = 
-    if (List.length values) > 1
-      then segments
-      else (segments ++ [ span [] [text (singleSegmentPercentage values total)]
+  let
+    segments =
+      List.map (viewProgressSegment total) values
+
+    progressItems =
+      if (List.length values) > 1
+        then segments
+        else (segments ++ [ div [class "vertically-center", style [("padding", "0 10px")] ] [text (singleSegmentPercentage values total)]
                         ])
-in
-  div [ class "percentage-breakdown" ]
-      ([] ++ progressItems)
+  in
+    div [ class "percentage-breakdown" ]
+        ([] ++ progressItems)
 
 
 viewProgressSegment : Int -> Count -> Html Msg
@@ -38,14 +38,21 @@ getPercentage value total =
 
 
 singleSegmentPercentage : CountData -> Int -> String
-singleSegmentPercentage values total = 
+singleSegmentPercentage values total =
   let
-    returnPercentage num = 
-      Round.round 2 (toFloat (getPercentage num total))
-      
+    appendSign value =
+      value ++ "%"
+
+    returnPercentage num =
+      getPercentage num total
+       |> String.dropRight 1
+       |> String.toFloat
+       |> Result.withDefault 0
+       |> Round.round 2
+       |> appendSign
+
   in
   List.head values
     |> Maybe.withDefault { key = "", value = 0 }
     |> .value
     |> returnPercentage
-  
