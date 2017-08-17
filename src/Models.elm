@@ -70,13 +70,23 @@ type alias HistoryDetailData =
 type alias HistoryDetail =
   { id: String
   , title: String
+  , episodeStatistics: EpisodeStatistic
   , rating: Int
+  }
+
+
+type alias EpisodeStatistic =
+  { id: String
+  , average: Float
+  , highest: Int
+  , lowest: Int
+  , mode: Int
   }
 
 
 emptyHistoryDetail : HistoryDetail
 emptyHistoryDetail =
-  HistoryDetail "" "" 0
+  HistoryDetail "" "" (EpisodeStatistic "" 0.0 0 0 0) 0
 
 
 type alias HistoryYearData =

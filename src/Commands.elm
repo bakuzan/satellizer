@@ -4,7 +4,7 @@ import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
 import Msgs exposing (Msg)
-import Models exposing (CountData, Count, HistoryDetailData, HistoryDetail, HistoryYearData, HistoryYear)
+import Models exposing (CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearData, HistoryYear)
 import RemoteData
 import Utils.Common as Common
 
@@ -97,7 +97,18 @@ historyDetailDecoder =
   decode HistoryDetail
     |> required "_id" Decode.string
     |> required "title" Decode.string
+    |> required "episodeStatistics" episodeStatisticsDecoder
     |> required "rating" Decode.int
+
+
+episodeStatisticsDecoder : Decode.Decoder EpisodeStatistic
+episodeStatisticsDecoder =
+  decode EpisodeStatistic
+    |> required "_id" Decode.string 
+    |> required "average" Decode.float
+    |> required "highest" Decode.int
+    |> required "lowest" Decode.int
+    |> required "mode" Decode.int
 
 
 historyYearDataDecoder : Decode.Decoder HistoryYearData
