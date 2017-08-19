@@ -84,9 +84,14 @@ type alias EpisodeStatistic =
   }
 
 
+emptyEpisodeStatistic : EpisodeStatistic
+emptyEpisodeStatistic =
+  EpisodeStatistic "" 0.0 0 0 0
+
+
 emptyHistoryDetail : HistoryDetail
 emptyHistoryDetail =
-  HistoryDetail "" "" (EpisodeStatistic "" 0.0 0 0 0) 0
+  HistoryDetail "" "" emptyEpisodeStatistic 0
 
 
 type alias HistoryYearData =

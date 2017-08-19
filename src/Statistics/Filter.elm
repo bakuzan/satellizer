@@ -46,8 +46,13 @@ viewSortingSelection sorting =
       [ select [class "select-box", value sorting.field, onInput Msgs.UpdateSortField]
          [ viewSortingOption "Title"
          , viewSortingOption "Rating"
+         , viewSortingOption "Average"
+         , viewSortingOption "Highest"
+         , viewSortingOption "Lowest"
+         , viewSortingOption "Mode"
          ]
       ]
+
 
 viewSortingOption : String -> Html Msg
 viewSortingOption txt =

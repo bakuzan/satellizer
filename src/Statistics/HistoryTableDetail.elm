@@ -3,9 +3,10 @@ module Statistics.HistoryTableDetail exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Msgs exposing (Msg)
-import Models exposing (HistoryDetailData, HistoryDetail, emptyHistoryDetail, Settings, Sort)
+import Models exposing (HistoryDetailData, HistoryDetail, emptyHistoryDetail, EpisodeStatistic, Settings, Sort)
 import Utils.TableFunctions exposing (getBreakdownName)
 import Utils.Common as Common
+import Round
 
 
 view : Settings -> HistoryDetailData -> Html Msg
@@ -31,14 +32,13 @@ viewHistoryDetail settings data =
   div [ class "history-detail" ]
       [ h2 [] [text detailSummary]
       , div [class "flex-row"]
-            [ viewDetailList settings.sorting data
-            , viewDetailBreakdowns data
+            [ viewDetailTable breakdown settings.sorting data
             ]
       ]
 
 
-viewDetailList : Sort -> HistoryDetailData -> Html Msg
-viewDetailList sorting list =
+viewDetailTable : String -> Sort -> HistoryDetailData -> Html Msg
+viewDetailTable breakdown sorting list =
   let
     isDesc =
       sorting.isDesc
@@ -49,8 +49,10 @@ viewDetailList sorting list =
         else sortedByRating isDesc list
 
   in
-  ul [class "history-detail-list list column one"]
-     ([] ++ List.map viewListItem sortedList)
+  table [class "history-breakdown__table"]
+        [ viewTableHeader breakdown
+        , viewTableBody sortedList
+        ]
 
 
 setDirection : Bool -> HistoryDetailData -> HistoryDetailData
@@ -72,11 +74,70 @@ sortedByRating isDesc list =
     |> setDirection isDesc
 
 
-viewListItem : HistoryDetail -> Html Msg
-viewListItem item =
-  li [class "flex-row"]
-     [ a [class "label", href ("http://localhost:9003/erza/anime-view/" ++ item.id), target "_blank"] [text item.title]
-     , span [class "value"] [text (toString item.rating)]
+viewTableHeader : String -> Html Msg
+viewTableHeader breakdown =
+  let
+    hideHeader =
+      breakdown == "MONTHS"
+
+  in
+  thead []
+        [ th [class "history-breakdown-body__month-title"] [text "Title"]
+        , viewHeaderCell False "Rating"
+        , viewHeaderCell hideHeader "Average"
+        , viewHeaderCell hideHeader "Highest"
+        , viewHeaderCell hideHeader "Lowest"
+        , viewHeaderCell hideHeader "Mode"
+        ]
+
+
+viewHeaderCell : Bool -> String -> Html Msg
+viewHeaderCell hide title =
+  th [classList [("hidden", hide)]] [text title]
+
+
+viewTableBody : HistoryDetailData -> Html Msg
+viewTableBody list =
+  tbody [class "history-breakdown-body"]
+        ([] ++ List.map viewTableRow list)
+
+
+viewTableRow : HistoryDetail -> Html Msg
+viewTableRow item =
+  let
+    es =
+      item.episodeStatistics
+
+  in
+  tr [class "history-breakdown-body__row month-breakdown"]
+     ([ td [class "history-breakdown-body__month-title"]
+           [ a [href ("http://localhost:9003/erza/anime-view/" ++ item.id), target "_blank"]
+               [text item.title]
+           ]
+      , renderCell (toString item.rating)
+      ] ++ renderEpisodeStatistics es)
+
+
+renderEpisodeStatistics : EpisodeStatistic -> List (Html Msg)
+renderEpisodeStatistics es =
+  let
+    processFloat avg =
+      Round.round 2 avg
+
+  in
+  if es.id /= ""
+    then [ renderCell (processFloat es.average)
+         , renderCell (toString es.highest)
+         , renderCell (toString es.lowest)
+         , renderCell (toString es.mode)
+         ]
+    else []
+
+
+renderCell : String -> Html Msg
+renderCell str =
+  td []
+     [ text str
      ]
 
 
