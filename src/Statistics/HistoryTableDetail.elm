@@ -31,8 +31,9 @@ viewHistoryDetail settings data =
   in
   div [ class "history-detail" ]
       [ h2 [] [text detailSummary]
-      , div [class "flex-row"]
-            [ viewDetailTable breakdown settings.sorting data
+      , div [class "flex-column"]
+            [ viewDetailBreakdowns data
+            , viewDetailTable breakdown settings.sorting data
             ]
       ]
 
@@ -44,9 +45,14 @@ viewDetailTable breakdown sorting list =
       sorting.isDesc
 
     sortedList =
-      if sorting.field == "TITLE"
-        then sortedByTitle isDesc list
-        else sortedByRating isDesc list
+      case sorting.field of
+        "TITLE" -> sortedBy isDesc (\x -> (String.toLower x.title)) list
+        "RATING" -> sortedBy isDesc .rating list
+        "AVERAGE" -> sortedBy isDesc (\x -> x.episodeStatistics.average) list
+        "HIGHEST" -> sortedBy isDesc (\x -> x.episodeStatistics.highest) list
+        "LOWEST" -> sortedBy isDesc (\x -> x.episodeStatistics.lowest) list
+        "MODE" -> sortedBy isDesc (\x -> x.episodeStatistics.mode) list
+        _ -> list
 
   in
   table [class "history-breakdown__table"]
@@ -62,15 +68,9 @@ setDirection isDesc arr =
     else arr
 
 
-sortedByTitle : Bool -> HistoryDetailData -> HistoryDetailData
-sortedByTitle isDesc list =
-  List.sortBy .title list
-    |> setDirection isDesc
-
-
-sortedByRating : Bool -> HistoryDetailData -> HistoryDetailData
-sortedByRating isDesc list =
-  List.sortBy .rating list
+sortedBy : Bool -> (HistoryDetail -> comparable) -> HistoryDetailData -> HistoryDetailData
+sortedBy isDesc func list =
+  List.sortBy func list
     |> setDirection isDesc
 
 
@@ -108,11 +108,19 @@ viewTableRow item =
     es =
       item.episodeStatistics
 
+    indicate =
+      if es.id /= "" && es.lowest == 0
+        then "* "
+        else ""
+
+    setTitleIndication =
+      (indicate ++ item.title)
+
   in
   tr [class "history-breakdown-body__row month-breakdown"]
      ([ td [class "history-breakdown-body__month-title"]
            [ a [href ("http://localhost:9003/erza/anime-view/" ++ item.id), target "_blank"]
-               [text item.title]
+               [text setTitleIndication]
            ]
       , renderCell (toString item.rating)
       ] ++ renderEpisodeStatistics es)
@@ -180,7 +188,9 @@ viewDetailBreakdowns list =
 
   in
   div [class "history-detail-breakdown"]
-      [ ul [class "list column one"]
+      [ label [] [ text "Overall"
+                 ]
+      , ul [class "list column one"]
            [ viewBreakdownPair "Average" average
            , viewBreakdownPair "Highest" highest
            , viewBreakdownPair "Lowest" lowest

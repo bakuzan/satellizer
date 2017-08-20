@@ -63,6 +63,15 @@ update msg model =
       let
         settings =
           model.settings
+
+        sorting =
+          settings.sorting
+
+        ensureValidType =
+          if breakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
+            then sorting.field
+            else "TITLE"
+
       in
       ( { model
         | historyDetail = RemoteData.Loading
@@ -71,6 +80,10 @@ update msg model =
           { settings
           | breakdownType = breakdown
           , detailGroup = ""
+          , sorting =
+            { sorting
+            | field = ensureValidType
+            }
           }
         }, (fetchHistoryData breakdown))
 

@@ -1,5 +1,9 @@
 @import "./_variables.scss";
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   font: {
     family: 'Roboto', monospace;
@@ -20,6 +24,12 @@ body {
 
 #status-container {
   margin-top: 10px;
+}
+
+#total-average-rating {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 #rating-container {
@@ -131,6 +141,10 @@ body {
     width: 50%;
   }
   .history-detail-breakdown {
+    margin-left: auto;
+    label {
+      margin: 2px;
+    }
     li {
       display: flex;
       justify-content: space-between;

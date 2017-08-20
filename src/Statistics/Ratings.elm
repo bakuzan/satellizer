@@ -7,6 +7,7 @@ import General.ProgressBar
 import Models exposing (Model, CountData, Count)
 import Utils.Common as Common
 import Utils.Constants as Constants
+import Round
 
 
 view : CountData -> Html Msg
@@ -23,9 +24,33 @@ view list =
 
   in
     div [id "rating-container"]
-        ([]
-        ++ List.map viewRatingBar ratings)
+        ([ viewTotalAverageRating total list
+         ]
+         ++ List.map viewRatingBar ratings)
 
+
+viewTotalAverageRating : Int -> CountData -> Html Msg
+viewTotalAverageRating total list =
+  let
+    divideIt num =
+      Common.divide num total
+        |> Round.round 2
+
+    weight obj =
+      obj.value * (
+        String.toInt obj.key
+          |> Result.withDefault 0
+      )
+
+    totalAverage =
+      List.map weight list
+       |> List.sum
+       |> divideIt
+
+  in
+  div [id "total-average-rating"]
+      [ text ("Average rating: " ++ totalAverage)
+      ]
 
 
 viewSingleRating : Int -> CountData -> Html Msg
@@ -52,10 +77,10 @@ viewSingleRating total rating =
 setRatingKey : Count -> String
 setRatingKey obj =
   if obj.key == "0" then "unrated" else (getNumberName obj.key)
-  
-  
+
+
 getNumberName : String -> String
-getNumberName str = 
+getNumberName str =
   String.toInt str
     |> Result.withDefault 0
     |> (\x -> List.drop (x - 1) Constants.numberNames)

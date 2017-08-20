@@ -28,29 +28,36 @@ viewFilterLink str =
 
 viewSortingSettings : Settings -> Html Msg
 viewSortingSettings settings =
-  if settings.detailGroup == ""
+  if settings.detailGroup == "" || (not (String.contains "-" settings.detailGroup))
     then div [] []
     else
       div [class "sorting-controls"]
           [ h4 [] [text "History detail"]
           , div []
-                [ viewSortingSelection settings.sorting
+                [ viewSortingSelection settings.sorting settings.breakdownType
                 , viewSortingDirection settings.sorting
                 ]
           ]
 
 
-viewSortingSelection : Sort -> Html Msg
-viewSortingSelection sorting =
+viewSortingSelection : Sort -> String -> Html Msg
+viewSortingSelection sorting breakdown =
+  let
+    additionalFields =
+      if breakdown == "MONTHS"
+        then []
+        else [ viewSortingOption "Average"
+             , viewSortingOption "Highest"
+             , viewSortingOption "Lowest"
+             , viewSortingOption "Mode"
+             ]
+
+  in
   div [class "has-float-label select-container"]
       [ select [class "select-box", value sorting.field, onInput Msgs.UpdateSortField]
-         [ viewSortingOption "Title"
-         , viewSortingOption "Rating"
-         , viewSortingOption "Average"
-         , viewSortingOption "Highest"
-         , viewSortingOption "Lowest"
-         , viewSortingOption "Mode"
-         ]
+         ([ viewSortingOption "Title"
+          , viewSortingOption "Rating"
+          ] ++ additionalFields)
       ]
 
 
