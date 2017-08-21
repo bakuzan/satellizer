@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (id, class, style)
 import Msgs exposing (Msg)
 import General.ProgressBar
-import Models exposing (Model, CountData, Count)
+import Models exposing (Model, CountData, Count, emptyCount)
 import Utils.Common as Common
 import Utils.Constants as Constants
 import Round
@@ -32,8 +32,14 @@ view list =
 viewTotalAverageRating : Int -> CountData -> Html Msg
 viewTotalAverageRating total list =
   let
+    unratedCount =
+      List.reverse list
+        |> List.head
+        |> Maybe.withDefault emptyCount
+        |> .value
+
     divideIt num =
-      Common.divide num total
+      Common.divide num (total - unratedCount)
         |> Round.round 2
 
     weight obj =

@@ -1,0 +1,72 @@
+.accordion {
+  width: 25%;
+  min-width: 500px;
+  margin: 0 auto {
+    right: 10px;
+  };
+  border-bottom: 2px solid #888;
+}
+.accordion-toggler {
+	display: none;
+	~ .accordion-content {
+		height: 1px;
+		overflow: hidden;
+		> * {
+			opacity: 0;
+			transition: 0.5s;
+			line-height: 1.75em;
+		}
+	}
+	+ label {
+		display: block;
+		position: relative;
+    padding: 5px;
+		font-weight: 700;
+    margin-right: 10px;
+	}
+	+ label:after,
+	+ label:before {
+		position: absolute;
+		background: black;
+		content: '';
+		transform: rotate(0deg);
+		transition: 0.5s;
+		top: 50%;
+	}
+	+ label:after {
+		right: 4px;
+		height: 10px;
+		width: 2px;
+		margin-top: -5px;
+	}
+	+ label:before {
+		right: 0;
+		width: 10px;
+		height: 2px;
+		margin-top: -1px;
+	}
+}
+
+.accordion-toggler:checked {
+	~ .accordion-content {
+		height: auto;
+		margin: 0 0 1.6rem;
+		> * {
+			opacity: 1;
+			transition: 0.5s;
+			transition-delay: 0.25s;
+		}
+	}
+	+ label:before  {
+		transform: rotate(360deg);
+		transition: 0.5s;
+	}
+	+ label:after {
+		transform: rotate(450deg);
+		transition: 0.5s;
+	}
+}
+
+label:hover {
+	cursor: pointer;
+}
