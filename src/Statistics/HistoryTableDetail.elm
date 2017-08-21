@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Msgs exposing (Msg)
 import Models exposing (HistoryDetailData, HistoryDetail, emptyHistoryDetail, EpisodeStatistic, Settings, Sort)
+import General.Accordion
 import Utils.TableFunctions exposing (getBreakdownName)
 import Utils.Common as Common
 import Round
@@ -188,14 +189,13 @@ viewDetailBreakdowns list =
 
   in
   div [class "history-detail-breakdown"]
-      [ label [] [ text "Overall"
-                 ]
-      , ul [class "list column one"]
-           [ viewBreakdownPair "Average" average
-           , viewBreakdownPair "Highest" highest
-           , viewBreakdownPair "Lowest" lowest
-           , viewBreakdownPair "Mode" mode
-           ]
+      [ General.Accordion.view "Overall" [ ul [class "list column one"]
+                                              [ viewBreakdownPair "Average" average
+                                              , viewBreakdownPair "Highest" highest
+                                              , viewBreakdownPair "Lowest" lowest
+                                              , viewBreakdownPair "Mode" mode
+                                              ]
+                                         ]
       ]
 
 
