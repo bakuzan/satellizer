@@ -6,21 +6,45 @@ import RemoteData exposing (WebData)
 type alias Model =
     { status : WebData CountData
     , history: WebData CountData
+    , historyDetail: WebData HistoryDetailData
+    , historyYear: WebData HistoryYearData
     , rating: WebData CountData
     , route: Route
-    , activeTab: String
-    , breakdownType: String
+    , settings: Settings
     }
+
+
+type alias Settings =
+  { activeTab: String
+  , breakdownType: String
+  , detailGroup: String
+  , sorting: Sort
+  }
+
+
+type alias Sort =
+  { field: String
+  , isDesc: Bool
+  }
 
 
 initialModel : Route -> Model
 initialModel route =
     { status = RemoteData.Loading
     , history = RemoteData.Loading
+    , historyDetail = RemoteData.Loading
+    , historyYear = RemoteData.Loading
     , rating = RemoteData.Loading
     , route = route
-    , activeTab = "History"
-    , breakdownType = "MONTHS"
+    , settings =
+      { activeTab = "History"
+      , breakdownType = "MONTHS"
+      , detailGroup = ""
+      , sorting =
+        { field = "TITLE"
+        , isDesc = False
+        }
+      }
     }
 
 
@@ -32,6 +56,66 @@ type alias Count =
   { key: String
   , value: Int
   }
+
+
+emptyCount : Count
+emptyCount =
+  Count "" 0
+
+
+type alias HistoryDetailData =
+  List HistoryDetail
+
+
+type alias HistoryDetail =
+  { id: String
+  , title: String
+  , episodeStatistics: EpisodeStatistic
+  , rating: Int
+  }
+
+
+type alias EpisodeStatistic =
+  { id: String
+  , average: Float
+  , highest: Int
+  , lowest: Int
+  , mode: Int
+  }
+
+
+emptyEpisodeStatistic : EpisodeStatistic
+emptyEpisodeStatistic =
+  EpisodeStatistic "" 0.0 0 0 0
+
+
+emptyHistoryDetail : HistoryDetail
+emptyHistoryDetail =
+  HistoryDetail "" "" emptyEpisodeStatistic 0
+
+
+type alias HistoryYearData =
+  List HistoryYear
+
+
+type alias HistoryYear =
+  { id: String
+  , value: Int
+  , average: Float
+  , highest: Int
+  , lowest: Int
+  , mode: Int
+  }
+
+
+emptyHistoryYear : HistoryYear
+emptyHistoryYear =
+  HistoryYear "" 0 0.0 0 0 0
+
+
+type ObjectsWithValue
+  = HistoryYearData
+  | CountData
 
 
 -- Constant models

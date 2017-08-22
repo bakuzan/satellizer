@@ -4,7 +4,7 @@ import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
 import Msgs exposing (Msg)
-import Models exposing (CountData, Count)
+import Models exposing (CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearData, HistoryYear)
 import RemoteData
 import Utils.Common as Common
 
@@ -14,6 +14,7 @@ fetchStatusData =
     Http.get (fetchStatusUrl "anime" False) countDataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchStatus
+
 
 fetchStatusUrl : String -> Bool -> String
 fetchStatusUrl itemType isAdult =
@@ -26,6 +27,7 @@ fetchRatingData =
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchRating
 
+
 fetchRatingUrl : String -> Bool -> String
 fetchRatingUrl itemType isAdult =
   constructUrl "rating-counts" itemType isAdult
@@ -37,9 +39,34 @@ fetchHistoryData breakdown =
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchHistory
 
+
 fetchHistoryUrl : String -> Bool -> String -> String
 fetchHistoryUrl itemType isAdult breakdown =
   (constructUrl "history-counts" itemType isAdult) ++ "/" ++ (String.toLower breakdown)
+
+
+fetchHistoryDetailData : String -> String -> Cmd Msg
+fetchHistoryDetailData date breakdown =
+  Http.get (fetchHistoryDetailUrl "anime" False breakdown date) historyDetailDataDecoder
+      |> RemoteData.sendRequest
+      |> Cmd.map Msgs.OnFetchHistoryDetail
+
+
+fetchHistoryDetailUrl : String -> Bool -> String -> String -> String
+fetchHistoryDetailUrl itemType isAdult breakdown date =
+  (constructUrl "history-detail" itemType isAdult) ++ "/" ++ (String.toLower breakdown) ++ "/" ++ date
+
+
+fetchHistoryYearData : String -> String -> Cmd Msg
+fetchHistoryYearData date breakdown =
+  Http.get (fetchHistoryYearUrl "anime" False breakdown date) historyYearDataDecoder
+      |> RemoteData.sendRequest
+      |> Cmd.map Msgs.OnFetchHistoryYear
+
+
+fetchHistoryYearUrl : String -> Bool -> String -> String -> String
+fetchHistoryYearUrl itemType isAdult breakdown date =
+  (constructUrl "history-years" itemType isAdult) ++ "/" ++ (String.toLower breakdown) ++ "/" ++ date
 
 
 constructUrl : String -> String -> Bool -> String
@@ -52,8 +79,49 @@ countDataDecoder : Decode.Decoder CountData
 countDataDecoder =
   Decode.list countDecoder
 
+
 countDecoder : Decode.Decoder Count
 countDecoder =
     decode Count
       |> required "key" Decode.string
       |> required "value" Decode.int
+
+
+historyDetailDataDecoder : Decode.Decoder HistoryDetailData
+historyDetailDataDecoder =
+  Decode.list historyDetailDecoder
+
+
+historyDetailDecoder : Decode.Decoder HistoryDetail
+historyDetailDecoder =
+  decode HistoryDetail
+    |> required "_id" Decode.string
+    |> required "title" Decode.string
+    |> required "episodeStatistics" episodeStatisticsDecoder
+    |> required "rating" Decode.int
+
+
+episodeStatisticsDecoder : Decode.Decoder EpisodeStatistic
+episodeStatisticsDecoder =
+  decode EpisodeStatistic
+    |> required "_id" Decode.string 
+    |> required "average" Decode.float
+    |> required "highest" Decode.int
+    |> required "lowest" Decode.int
+    |> required "mode" Decode.int
+
+
+historyYearDataDecoder : Decode.Decoder HistoryYearData
+historyYearDataDecoder =
+  Decode.list historyYearDecoder
+
+
+historyYearDecoder : Decode.Decoder HistoryYear
+historyYearDecoder =
+  decode HistoryYear
+    |> required "_id" Decode.string
+    |> required "value" Decode.int
+    |> required "average" Decode.float
+    |> required "highest" Decode.int
+    |> required "lowest" Decode.int
+    |> required "mode" Decode.int

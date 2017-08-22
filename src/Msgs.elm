@@ -1,7 +1,7 @@
 module Msgs exposing (..)
 
 -- import Http
-import Models exposing (CountData)
+import Models exposing (CountData, HistoryDetailData, HistoryYearData)
 import Navigation exposing (Location)
 import RemoteData exposing (WebData)
 
@@ -14,3 +14,8 @@ type Msg
     | OnFetchRating (WebData CountData)
     | UpdateActiveTab String
     | UpdateBreakdownType String
+    | UpdateSortField String
+    | UpdateSortDirection Bool
+    | DisplayHistoryDetail String
+    | OnFetchHistoryDetail (WebData HistoryDetailData)
+    | OnFetchHistoryYear (WebData HistoryYearData)

@@ -3,8 +3,8 @@ module Update exposing (..)
 import Routing exposing (parseLocation)
 import Msgs exposing (Msg)
 import Models exposing (Model)
-import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData)
-
+import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData, fetchHistoryDetailData, fetchHistoryYearData)
+import RemoteData
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -20,10 +20,10 @@ update msg model =
     Msgs.OnFetchStatus response ->
       let
         breakdown =
-          model.breakdownType
+          model.settings.breakdownType
 
         name =
-          model.activeTab
+          model.settings.activeTab
 
         callApi =
           if name == "History" then (fetchHistoryData breakdown) else
@@ -35,14 +35,114 @@ update msg model =
     Msgs.OnFetchHistory response ->
       ( { model | history = response }, Cmd.none )
 
+    Msgs.OnFetchHistoryDetail response ->
+      ( { model | historyDetail = response }, Cmd.none )
+
+    Msgs.OnFetchHistoryYear response ->
+      ( { model | historyYear = response }, Cmd.none )
+
     Msgs.OnFetchRating response ->
       ( { model | rating = response }, Cmd.none )
 
     Msgs.UpdateActiveTab name ->
-      ( { model | activeTab = name }, fetchStatusData )
+      let
+        settings =
+          model.settings
+      in
+      ( { model
+         | historyDetail = RemoteData.Loading
+         , historyYear = RemoteData.Loading
+         , settings =
+           { settings
+           | activeTab = name
+           , detailGroup = ""
+           }
+         }, fetchStatusData )
 
     Msgs.UpdateBreakdownType breakdown ->
-      ( { model | breakdownType = breakdown }, (fetchHistoryData breakdown))
+      let
+        settings =
+          model.settings
+
+        sorting =
+          settings.sorting
+
+        ensureValidType =
+          if breakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
+            then sorting.field
+            else "TITLE"
+
+      in
+      ( { model
+        | historyDetail = RemoteData.Loading
+        , historyYear = RemoteData.Loading
+        , settings =
+          { settings
+          | breakdownType = breakdown
+          , detailGroup = ""
+          , sorting =
+            { sorting
+            | field = ensureValidType
+            }
+          }
+        }, (fetchHistoryData breakdown))
+
+    Msgs.DisplayHistoryDetail datePart ->
+      let
+        settings =
+          model.settings
+
+        fetchHistoryPartition =
+          if (String.contains "-" datePart) == True
+            then (fetchHistoryDetailData datePart model.settings.breakdownType)
+            else (fetchHistoryYearData datePart model.settings.breakdownType)
+      in
+      ( { model
+        | settings =
+          { settings
+          | detailGroup = datePart
+          }
+      }, (fetchHistoryPartition) )
+
+
+    Msgs.UpdateSortField field ->
+      let
+        settings =
+          model.settings
+
+        sorting =
+          model.settings.sorting
+
+      in
+      ( { model
+        | settings =
+          { settings
+          | sorting =
+            { sorting
+            | field = field
+            }
+          }
+      }, Cmd.none)
+
+
+    Msgs.UpdateSortDirection direction ->
+      let
+        settings =
+          model.settings
+
+        sorting =
+          model.settings.sorting
+
+      in
+      ( { model
+        | settings =
+          { settings
+          | sorting =
+            { sorting
+            | isDesc = direction
+            }
+          }
+      }, Cmd.none)
 
     _ ->
       ( model, Cmd.none )

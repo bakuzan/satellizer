@@ -2,6 +2,7 @@
   "name": "satellizer",
   "version": "1.0.0",
   "private": true,
+  "homepage": "http://localhost:3004/erza/statistics/",
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
