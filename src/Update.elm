@@ -143,6 +143,63 @@ update msg model =
             }
           }
       }, Cmd.none)
-
+      
+    Msgs.UpdateIsAdult isAdult ->
+      let
+        sorting = 
+          model.settings.sorting
+        
+        getBreakdown = 
+          if model.settings.contentType == "anime"
+            then model.settings.breakdownType
+            else "MONTHS"
+        
+        ensureValidField =
+          if getBreakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
+            then sorting.field
+            else "TITLE"
+      in
+      ( { model
+        | settings = 
+          { model.settings 
+          | isAdult = isAdult
+          , breakdownType = getBreakdown
+          , detailGroup = ""
+          , sorting = 
+            { sorting
+            | field = ensureValidField
+            }
+          }
+        } , Cmd.none)
+      
+    Msgs.UpdateContentType contentType ->
+      let
+        sorting = 
+          model.settings.sorting
+        
+        getBreakdown = 
+          if contentType == "anime"
+            then model.settings.breakdownType
+            else "MONTHS"
+        
+        ensureValidField =
+          if getBreakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
+            then sorting.field
+            else "TITLE"
+      
+      in
+      ( { model
+        | settings = 
+          { model.settings 
+          | contentType = contentType
+          , breakdownType = getBreakdown
+          , detailGroup = ""
+          , sorting = 
+            { sorting
+            | field = ensureValidField
+            }
+          }
+        } , Cmd.none)
+      
     _ ->
       ( model, Cmd.none )
