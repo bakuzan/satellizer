@@ -4,76 +4,95 @@ import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
 import Msgs exposing (Msg)
-import Models exposing (CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearData, HistoryYear)
+import Models exposing (Settings, CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearData, HistoryYear)
 import RemoteData
 import Utils.Common as Common
 
 
-fetchStatusData : Cmd Msg
-fetchStatusData =
-    Http.get (fetchStatusUrl "anime" False) countDataDecoder
+-- Status counts
+
+fetchStatusData : Settings -> Cmd Msg
+fetchStatusData settings =
+    Http.get (fetchStatusUrl settings) countDataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchStatus
 
 
-fetchStatusUrl : String -> Bool -> String
-fetchStatusUrl itemType isAdult =
-  constructUrl "status-counts" itemType isAdult
+fetchStatusUrl : Settings -> String
+fetchStatusUrl settings =
+  constructUrl "status-counts" settings
 
 
-fetchRatingData : Cmd Msg
-fetchRatingData =
-    Http.get (fetchRatingUrl "anime" False) countDataDecoder
+-- Rating counts
+
+fetchRatingData : Settings -> Cmd Msg
+fetchRatingData settings =
+    Http.get (fetchRatingUrl  settings) countDataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchRating
 
 
-fetchRatingUrl : String -> Bool -> String
-fetchRatingUrl itemType isAdult =
-  constructUrl "rating-counts" itemType isAdult
+fetchRatingUrl : Settings -> String
+fetchRatingUrl settings =
+  constructUrl "rating-counts" settings
 
 
-fetchHistoryData : String -> Cmd Msg
-fetchHistoryData breakdown =
-    Http.get (fetchHistoryUrl "anime" False breakdown) countDataDecoder
+-- History table counts
+
+fetchHistoryData : Settings -> Cmd Msg
+fetchHistoryData settings =
+    Http.get (fetchHistoryUrl settings) countDataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchHistory
 
 
-fetchHistoryUrl : String -> Bool -> String -> String
-fetchHistoryUrl itemType isAdult breakdown =
-  (constructUrl "history-counts" itemType isAdult) ++ "/" ++ (String.toLower breakdown)
+fetchHistoryUrl : Settings -> String
+fetchHistoryUrl settings =
+  (constructUrl "history-counts" settings) ++ "/" ++ (String.toLower settings.breakdownType)
 
 
-fetchHistoryDetailData : String -> String -> Cmd Msg
-fetchHistoryDetailData date breakdown =
-  Http.get (fetchHistoryDetailUrl "anime" False breakdown date) historyDetailDataDecoder
+-- History breakdown by partition
+
+fetchHistoryDetailData : Settings -> Cmd Msg
+fetchHistoryDetailData settings =
+  Http.get (fetchHistoryDetailUrl settings) historyDetailDataDecoder
       |> RemoteData.sendRequest
       |> Cmd.map Msgs.OnFetchHistoryDetail
 
 
-fetchHistoryDetailUrl : String -> Bool -> String -> String -> String
-fetchHistoryDetailUrl itemType isAdult breakdown date =
-  (constructUrl "history-detail" itemType isAdult) ++ "/" ++ (String.toLower breakdown) ++ "/" ++ date
+fetchHistoryDetailUrl : Settings -> String
+fetchHistoryDetailUrl settings =
+  (constructUrl "history-detail" settings) ++ (constructHistoryBreakdownUrl settings)
 
 
-fetchHistoryYearData : String -> String -> Cmd Msg
-fetchHistoryYearData date breakdown =
-  Http.get (fetchHistoryYearUrl "anime" False breakdown date) historyYearDataDecoder
+-- History breakdown by year
+
+fetchHistoryYearData : Settings -> Cmd Msg
+fetchHistoryYearData settings =
+  Http.get (fetchHistoryYearUrl settings) historyYearDataDecoder
       |> RemoteData.sendRequest
       |> Cmd.map Msgs.OnFetchHistoryYear
 
 
-fetchHistoryYearUrl : String -> Bool -> String -> String -> String
-fetchHistoryYearUrl itemType isAdult breakdown date =
-  (constructUrl "history-years" itemType isAdult) ++ "/" ++ (String.toLower breakdown) ++ "/" ++ date
+fetchHistoryYearUrl : Settings -> String
+fetchHistoryYearUrl settings =
+  (constructUrl "history-years" settings) ++ (constructHistoryBreakdownUrl settings)
 
 
-constructUrl : String -> String -> Bool -> String
-constructUrl urlType itemType isAdult =
-    Common.replace ":type" itemType ("/api/statistics/" ++ urlType ++ "/:type/:isAdult")
-      |> Common.replace ":isAdult" (toString isAdult)
+-- Url helpers
+  
+constructHistoryBreakdownUrl : Settings -> String
+constructHistoryBreakdownUrl settings =
+  "/" ++ (String.toLower settings.breakdownType) ++ "/" ++ settings.detailGroup
 
+
+constructUrl : String -> Settings -> String
+constructUrl urlType settings =
+    Common.replace ":type" settings.contentType ("/api/statistics/" ++ urlType ++ "/:type/:isAdult")
+      |> Common.replace ":isAdult" (toString settings.isAdult)
+
+
+-- Decoding models
 
 countDataDecoder : Decode.Decoder CountData
 countDataDecoder =
