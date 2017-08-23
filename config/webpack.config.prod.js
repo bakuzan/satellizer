@@ -21,8 +21,8 @@ const shouldUseRelativeAssetPaths = publicPath === './';
 // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
 const publicUrl = publicPath.slice(0, -1);
 
-// Note: defined here because it will be used more than once.
-const cssFilename = 'static/css/[name].[contenthash:8].css';
+// Note: defined here because it will be used more than once. Formerly [name].[contenthash:8]
+const cssFilename = 'static/css/satellizer.css';
 
 // ExtractTextPlugin expects the build output to be flat.
 // (See https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/27)
@@ -49,8 +49,8 @@ module.exports = {
     // Add /* filename */ comments to generated require()s in the output.
     pathinfo: true,
 
-    // Generated JS files.
-    filename: 'static/js/[name].[chunkhash:8].js'
+    // Generated JS files. Formerly [name].[chunkhash:8]
+    filename: 'static/js/satellizer.js'
   },
 
   resolve: {
