@@ -8,6 +8,24 @@ import RemoteData
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+  let
+    settings = 
+      model.settings
+    
+    sorting =
+      settings.sorting
+      
+    getBreakdownType contentType = 
+      if contentType == "anime"
+        then settings.breakdownType
+        else "MONTHS"
+    
+    ensureValidSortField breakdown =
+      if breakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
+        then sorting.field
+        else "TITLE"
+        
+  in
   case msg of
     Msgs.OnLocationChange location ->
       let
@@ -19,15 +37,12 @@ update msg model =
 
     Msgs.OnFetchStatus response ->
       let
-        breakdown =
-          model.settings.breakdownType
-
         name =
-          model.settings.activeTab
+          settings.activeTab
 
         callApi =
-          if name == "History" then (fetchHistoryData model.settings) else
-          if name == "Ratings" then (fetchRatingData model.settings) else Cmd.none
+          if name == "History" then (fetchHistoryData settings) else
+          if name == "Ratings" then (fetchRatingData settings) else Cmd.none
 
       in
       ( { model | status = response }, callApi )
@@ -45,10 +60,6 @@ update msg model =
       ( { model | rating = response }, Cmd.none )
 
     Msgs.UpdateActiveTab name ->
-      let
-        settings =
-          model.settings
-      in
       ( { model
          | historyDetail = RemoteData.Loading
          , historyYear = RemoteData.Loading
@@ -60,19 +71,6 @@ update msg model =
          }, fetchStatusData settings)
 
     Msgs.UpdateBreakdownType breakdown ->
-      let
-        settings =
-          model.settings
-
-        sorting =
-          settings.sorting
-
-        ensureValidType =
-          if breakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
-            then sorting.field
-            else "TITLE"
-
-      in
       ( { model
         | historyDetail = RemoteData.Loading
         , historyYear = RemoteData.Loading
@@ -82,16 +80,13 @@ update msg model =
           , detailGroup = ""
           , sorting =
             { sorting
-            | field = ensureValidType
+            | field = (ensureValidSortField breakdown)
             }
           }
         }, (fetchHistoryData settings))
 
     Msgs.DisplayHistoryDetail datePart ->
       let
-        settings =
-          model.settings
-
         fetchHistoryPartition =
           if (String.contains "-" datePart) == True
             then (fetchHistoryDetailData settings)
@@ -107,14 +102,6 @@ update msg model =
 
 
     Msgs.UpdateSortField field ->
-      let
-        settings =
-          model.settings
-
-        sorting =
-          model.settings.sorting
-
-      in
       ( { model
         | settings =
           { settings
@@ -127,14 +114,6 @@ update msg model =
 
 
     Msgs.UpdateSortDirection direction ->
-      let
-        settings =
-          model.settings
-
-        sorting =
-          model.settings.sorting
-
-      in
       ( { model
         | settings =
           { settings
@@ -147,18 +126,9 @@ update msg model =
       
     Msgs.UpdateIsAdult isAdult ->
       let
-        sorting = 
-          model.settings.sorting
-        
-        getBreakdown = 
-          if model.settings.contentType == "anime"
-            then model.settings.breakdownType
-            else "MONTHS"
-        
-        ensureValidField =
-          if getBreakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
-            then sorting.field
-            else "TITLE"
+       breakdownType = 
+         getBreakdownType settings.contentType
+            
       in
       ( { model
         | settings = 
@@ -168,25 +138,15 @@ update msg model =
           , detailGroup = ""
           , sorting = 
             { sorting
-            | field = ensureValidField
+            | field = (ensureValidSortField breakdownType)
             }
           }
         } , fetchStatusData settings)
       
     Msgs.UpdateContentType contentType ->
       let
-        sorting = 
-          model.settings.sorting
-        
-        getBreakdown = 
-          if contentType == "anime"
-            then model.settings.breakdownType
-            else "MONTHS"
-        
-        ensureValidField =
-          if getBreakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
-            then sorting.field
-            else "TITLE"
+        breakdownType = 
+          getBreakdownType contentType
       
       in
       ( { model
@@ -197,7 +157,7 @@ update msg model =
           , detailGroup = ""
           , sorting = 
             { sorting
-            | field = ensureValidField
+            | field = (ensureValidSortField breakdownType)
             }
           }
         } , fetchStatusData settings)
