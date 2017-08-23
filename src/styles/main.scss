@@ -1,166 +1,157 @@
 @import "./_variables.scss";
 
-* {
-  box-sizing: border-box;
-}
+#satellizer {
 
-body {
-  font: {
-    family: 'Roboto', monospace;
-    size: 16px;
-  };
-  margin: 0;
-  text-align: center;
-}
-
-.vertically-center {
-  display: flex;
-  align-items: center;
-}
-
-.hidden {
-  display: none;
-}
-
-#status-container {
-  margin-top: 10px;
-}
-
-#total-average-rating {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-#rating-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  > div {
-    display: inline-flex;
-    flex-direction: row;
-  }
-  .rating-label {
+  .vertically-center {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 25px;
-  }
-}
-
-// Progress bar
-.percentage-breakdown {
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  height: 30px;
-  width: 100%;
-
-  .percentage-breakdown__bar {
-    height: 100%;
-
-    @each $key, $colour in $rating-colours {
-      &.#{$key} {
-        background: $colour;
-      }
-    }
-
   }
 
-}
-
-//History table
-.history-breakdown {
-  margin: 5px 0;
-
-  .radio-group {
-    width: 25%;
+  .hidden {
+    display: none;
   }
-  .history-breakdown__table {
+
+  #status-container {
+    margin-top: 10px;
+  }
+
+  #total-average-rating {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  #rating-container {
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    > div {
+      display: inline-flex;
+      flex-direction: row;
+    }
+    .rating-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 25px;
+    }
   }
-}
 
-.season > .history-breakdown-header {
-  th:not(:first-child) {
-    width: 25%;
+  // Progress bar
+  .percentage-breakdown {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    height: 30px;
+    width: 100%;
+
+    .percentage-breakdown__bar {
+      height: 100%;
+
+      @each $key, $colour in $rating-colours {
+        &.#{$key} {
+          background: $colour;
+        }
+      }
+
+    }
+
   }
-}
 
-.history-breakdown-body {
+  //History table
+  .history-breakdown {
+    margin: 5px 0;
 
-  &__row.year-breakdown, &__row.month-breakdown {
-    border-spacing: 0;
-    &:hover {
-      background: lighten($history-table-cell-background, $lighten-percentage);
-      color: $history-table-cell-constrast;
-      a {
+    .radio-group {
+      width: 25%;
+    }
+    .history-breakdown__table {
+      width: 100%;
+    }
+  }
+
+  .season > .history-breakdown-header {
+    th:not(:first-child) {
+      width: 25%;
+    }
+  }
+
+  .history-breakdown-body {
+
+    &__row.year-breakdown, &__row.month-breakdown {
+      border-spacing: 0;
+      &:hover {
+        background: lighten($history-table-cell-background, $lighten-percentage);
         color: $history-table-cell-constrast;
+        a {
+          color: $history-table-cell-constrast;
+        }
       }
     }
-  }
 
-  &__data-cell {
-    width: calc(100% / 12); //25px;
-    border: 1px solid $history-table-cell-border;
-    cursor: pointer;
-    button {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: none;
-      padding: 0;
-      border: none;
-      appearance: none;
+    &__data-cell {
+      width: calc(100% / 12); //25px;
+      border: 1px solid $history-table-cell-border;
       cursor: pointer;
+      button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: none;
+        padding: 0;
+        border: none;
+        appearance: none;
+        cursor: pointer;
+      }
+      &__background {
+        width: 100%;
+        height: 100%;
+        background: $history-table-cell-background;
+      }
     }
-    &__background {
-      width: 100%;
-      height: 100%;
-      background: $history-table-cell-background;
+    &__year-statistic, &__month-title {
+      padding-left: 5px;
+      text-align: left;
     }
   }
-  &__year-statistic, &__month-title {
-    padding-left: 5px;
-    text-align: left;
-  }
-}
 
-.history-detail {
-  margin: 0 10px;
-  box-shadow: 5px 1px 10px 1px #000;
+  .history-detail {
+    margin: 0 10px;
+    box-shadow: 5px 1px 10px 1px #000;
 
-  h2 {
-    padding: 5px;
-    margin: 10px 5px;
-    text-align: left;
-  }
-  .history-detail-list {
-    width: 50%;
-  }
-  .history-detail-breakdown {
-    margin-left: auto;
-    label {
-      margin: 2px;
+    h2 {
+      padding: 5px;
+      margin: 10px 5px;
+      text-align: left;
     }
-    li {
-      display: flex;
-      justify-content: space-between;
+    .history-detail-list {
+      width: 50%;
+    }
+    .history-detail-breakdown {
+      margin-left: auto;
+      label {
+        margin: 2px;
+      }
+      li {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    a {
+      width: 75%;
+      text-align: left;
     }
   }
-  a {
-    width: 75%;
-    text-align: left;
-  }
-}
 
-.sorting-controls {
-  h4 {
-    margin: 5px {
-      top: 10px;
+  .sorting-controls {
+    h4 {
+      margin: 5px {
+        top: 10px;
+      }
+      text-align: left;
     }
-    text-align: left;
   }
+  
 }
