@@ -11,6 +11,7 @@ type alias RadioOption =
   { label: String
   , optionValue: String
   , action: Msg
+  , disabled: Bool
   }
 
 
@@ -36,6 +37,12 @@ viewRadioOption groupName groupValue option =
 
   in
   label [class "radio", Common.setRole "radio"]
-        [ input [type_ "radio", name groupName, value optionValue, checked (optionValue == groupValue), onClick action ] []
+        [ input [ type_ "radio"
+                , name groupName
+                , value optionValue
+                , checked (optionValue == groupValue)
+                , disabled option.disabled
+                , onClick action 
+                ] []
         , span [] [text option.label]
         ]
