@@ -26,8 +26,8 @@ update msg model =
           model.settings.activeTab
 
         callApi =
-          if name == "History" then (fetchHistoryData breakdown) else
-          if name == "Ratings" then fetchRatingData else Cmd.none
+          if name == "History" then (fetchHistoryData model.settings) else
+          if name == "Ratings" then (fetchRatingData model.settings) else Cmd.none
 
       in
       ( { model | status = response }, callApi )
@@ -57,7 +57,7 @@ update msg model =
            | activeTab = name
            , detailGroup = ""
            }
-         }, fetchStatusData )
+         }, fetchStatusData settings)
 
     Msgs.UpdateBreakdownType breakdown ->
       let
@@ -85,7 +85,7 @@ update msg model =
             | field = ensureValidType
             }
           }
-        }, (fetchHistoryData breakdown))
+        }, (fetchHistoryData settings))
 
     Msgs.DisplayHistoryDetail datePart ->
       let
@@ -94,8 +94,9 @@ update msg model =
 
         fetchHistoryPartition =
           if (String.contains "-" datePart) == True
-            then (fetchHistoryDetailData datePart model.settings.breakdownType)
-            else (fetchHistoryYearData datePart model.settings.breakdownType)
+            then (fetchHistoryDetailData settings)
+            else (fetchHistoryYearData settings)
+            
       in
       ( { model
         | settings =
@@ -170,7 +171,7 @@ update msg model =
             | field = ensureValidField
             }
           }
-        } , Cmd.none)
+        } , fetchStatusData settings)
       
     Msgs.UpdateContentType contentType ->
       let
@@ -199,7 +200,7 @@ update msg model =
             | field = ensureValidField
             }
           }
-        } , Cmd.none)
+        } , fetchStatusData settings)
       
     _ ->
       ( model, Cmd.none )
