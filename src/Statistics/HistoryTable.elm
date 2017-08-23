@@ -21,15 +21,25 @@ view settings data detail yearDetail =
 
   in
     div [ class "history-breakdown" ]
-        [ viewBreakdownToggle breakdownType
+        [ viewBreakdownToggle settings
         , viewTable data breakdownType
         , viewTableDetail settings detail yearDetail
         ]
 
 
-viewBreakdownToggle : String -> Html Msg
-viewBreakdownToggle state =
-  viewRadioGroup "breakdown" state Constants.breakdownOptions
+viewBreakdownToggle : Settings -> Html Msg
+viewBreakdownToggle settings =
+  let
+    blockInteraction = 
+      if settings.contentType == "manga" || settings.isAdult == True
+        then True
+        else Flase
+    
+    radioOptions = 
+      List.map (\x -> { x | disabled = blockInteraction }) Constants.breakdownOptions
+      
+  in
+  viewRadioGroup "breakdown" settings.breakdownType radioOptions
 
 
 viewTableDetail : Settings -> HistoryDetailData -> HistoryYearData -> Html Msg
