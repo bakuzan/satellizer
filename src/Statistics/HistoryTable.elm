@@ -30,14 +30,14 @@ view settings data detail yearDetail =
 viewBreakdownToggle : Settings -> Html Msg
 viewBreakdownToggle settings =
   let
-    blockInteraction = 
+    blockInteraction =
       if settings.contentType == "manga" || settings.isAdult == True
         then True
-        else Flase
-    
-    radioOptions = 
+        else False
+
+    radioOptions =
       List.map (\x -> { x | disabled = blockInteraction }) Constants.breakdownOptions
-      
+
   in
   viewRadioGroup "breakdown" settings.breakdownType radioOptions
 
@@ -99,7 +99,7 @@ viewRow breakdown total data =
  let
    fixValue =
      if breakdown == "MONTHS" then 1 else -2
-     
+
    getKey x =
      String.right 2 ("0" ++ (toString (x.number + fixValue)))
 
@@ -139,8 +139,8 @@ viewCell breakdown total obj =
   let
     viewDate str =
       (getBreakdownName breakdown str) ++ " " ++ (Common.getYear str)
-      
-    isDisabled = 
+
+    isDisabled =
       obj.value == 0
 
   in

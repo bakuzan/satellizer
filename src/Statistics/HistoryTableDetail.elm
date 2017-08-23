@@ -20,9 +20,9 @@ view settings data =
 viewHistoryDetail : Settings -> HistoryDetailData -> Html Msg
 viewHistoryDetail settings data =
   let
-    contentType = 
+    contentType =
       settings.contentType
-      
+
     breakdown =
       settings.breakdownType
 
@@ -42,7 +42,7 @@ viewHistoryDetail settings data =
       ]
 
 
-viewDetailTable : Stirng -> String -> Sort -> HistoryDetailData -> Html Msg
+viewDetailTable : String -> String -> Sort -> HistoryDetailData -> Html Msg
 viewDetailTable contentType breakdown sorting list =
   let
     isDesc =
@@ -101,9 +101,9 @@ viewHeaderCell hide title =
 
 
 viewTableBody : String -> HistoryDetailData -> Html Msg
-viewTableBody String -> list =
+viewTableBody contentType list =
   tbody [class "history-breakdown-body"]
-        ([] ++ List.map (viewTableRow contentType list))
+        ([] ++ List.map (viewTableRow contentType) list)
 
 
 viewTableRow : String -> HistoryDetail -> Html Msg

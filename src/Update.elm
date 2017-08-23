@@ -9,22 +9,22 @@ import RemoteData
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   let
-    settings = 
+    settings =
       model.settings
-    
+
     sorting =
       settings.sorting
-      
-    getBreakdownType contentType = 
+
+    getBreakdownType contentType =
       if contentType == "anime"
         then settings.breakdownType
         else "MONTHS"
-    
+
     ensureValidSortField breakdown =
       if breakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
         then sorting.field
         else "TITLE"
-        
+
   in
   case msg of
     Msgs.OnLocationChange location ->
@@ -91,7 +91,7 @@ update msg model =
           if (String.contains "-" datePart) == True
             then (fetchHistoryDetailData settings)
             else (fetchHistoryYearData settings)
-            
+
       in
       ( { model
         | settings =
@@ -123,44 +123,44 @@ update msg model =
             }
           }
       }, Cmd.none)
-      
+
     Msgs.UpdateIsAdult isAdult ->
       let
-       breakdownType = 
+       breakdownType =
          getBreakdownType settings.contentType
-            
+
       in
       ( { model
-        | settings = 
-          { model.settings 
+        | settings =
+          { settings
           | isAdult = isAdult
-          , breakdownType = getBreakdown
+          , breakdownType = breakdownType
           , detailGroup = ""
-          , sorting = 
+          , sorting =
             { sorting
             | field = (ensureValidSortField breakdownType)
             }
           }
         } , fetchStatusData settings)
-      
+
     Msgs.UpdateContentType contentType ->
       let
-        breakdownType = 
+        breakdownType =
           getBreakdownType contentType
-      
+
       in
       ( { model
-        | settings = 
-          { model.settings 
+        | settings =
+          { settings
           | contentType = contentType
-          , breakdownType = getBreakdown
+          , breakdownType = breakdownType
           , detailGroup = ""
-          , sorting = 
+          , sorting =
             { sorting
             | field = (ensureValidSortField breakdownType)
             }
           }
         } , fetchStatusData settings)
-      
+
     _ ->
       ( model, Cmd.none )

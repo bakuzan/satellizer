@@ -73,6 +73,6 @@ viewSortingDirection sorting =
 
 getSortingDirections : List RadioOption
 getSortingDirections =
-  [{ label = "ASC", optionValue = "False", action = Msgs.UpdateSortDirection False }
-  ,{ label = "DESC", optionValue = "True", action = Msgs.UpdateSortDirection True }
+  [{ label = "ASC", optionValue = "False", action = Msgs.UpdateSortDirection False, disabled = False }
+  ,{ label = "DESC", optionValue = "True", action = Msgs.UpdateSortDirection True, disabled = False }
   ]
