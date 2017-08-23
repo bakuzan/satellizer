@@ -7,6 +7,7 @@ import Navigation exposing (Location)
 import Routing
 import Update exposing (update)
 import View exposing (view)
+import ContentFilters
 
 
 init : Flags Location -> ( Model, Cmd Msg )
@@ -20,7 +21,9 @@ init flags location =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+  Sub.batch [ ContentFilters.isAdult Msgs.UpdateIsAdult
+            , ContentFilters.contentType Msgs.UpdateContentType
+            ]
 
 
 main : Program Never Model Msg
