@@ -20,6 +20,9 @@ view settings data =
 viewHistoryDetail : Settings -> HistoryDetailData -> Html Msg
 viewHistoryDetail settings data =
   let
+    contentType = 
+      settings.contentType
+      
     breakdown =
       settings.breakdownType
 
@@ -34,13 +37,13 @@ viewHistoryDetail settings data =
       [ h2 [] [text detailSummary]
       , div [class "flex-column"]
             [ viewDetailBreakdowns data
-            , viewDetailTable breakdown settings.sorting data
+            , viewDetailTable contentType breakdown settings.sorting data
             ]
       ]
 
 
-viewDetailTable : String -> Sort -> HistoryDetailData -> Html Msg
-viewDetailTable breakdown sorting list =
+viewDetailTable : Stirng -> String -> Sort -> HistoryDetailData -> Html Msg
+viewDetailTable contentType breakdown sorting list =
   let
     isDesc =
       sorting.isDesc
@@ -58,7 +61,7 @@ viewDetailTable breakdown sorting list =
   in
   table [class "history-breakdown__table"]
         [ viewTableHeader breakdown
-        , viewTableBody sortedList
+        , viewTableBody contentType sortedList
         ]
 
 
@@ -97,14 +100,14 @@ viewHeaderCell hide title =
   th [classList [("hidden", hide)]] [text title]
 
 
-viewTableBody : HistoryDetailData -> Html Msg
-viewTableBody list =
+viewTableBody : String -> HistoryDetailData -> Html Msg
+viewTableBody String -> list =
   tbody [class "history-breakdown-body"]
-        ([] ++ List.map viewTableRow list)
+        ([] ++ List.map (viewTableRow contentType list))
 
 
-viewTableRow : HistoryDetail -> Html Msg
-viewTableRow item =
+viewTableRow : String -> HistoryDetail -> Html Msg
+viewTableRow contentType item =
   let
     es =
       item.episodeStatistics
@@ -120,7 +123,7 @@ viewTableRow item =
   in
   tr [class "history-breakdown-body__row month-breakdown"]
      ([ td [class "history-breakdown-body__month-title"]
-           [ a [href ("http://localhost:9003/erza/anime-view/" ++ item.id), target "_blank"]
+           [ a [href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id), target "_blank"]
                [text setTitleIndication]
            ]
       , renderCell (toString item.rating)
