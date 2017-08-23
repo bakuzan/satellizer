@@ -19,3 +19,5 @@ type Msg
     | DisplayHistoryDetail String
     | OnFetchHistoryDetail (WebData HistoryDetailData)
     | OnFetchHistoryYear (WebData HistoryYearData)
+    | UpdateIsAdult Bool
+    | UpdateContentType String
