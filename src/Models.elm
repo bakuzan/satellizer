@@ -3,6 +3,13 @@ module Models exposing (..)
 import RemoteData exposing (WebData)
 
 
+
+type alias Flags = 
+  { contentType: String
+  , isAdult: Bool
+  }
+
+
 type alias Model =
     { status : WebData CountData
     , history: WebData CountData
@@ -19,6 +26,8 @@ type alias Settings =
   , breakdownType: String
   , detailGroup: String
   , sorting: Sort
+  , isAdult: Bool
+  , contentType: String
   }
 
 
@@ -28,8 +37,8 @@ type alias Sort =
   }
 
 
-initialModel : Route -> Model
-initialModel route =
+initialModel : Flags -> Route -> Model
+initialModel flags route =
     { status = RemoteData.Loading
     , history = RemoteData.Loading
     , historyDetail = RemoteData.Loading
@@ -44,6 +53,8 @@ initialModel route =
         { field = "TITLE"
         , isDesc = False
         }
+      , contentType = flags.contentType
+      , isAdult = flags.isAdult
       }
     }
 
