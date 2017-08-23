@@ -44,7 +44,7 @@ module.exports = {
   appIndexJs: resolveApp('./src/index.js'),
   appSrc: resolveApp('./src'),
   entry: resolveApp('./src/index.js'),
-  appBuild: resolveApp('./build'),
+  appBuild: resolveApp('../build'), // Formerly './build', attempting to insert build output into Erza build folder.
   elmPackageJson: resolveApp('./elm-package.json'),
   elmMake: require('elm/platform').executablePaths['elm-make'],
   publicUrl: getPublicUrl(resolveApp('elm-package.json')),
