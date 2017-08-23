@@ -9,13 +9,13 @@ import Update exposing (update)
 import View exposing (view)
 
 
-init : Location -> ( Model, Cmd Msg )
-init location =
+init : Flags Location -> ( Model, Cmd Msg )
+init flags location =
     let
         currentRoute =
             Routing.parseLocation location
     in
-        ( initialModel currentRoute, fetchStatusData )
+        ( initialModel flags currentRoute, fetchStatusData )
 
 
 subscriptions : Model -> Sub Msg
@@ -25,7 +25,7 @@ subscriptions model =
 
 main : Program Never Model Msg
 main =
-    Navigation.program Msgs.OnLocationChange
+    Navigation.programWithFlags Msgs.OnLocationChange
         { init = init
         , view = view
         , update = update
