@@ -12,8 +12,7 @@ import Utils.Constants as Constants
 view : Settings -> Html Msg
 view settings =
     div [ class "list-filter" ]
-        [ text "LIST FILTERS WILL GO HERE"
-        , div [ class "button-group" ]
+        [ div [ class "button-group" ]
               [ viewFilterLink (Constants.itemType |> .anime)
               , viewFilterLink (Constants.itemType |> .manga)
               ]

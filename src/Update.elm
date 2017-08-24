@@ -60,21 +60,23 @@ update msg model =
       ( { model | rating = response }, Cmd.none )
 
     Msgs.UpdateActiveTab name ->
+      let
+        updatedSettings =
+          { settings
+          | activeTab = name
+          , detailGroup = ""
+          }
+
+      in
       ( { model
          | historyDetail = RemoteData.Loading
          , historyYear = RemoteData.Loading
-         , settings =
-           { settings
-           | activeTab = name
-           , detailGroup = ""
-           }
-         }, fetchStatusData settings)
+         , settings = updatedSettings
+         }, fetchStatusData updatedSettings)
 
     Msgs.UpdateBreakdownType breakdown ->
-      ( { model
-        | historyDetail = RemoteData.Loading
-        , historyYear = RemoteData.Loading
-        , settings =
+      let
+        updatedSettings =
           { settings
           | breakdownType = breakdown
           , detailGroup = ""
@@ -83,21 +85,29 @@ update msg model =
             | field = (ensureValidSortField breakdown)
             }
           }
-        }, (fetchHistoryData settings))
-
-    Msgs.DisplayHistoryDetail datePart ->
-      let
-        fetchHistoryPartition =
-          if (String.contains "-" datePart) == True
-            then (fetchHistoryDetailData settings)
-            else (fetchHistoryYearData settings)
 
       in
       ( { model
-        | settings =
+        | historyDetail = RemoteData.Loading
+        , historyYear = RemoteData.Loading
+        , settings = updatedSettings
+        }, (fetchHistoryData updatedSettings))
+
+    Msgs.DisplayHistoryDetail datePart ->
+      let
+        updatedSettings =
           { settings
           | detailGroup = datePart
           }
+
+        fetchHistoryPartition =
+          if (String.contains "-" datePart) == True
+            then (fetchHistoryDetailData updatedSettings)
+            else (fetchHistoryYearData updatedSettings)
+
+      in
+      ( { model
+        | settings = updatedSettings
       }, (fetchHistoryPartition) )
 
 
@@ -126,31 +136,30 @@ update msg model =
 
     Msgs.UpdateIsAdult isAdult ->
       let
-       breakdownType =
-         getBreakdownType settings.contentType
+        breakdownType =
+          getBreakdownType settings.contentType
 
-      in
-      ( { model
-        | settings =
+        updatedSettings =
           { settings
-          | isAdult = isAdult
-          , breakdownType = breakdownType
+          | breakdownType = breakdownType
           , detailGroup = ""
           , sorting =
             { sorting
             | field = (ensureValidSortField breakdownType)
             }
           }
-        } , fetchStatusData settings)
+
+      in
+      ( { model
+        | settings = updatedSettings
+        } , fetchStatusData updatedSettings)
 
     Msgs.UpdateContentType contentType ->
       let
         breakdownType =
           getBreakdownType contentType
 
-      in
-      ( { model
-        | settings =
+        updatedSettings =
           { settings
           | contentType = contentType
           , breakdownType = breakdownType
@@ -160,7 +169,11 @@ update msg model =
             | field = (ensureValidSortField breakdownType)
             }
           }
-        } , fetchStatusData settings)
+
+      in
+      ( { model
+        | settings = updatedSettings
+        } , fetchStatusData updatedSettings)
 
     _ ->
       ( model, Cmd.none )

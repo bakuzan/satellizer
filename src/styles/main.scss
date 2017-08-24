@@ -78,6 +78,12 @@
 
   .history-breakdown-body {
 
+    &__row {
+      td:not(.history-breakdown-body__month-title) {
+        text-align: center;
+      }
+    }
+
     &__row.year-breakdown, &__row.month-breakdown {
       border-spacing: 0;
       &:hover {
@@ -153,5 +159,5 @@
       text-align: left;
     }
   }
-  
+
 }
