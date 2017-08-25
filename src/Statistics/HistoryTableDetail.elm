@@ -33,11 +33,13 @@ viewHistoryDetail settings data =
       (toString (List.length data)) ++ " series for " ++ (getBreakdownName breakdown detailGroup) ++ " " ++ (Common.getYear detailGroup)
 
   in
-  div [ class "history-detail" ]
-      [ h2 [] [text detailSummary]
-      , div [class "flex-column"]
-            [ viewDetailBreakdowns data
-            , viewDetailTable contentType breakdown settings.sorting data
+  div []
+      [ viewDetailBreakdowns data
+      , div [ class "history-detail" ]
+            [ h2 [] [text detailSummary]
+            , div [class "flex-column"]
+                  [ viewDetailTable contentType breakdown settings.sorting data
+                  ]
             ]
       ]
 
