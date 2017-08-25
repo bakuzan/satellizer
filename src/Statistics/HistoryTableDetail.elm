@@ -99,7 +99,11 @@ viewTableHeader breakdown =
 
 viewHeaderCell : Bool -> String -> Html Msg
 viewHeaderCell hide title =
-  th [classList [("hidden", hide)]] [text title]
+  th [classList [("hidden", hide)]] 
+     [ button [class "button", onClick (Msgs.UpdateSortField title)]
+              [ text title
+              ]
+     ]
 
 
 viewTableBody : String -> HistoryDetailData -> Html Msg
