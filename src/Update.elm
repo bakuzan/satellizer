@@ -112,12 +112,20 @@ update msg model =
 
 
     Msgs.UpdateSortField field ->
+      let
+        setSortDirection = 
+          if field == sorting.field
+            then (not sorting.isDesc)
+            else sorting.isDesc
+            
+      in
       ( { model
         | settings =
           { settings
           | sorting =
             { sorting
             | field = field
+            , isDesc = setSortDirection
             }
           }
       }, Cmd.none)
