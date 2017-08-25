@@ -62,7 +62,7 @@ viewDetailTable contentType breakdown sorting list =
 
   in
   table [class "history-breakdown__table"]
-        [ viewTableHeader breakdown
+        [ viewTableHeader breakdown sorting
         , viewTableBody contentType sortedList
         ]
 
@@ -80,8 +80,8 @@ sortedBy isDesc func list =
     |> setDirection isDesc
 
 
-viewTableHeader : String -> Html Msg
-viewTableHeader breakdown =
+viewTableHeader : String -> Sort -> Html Msg
+viewTableHeader breakdown sorting =
   let
     hideHeader =
       breakdown == "MONTHS"
@@ -89,18 +89,28 @@ viewTableHeader breakdown =
   in
   thead []
         [ th [class "history-breakdown-body__month-title"] [text "Title"]
-        , viewHeaderCell False "Rating"
-        , viewHeaderCell hideHeader "Average"
-        , viewHeaderCell hideHeader "Highest"
-        , viewHeaderCell hideHeader "Lowest"
-        , viewHeaderCell hideHeader "Mode"
+        , viewHeaderCell False "Rating" sorting
+        , viewHeaderCell hideHeader "Average" sorting
+        , viewHeaderCell hideHeader "Highest" sorting
+        , viewHeaderCell hideHeader "Lowest" sorting
+        , viewHeaderCell hideHeader "Mode" sorting
         ]
 
 
-viewHeaderCell : Bool -> String -> Html Msg
-viewHeaderCell hide title =
+viewHeaderCell : Bool -> String -> Sort -> Html Msg
+viewHeaderCell hide title sorting =
+  let
+    icon = 
+      if sorting.field /= title
+        then ""
+        else 
+          if sorting.isDesc == True
+            then "\u2303"
+            else "\u2304"
+    
+  in
   th [classList [("hidden", hide)]] 
-     [ button [class "button", onClick (Msgs.UpdateSortField title)]
+     [ button [class "button-icon", onClick (Msgs.UpdateSortField title), attribute "icon" icon]
               [ text title
               ]
      ]
