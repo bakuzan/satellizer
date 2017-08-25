@@ -44,13 +44,11 @@ view model =
       model.rating
 
   in
-    div [class "flex-row"]
-        [ div [ class "flex-column flex-grow" ]
-              [ viewRender status |> viewStatus
-              , viewTabContainer activeTab [("History", [Statistics.HistoryTable.view model.settings history detail yearDetail])
-                                           ,("Ratings", [viewRender ratings |> Statistics.Ratings.view])
-                                           ]
-              ]
+    div [ class "flex-column flex-grow" ]
+        [ viewRender status |> viewStatus
+        , viewTabContainer activeTab [("History", [Statistics.HistoryTable.view model.settings history detail yearDetail])
+                                     ,("Ratings", [viewRender ratings |> Statistics.Ratings.view])
+                                     ]
         ]
 
 
