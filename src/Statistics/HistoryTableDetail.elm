@@ -2,6 +2,7 @@ module Statistics.HistoryTableDetail exposing (view)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing(onClick)
 import Msgs exposing (Msg)
 import Models exposing (HistoryDetailData, HistoryDetail, emptyHistoryDetail, EpisodeStatistic, Settings, Sort)
 import General.Accordion
@@ -88,29 +89,29 @@ viewTableHeader breakdown sorting =
 
   in
   thead []
-        [ th [class "history-breakdown-body__month-title"] [text "Title"]
-        , viewHeaderCell False "Rating" sorting
-        , viewHeaderCell hideHeader "Average" sorting
-        , viewHeaderCell hideHeader "Highest" sorting
-        , viewHeaderCell hideHeader "Lowest" sorting
-        , viewHeaderCell hideHeader "Mode" sorting
+        [ viewHeaderCell False "Title" sorting "history-breakdown-body__month-title"
+        , viewHeaderCell False "Rating" sorting ""
+        , viewHeaderCell hideHeader "Average" sorting ""
+        , viewHeaderCell hideHeader "Highest" sorting ""
+        , viewHeaderCell hideHeader "Lowest" sorting ""
+        , viewHeaderCell hideHeader "Mode" sorting ""
         ]
 
 
-viewHeaderCell : Bool -> String -> Sort -> Html Msg
-viewHeaderCell hide title sorting =
+viewHeaderCell : Bool -> String -> Sort -> String -> Html Msg
+viewHeaderCell hide title sorting classes =
   let
-    icon = 
+    icon =
       if sorting.field /= title
         then ""
-        else 
+        else
           if sorting.isDesc == True
-            then "\u2303"
-            else "\u2304"
-    
+            then "\\u2303"
+            else "\\u2304"
+
   in
-  th [classList [("hidden", hide)]] 
-     [ button [class "button-icon", onClick (Msgs.UpdateSortField title), attribute "icon" icon]
+  th [classList [("hidden", hide)], class ("" ++ classes)]
+     [ button [class "button-icon", onClick (Msgs.UpdateSortField (String.toUpper title)), attribute "icon" icon]
               [ text title
               ]
      ]
@@ -208,19 +209,22 @@ viewDetailBreakdowns list =
 
   in
   div [class "history-detail-breakdown"]
-      [ General.Accordion.view "Overall" [ ul [class "list column one"]
-                                              [ viewBreakdownPair "Average" average
-                                              , viewBreakdownPair "Highest" highest
-                                              , viewBreakdownPair "Lowest" lowest
-                                              , viewBreakdownPair "Mode" mode
-                                              ]
+      [ General.Accordion.view "Overall" [ ul [class "list column two"]
+                                              ([]
+                                              ++ viewBreakdownPair "Average" average
+                                              ++ viewBreakdownPair "Highest" highest
+                                              ++ viewBreakdownPair "Lowest" lowest
+                                              ++ viewBreakdownPair "Mode" mode)
                                          ]
       ]
 
 
-viewBreakdownPair : String -> a -> Html Msg
+viewBreakdownPair : String -> a -> List (Html Msg)
 viewBreakdownPair name statistic =
-  li []
-     [ strong [] [text name]
-     , span [] [text (toString statistic)]
-     ]
+  [ li [class "label"]
+       [ text name
+       ]
+  , li [class "value"]
+       [ text (toString statistic)
+       ]
+  ]

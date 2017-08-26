@@ -113,11 +113,11 @@ update msg model =
 
     Msgs.UpdateSortField field ->
       let
-        setSortDirection = 
+        setSortDirection =
           if field == sorting.field
             then (not sorting.isDesc)
             else sorting.isDesc
-            
+
       in
       ( { model
         | settings =
@@ -144,12 +144,19 @@ update msg model =
 
     Msgs.UpdateIsAdult isAdult ->
       let
+        ensureValidDetailGroup breakdown =
+          if isAdult == True
+            then "MONTHS"
+            else breakdown
+
         breakdownType =
           getBreakdownType settings.contentType
+            |> ensureValidDetailGroup
 
         updatedSettings =
           { settings
-          | breakdownType = breakdownType
+          | isAdult = isAdult
+          , breakdownType = breakdownType
           , detailGroup = ""
           , sorting =
             { sorting
