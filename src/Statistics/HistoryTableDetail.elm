@@ -102,17 +102,18 @@ viewHeaderCell : Bool -> String -> Sort -> String -> Html Msg
 viewHeaderCell hide title sorting classes =
   let
     icon =
-      if sorting.field /= title
+      if sorting.field /= (String.toUpper title)
         then ""
         else
           if sorting.isDesc == True
-            then "\\u2303"
-            else "\\u2304"
+            then " sort--desc"
+            else " sort--asc"
 
   in
-  th [classList [("hidden", hide)], class ("" ++ classes)]
-     [ button [class "button-icon", onClick (Msgs.UpdateSortField (String.toUpper title)), attribute "icon" icon]
-              [ text title
+  th [classList [("hidden", hide)], class classes]
+     [ button [class "button", onClick (Msgs.UpdateSortField (String.toUpper title))]
+              [ strong [class ("sort" ++ icon)] 
+                       [text title]
               ]
      ]
 

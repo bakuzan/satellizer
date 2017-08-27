@@ -3,7 +3,7 @@ module Statistics.HistoryTableDetailYear exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Msgs exposing (Msg)
-import Models exposing (HistoryYearData, HistoryYear, Settings)
+import Models exposing (HistoryYearData, HistoryYear, emptyHistoryYear, Settings)
 import Utils.Constants as Constants
 import Utils.Common as Common
 import Round
@@ -44,7 +44,7 @@ viewDetailTable : String -> HistoryYearData -> Html Msg
 viewDetailTable breakdown data =
   table [class ("history-breakdown__table " ++ (String.toLower breakdown))]
         [ viewTableHead breakdown
-        , viewTableBody data
+        , viewTableBody breakdown data
         ]
 
 
@@ -68,18 +68,50 @@ viewTableHead breakdown =
 
 
 
-viewTableBody : HistoryYearData -> Html Msg
-viewTableBody data =
-  tbody [class "history-breakdown-body"]
-        [ viewTableRow "Average" .average data
-        , viewTableRow "Highest" .highest data
-        , viewTableRow "Lowest" .lowest data
-        , viewTableRow "Mode" .mode data
-        ]
+viewTableBody : String -> HistoryYearData -> Html Msg
+viewTableBody breakdown data =
+  let
+   fixValue =
+     if breakdown == "MONTHS" then 1 else -2
+
+   getKey x =
+     String.right 2 ("0" ++ (toString (x.number + fixValue)))
+
+   fixedData =
+     let
+       values =
+         List.map .id data
+
+     in
+     List.filter (\x -> not (List.member (getKey x) values)) headers
+       |> List.map (\x -> { emptyHistoryYear | id = (getKey x) })
+       |> List.append data
+
+   headers =
+     if breakdown == "MONTHS" then Constants.months else Constants.seasons
+
+   cells =
+    List.sortBy .id fixedData
+
+  in
+    tbody [class "history-breakdown-body"]
+          [ viewTableRow "Average" .average cells
+          , viewTableRow "Highest" .highest cells
+          , viewTableRow "Lowest" .lowest cells
+          , viewTableRow "Mode" .mode cells
+          ]
 
 
 viewTableRow : String -> (HistoryYear -> comparable) -> HistoryYearData -> Html Msg
 viewTableRow name fun data =
+  tr [class "history-breakdown-body__row year-breakdown"]
+     ([ th [class "history-breakdown-body__year-statistic"] 
+           [text name]
+      ] ++ List.map (viewTableCell fun) data)
+
+
+viewTableCell : (HistoryYear -> comparable) -> HistoryYear -> Html Msg
+viewTableCell fun obj =
   let
     processValue val isFloat =
       if isFloat == True
@@ -92,11 +124,7 @@ viewTableRow name fun data =
       toString val
        |> String.contains "."
        |> (processValue (toString val))
-
-    viewTableCell x =
-      td [] [text (formatValue (fun x))]
-
+    
   in
-  tr [class "history-breakdown-body__row year-breakdown"]
-     ([ th [class "history-breakdown-body__year-statistic"] [text name]
-     ] ++ List.map viewTableCell data)
+    td [] 
+       [text (formatValue (fun obj))]
