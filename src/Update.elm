@@ -41,8 +41,12 @@ update msg model =
           settings.activeTab
 
         callApi =
-          if name == "History" then (fetchHistoryData settings) else
-          if name == "Ratings" then (fetchRatingData settings) else Cmd.none
+          if name == "History"
+            then (fetchHistoryData settings)
+            else
+              if name == "Ratings"
+                then (fetchRatingData settings)
+                else Cmd.none
 
       in
       ( { model | status = response }, callApi )
@@ -54,7 +58,8 @@ update msg model =
       ( { model | historyDetail = response }, Cmd.none )
 
     Msgs.OnFetchHistoryYear response ->
-      ( { model | historyYear = response }, Cmd.none )
+      ( { model | historyYear = response.counts
+                , historyDetail = response.detail }, Cmd.none )
 
     Msgs.OnFetchRating response ->
       ( { model | rating = response }, Cmd.none )

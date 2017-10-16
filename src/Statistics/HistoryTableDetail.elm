@@ -30,8 +30,13 @@ viewHistoryDetail settings data =
     detailGroup =
       settings.detailGroup
 
+    displayPartition =
+      if (String.contains "-" settings.detailGroup)
+        then getBreakdownName breakdown detailGroup
+        else ""
+
     detailSummary =
-      (toString (List.length data)) ++ " series for " ++ (getBreakdownName breakdown detailGroup) ++ " " ++ (Common.getYear detailGroup)
+      (toString (List.length data)) ++ " series for " ++ displayPartition ++ " " ++ (Common.getYear detailGroup)
 
   in
   div []
@@ -112,7 +117,7 @@ viewHeaderCell hide title sorting classes =
   in
   th [classList [("hidden", hide)], class classes]
      [ button [class "button", onClick (Msgs.UpdateSortField (String.toUpper title))]
-              [ strong [class ("sort" ++ icon)] 
+              [ strong [class ("sort" ++ icon)]
                        [text title]
               ]
      ]

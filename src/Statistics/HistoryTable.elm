@@ -46,7 +46,10 @@ viewTableDetail : Settings -> HistoryDetailData -> HistoryYearData -> Html Msg
 viewTableDetail settings detail yearDetail =
   if (String.contains "-" settings.detailGroup) == True
     then Statistics.HistoryTableDetail.view settings detail
-    else Statistics.HistoryTableDetailYear.view settings yearDetail
+    else div []
+             [ Statistics.HistoryTableDetailYear.view settings yearDetail
+             , Statistics.HistoryTableDetail.view settings detail
+             ]
 
 
 viewTable : CountData -> String -> Html Msg

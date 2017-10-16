@@ -4,7 +4,7 @@ import RemoteData exposing (WebData)
 
 
 
-type alias Flags = 
+type alias Flags =
   { contentType: String
   , isAdult: Bool
   }
@@ -122,6 +122,12 @@ type alias HistoryYear =
 emptyHistoryYear : HistoryYear
 emptyHistoryYear =
   HistoryYear "" 0 0.0 0 0 0
+
+
+type alias HistoryYearDetail =
+  { counts: HistoryYearData
+  , detail: HistoryDetailData
+  }
 
 
 type ObjectsWithValue

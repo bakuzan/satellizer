@@ -4,7 +4,7 @@ import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
 import Msgs exposing (Msg)
-import Models exposing (Settings, CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearData, HistoryYear)
+import Models exposing (Settings, CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearDetail, HistoryYearData, HistoryYear)
 import RemoteData
 import Utils.Common as Common
 
@@ -69,7 +69,7 @@ fetchHistoryDetailUrl settings =
 
 fetchHistoryYearData : Settings -> Cmd Msg
 fetchHistoryYearData settings =
-  Http.get (fetchHistoryYearUrl settings) historyYearDataDecoder
+  Http.get (fetchHistoryYearUrl settings) historyYearDetailDecoder
       |> RemoteData.sendRequest
       |> Cmd.map Msgs.OnFetchHistoryYear
 
@@ -80,7 +80,7 @@ fetchHistoryYearUrl settings =
 
 
 -- Url helpers
-  
+
 constructHistoryBreakdownUrl : Settings -> String
 constructHistoryBreakdownUrl settings =
   "/" ++ (String.toLower settings.breakdownType) ++ "/" ++ settings.detailGroup
@@ -123,11 +123,18 @@ historyDetailDecoder =
 episodeStatisticsDecoder : Decode.Decoder EpisodeStatistic
 episodeStatisticsDecoder =
   decode EpisodeStatistic
-    |> required "_id" Decode.string 
+    |> required "_id" Decode.string
     |> required "average" Decode.float
     |> required "highest" Decode.int
     |> required "lowest" Decode.int
     |> required "mode" Decode.int
+
+
+historyYearDetailDecoder : Decode.Decoder HistoryYearDetail
+historyYearDetailDecoder =
+    decode HistoryYearDetail
+      |> required "counts" historyYearDataDecoder
+      |> required "detail" historyDetailDataDecoder
 
 
 historyYearDataDecoder : Decode.Decoder HistoryYearData
