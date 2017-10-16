@@ -130,6 +130,11 @@ type alias HistoryYearDetail =
   }
 
 
+emptyHistoryYearDetail : HistoryYearDetail
+emptyHistoryYearDetail =
+    HistoryYearDetail [] []
+    
+
 type ObjectsWithValue
   = HistoryYearData
   | CountData

@@ -2,7 +2,7 @@ module Update exposing (..)
 
 import Routing exposing (parseLocation)
 import Msgs exposing (Msg)
-import Models exposing (Model)
+import Models exposing (Model, emptyHistoryYearDetail)
 import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData, fetchHistoryDetailData, fetchHistoryYearData)
 import RemoteData
 
@@ -58,8 +58,28 @@ update msg model =
       ( { model | historyDetail = response }, Cmd.none )
 
     Msgs.OnFetchHistoryYear response ->
-      ( { model | historyYear = response.counts
-                , historyDetail = response.detail }, Cmd.none )
+      let
+        extractData data =
+          case data of
+            RemoteData.NotAsked -> emptyHistoryYearDetail
+            RemoteData.Loading -> emptyHistoryYearDetail
+            RemoteData.Failure err -> emptyHistoryYearDetail
+            RemoteData.Success data -> data
+
+        counts =
+          (extractData response)
+            |> .counts
+            |> RemoteData.succeed
+
+        detail =
+          (extractData response)
+            |> .detail
+            |> RemoteData.succeed
+
+      in
+      ( { model | historyYear = counts
+                , historyDetail = detail
+                }, Cmd.none )
 
     Msgs.OnFetchRating response ->
       ( { model | rating = response }, Cmd.none )
