@@ -28,13 +28,9 @@ viewHistoryYearDetail settings data =
     getYearCount =
       Common.calculateTotalOfValuesTemp data
 
-    detailSummary =
-      (toString getYearCount) ++ " series for " ++ detailGroup
-
   in
   div [ class "history-detail" ]
-      [ h2 [] [text detailSummary]
-      , div [class "flex-row"]
+      [ div [class "flex-row"]
             [ viewDetailTable breakdown data
             ]
       ]
@@ -105,7 +101,7 @@ viewTableBody breakdown data =
 viewTableRow : String -> (HistoryYear -> comparable) -> HistoryYearData -> Html Msg
 viewTableRow name fun data =
   tr [class "history-breakdown-body__row year-breakdown"]
-     ([ th [class "history-breakdown-body__year-statistic"] 
+     ([ th [class "history-breakdown-body__year-statistic"]
            [text name]
       ] ++ List.map (viewTableCell fun) data)
 
@@ -124,7 +120,7 @@ viewTableCell fun obj =
       toString val
        |> String.contains "."
        |> (processValue (toString val))
-    
+
   in
-    td [] 
+    td []
        [text (formatValue (fun obj))]
