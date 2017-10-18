@@ -83,6 +83,7 @@ type alias HistoryDetail =
   , title: String
   , episodeStatistics: EpisodeStatistic
   , rating: Int
+  , season: String
   }
 
 
@@ -102,7 +103,7 @@ emptyEpisodeStatistic =
 
 emptyHistoryDetail : HistoryDetail
 emptyHistoryDetail =
-  HistoryDetail "" "" emptyEpisodeStatistic 0
+  HistoryDetail "" "" emptyEpisodeStatistic 0 ""
 
 
 type alias HistoryYearData =
@@ -133,7 +134,7 @@ type alias HistoryYearDetail =
 emptyHistoryYearDetail : HistoryYearDetail
 emptyHistoryYearDetail =
     HistoryYearDetail [] []
-    
+
 
 type ObjectsWithValue
   = HistoryYearData

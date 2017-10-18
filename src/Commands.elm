@@ -118,6 +118,7 @@ historyDetailDecoder =
     |> required "title" Decode.string
     |> required "episodeStatistics" episodeStatisticsDecoder
     |> required "rating" Decode.int
+    |> required "season" Decode.string
 
 
 episodeStatisticsDecoder : Decode.Decoder EpisodeStatistic
