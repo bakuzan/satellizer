@@ -1,8 +1,6 @@
 module View exposing (..)
 
 import Html exposing (Html, div, text)
--- import Html.Attributes exposing (id)
--- import Navigation exposing (Location)
 import Models exposing (Model)
 import Msgs exposing (Msg)
 import Statistics.Core

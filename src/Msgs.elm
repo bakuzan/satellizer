@@ -1,6 +1,6 @@
 module Msgs exposing (..)
 
--- import Http
+
 import Models exposing (CountData, HistoryDetailData, HistoryYearDetail)
 import Navigation exposing (Location)
 import RemoteData exposing (WebData)
