@@ -34,9 +34,9 @@ viewHistoryDetail settings data =
       not (String.contains "-" settings.detailGroup)
 
     displayPartition =
-      if isMonthBreakdown
-        then getBreakdownName breakdown detailGroup
-        else ""
+      if isYearBreakdown
+        then ""
+        else getBreakdownName breakdown detailGroup
 
     detailSummary =
       (toString (List.length data)) ++ " series for " ++ displayPartition ++ " " ++ (Common.getYear detailGroup)
