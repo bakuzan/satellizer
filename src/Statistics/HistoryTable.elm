@@ -19,10 +19,13 @@ view settings data detail yearDetail =
     breakdownType =
       settings.breakdownType
 
+    isYearBreakdown =
+      not (String.contains "-" settings.detailGroup)
+
   in
     div [ class "history-breakdown" ]
         [ viewBreakdownToggle settings
-        , viewTable data breakdownType
+        , viewTable data breakdownType isYearBreakdown
         , viewTableDetail settings detail yearDetail
         ]
 
@@ -52,8 +55,8 @@ viewTableDetail settings detail yearDetail =
              ]
 
 
-viewTable : CountData -> String -> Html Msg
-viewTable countData breakdown =
+viewTable : CountData -> String -> Bool -> Html Msg
+viewTable countData breakdown isYearBreakdown =
   let
     total =
       Common.maxOfField .value data
@@ -68,17 +71,17 @@ viewTable countData breakdown =
       if breakdown == "MONTHS" then Constants.months else Constants.seasons
 
   in
-  table [ class ("history-breakdown__table " ++ (String.toLower breakdown)) ]
-          [ viewHeader headers
-          , viewBody breakdown total data
-          ]
+  table [ class "history-breakdown__table", classList [(String.toLower breakdown, True), ("year", isYearBreakdown)] ]
+        [ viewHeader headers
+        , viewBody breakdown total data
+        ]
 
 
 viewHeader : List Header -> Html Msg
 viewHeader headers =
     let
       displayHeader obj =
-        th [] [text obj.name]
+        th [class (String.toLower obj.name)] [text obj.name]
 
     in
     thead [class "history-breakdown-header"]

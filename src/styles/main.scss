@@ -131,9 +131,11 @@
       margin: 10px 5px;
       text-align: left;
     }
+
     .history-detail-list {
       width: 50%;
     }
+
     .history-detail-breakdown {
       margin-left: auto;
       label {
@@ -144,29 +146,55 @@
         justify-content: space-between;
       }
     }
+
     a {
       width: 75%;
       text-align: left;
     }
+
   }
 
   .sort {
-	line-height: 1;
+  	line-height: 1;
 
-	&::after {
-		content: "";
-		margin-left: 15px;
-		font-size: 1.2rem;
-	}
+  	&::after {
+  		content: "";
+  		margin-left: 15px;
+  		font-size: 1.2rem;
+  	}
 
-	&.sort {
-		&--asc::after {
-			content: "\25B2";
-		}
-		&--desc::after {
-			content: "\25BC";
-		}
-	}
+  	&.sort {
+  		&--asc::after {
+  			content: "\25B2";
+  		}
+  		&--desc::after {
+  			content: "\25BC";
+  		}
+  	}
+  }
+
+
+  // season colouring for year breakdown
+
+  @each $key, $colour in $season-colours {
+
+    // history table headers
+    .season.year th.#{$key} {
+      background-color: $colour
+      color: $white;
+    }
+
+    // history detail rows
+    .year-breakdown tr.#{$key}:hover {
+      background-color: $colour;
+      color: $white;
+
+      a {
+        background-color: inherit;
+        color: inherit;
+      }
+    }
+
   }
 
 }

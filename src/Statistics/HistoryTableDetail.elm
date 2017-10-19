@@ -30,8 +30,8 @@ viewHistoryDetail settings data =
     detailGroup =
       settings.detailGroup
 
-    isMonthBreakdown =
-      (String.contains "-" settings.detailGroup)
+    isYearBreakdown =
+      not (String.contains "-" settings.detailGroup)
 
     displayPartition =
       if isMonthBreakdown
@@ -46,7 +46,7 @@ viewHistoryDetail settings data =
       [ viewDetailBreakdowns data
       , div [ class "history-detail" ]
             [ h2 [] [text detailSummary]
-            , div [class "flex-column", classList [("year-breakdown", not isMonthBreakdown)]]
+            , div [class "flex-column", classList [("year-breakdown", isYearBreakdown)]]
                   [ viewDetailTable contentType breakdown settings.sorting data
                   ]
             ]
@@ -147,7 +147,7 @@ viewTableRow contentType item =
       (indicate ++ item.title)
 
   in
-  tr [class "history-breakdown-body__row month-breakdown", classList [(item.season, True)]]
+  tr [class "history-breakdown-body__row month-breakdown", classList [(String.toLower item.season, True)]]
      ([ td [class "history-breakdown-body__month-title"]
            [ a [href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id), target "_blank"]
                [text setTitleIndication]
