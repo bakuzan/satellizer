@@ -186,12 +186,12 @@
 
     // history detail rows
     .year-breakdown tr.#{$key}:hover {
-      background-color: $colour;
-      color: $white;
+      background-color: $colour !important;
+      color: $white !important;
 
       a {
-        background-color: inherit;
-        color: inherit;
+        background-color: inherit !important;
+        color: inherit !important;
       }
     }
 
