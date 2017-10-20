@@ -8,6 +8,7 @@ import Models exposing (Count, CountData, HistoryDetailData, HistoryYearData, He
 import General.RadioButton exposing (viewRadioGroup)
 import Statistics.HistoryTableDetail
 import Statistics.HistoryTableDetailYear
+import General.SeasonKey as SeasonKey
 import Utils.Constants as Constants
 import Utils.Common as Common
 import Utils.TableFunctions exposing (getBreakdownName)
@@ -27,6 +28,7 @@ view settings data detail yearDetail =
         [ viewBreakdownToggle settings
         , viewTable data breakdownType isYearBreakdown
         , viewTableDetail settings detail yearDetail
+        , SeasonKey.view isYearBreakdown
         ]
 
 
