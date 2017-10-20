@@ -20,7 +20,7 @@ view settings data detail yearDetail =
       settings.breakdownType
 
     isYearBreakdown =
-      not (String.contains "-" settings.detailGroup)
+      (not (String.contains "-" settings.detailGroup)) && settings.detailGroup /= ""
 
   in
     div [ class "history-breakdown" ]
