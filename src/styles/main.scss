@@ -179,7 +179,9 @@
     position: fixed;
     top: 75px;
     right: 10px;
+    background: $white;
     box-shadow: 1px 1px 5px 1px;
+    z-index: map-get($z-index, above-siblings);
 
     .key-entry {
       display: flex;

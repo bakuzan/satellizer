@@ -28,7 +28,7 @@ view settings data detail yearDetail =
         [ viewBreakdownToggle settings
         , viewTable data breakdownType isYearBreakdown
         , viewTableDetail settings detail yearDetail
-        , SeasonKey.view isYearBreakdown
+        , SeasonKey.view (isYearBreakdown && breakdownType /= "MONTHS")
         ]
 
 
