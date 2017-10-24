@@ -215,5 +215,17 @@ update msg model =
         | settings = updatedSettings
         } , fetchStatusData updatedSettings)
 
+    Msgs.UpdateRequireKey required ->
+      let
+        updatedSettings =
+          { settings
+          | requireKey = required
+          }
+
+      in
+      ( { model
+        | settings = updatedSettings
+        }, Cmd.none)
+
     _ ->
       ( model, Cmd.none )

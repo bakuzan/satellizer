@@ -38,7 +38,7 @@ viewHistoryYearDetail settings data =
 
 viewDetailTable : String -> HistoryYearData -> Html Msg
 viewDetailTable breakdown data =
-  table [class ("history-breakdown__table " ++ (String.toLower breakdown))]
+  table [class "history-breakdown__table", classList [(String.toLower breakdown, True), ("year", True)] ]
         [ viewTableHead breakdown
         , viewTableBody breakdown data
         ]
@@ -48,7 +48,7 @@ viewTableHead : String -> Html Msg
 viewTableHead breakdown =
   let
     viewHeader obj =
-      th []
+      th [class (String.toLower obj.name)]
          [ text obj.name
          ]
 

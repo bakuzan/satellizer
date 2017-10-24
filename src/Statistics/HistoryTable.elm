@@ -28,7 +28,7 @@ view settings data detail yearDetail =
         [ viewBreakdownToggle settings
         , viewTable data breakdownType isYearBreakdown
         , viewTableDetail settings detail yearDetail
-        , SeasonKey.view (isYearBreakdown && breakdownType /= "MONTHS")
+        , SeasonKey.view (isYearBreakdown && breakdownType /= "MONTHS" && settings.requireKey)
         ]
 
 
@@ -51,7 +51,7 @@ viewTableDetail : Settings -> HistoryDetailData -> HistoryYearData -> Html Msg
 viewTableDetail settings detail yearDetail =
   if (String.contains "-" settings.detailGroup) == True
     then Statistics.HistoryTableDetail.view settings detail
-    else div []
+    else div [id "history-breakdown-detail"]
              [ Statistics.HistoryTableDetailYear.view settings yearDetail
              , Statistics.HistoryTableDetail.view settings detail
              ]

@@ -28,6 +28,7 @@ type alias Settings =
   , sorting: Sort
   , isAdult: Bool
   , contentType: String
+  , requireKey: Bool
   }
 
 
@@ -55,6 +56,7 @@ initialModel flags route =
         }
       , contentType = flags.contentType
       , isAdult = flags.isAdult
+      , requireKey = False
       }
     }
 

@@ -24,11 +24,13 @@ init flags location =
 
 port contentType : (String -> msg) -> Sub msg
 port isAdult : (Bool -> msg) -> Sub msg
+port requireKey: (Bool -> msg) -> Sub msg
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch [ isAdult Msgs.UpdateIsAdult
             , contentType Msgs.UpdateContentType
+            , requireKey Msgs.UpdateRequireKey
             ]
 
 

@@ -21,3 +21,4 @@ type Msg
     | OnFetchHistoryYear (WebData HistoryYearDetail)
     | UpdateIsAdult Bool
     | UpdateContentType String
+    | UpdateRequireKey Bool
