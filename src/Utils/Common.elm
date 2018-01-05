@@ -66,7 +66,7 @@ calculateAverageOfRatings : HistoryDetailData -> Float
 calculateAverageOfRatings list =
   List.map (\x -> x.rating) list
     |> List.foldr (+) 0
-    |> divideTotalByCount (List.length list)
+    |> divideTotalByCount (List.length (List.filter (\x -> x /= 0) list))
     |> Round.round 2
     |> String.toFloat
     |> Result.withDefault 0.0
