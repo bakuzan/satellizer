@@ -64,9 +64,12 @@ calculateTotalOfValuesTemp list =
 
 calculateAverageOfRatings : HistoryDetailData -> Float
 calculateAverageOfRatings list =
-  List.map (\x -> x.rating) list
-    |> List.foldr (+) 0
-    |> divideTotalByCount (List.length (List.filter (\x -> x /= 0) list))
+  let
+    ratings =
+      List.map (\x -> x.rating) list
+  in
+  List.foldr (+) 0 ratings
+    |> divideTotalByCount (List.length (List.filter (\x -> x /= 0) ratings))
     |> Round.round 2
     |> String.toFloat
     |> Result.withDefault 0.0
