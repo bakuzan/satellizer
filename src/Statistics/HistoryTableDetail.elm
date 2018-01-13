@@ -149,7 +149,7 @@ viewTableRow contentType item =
   in
   tr [class "history-breakdown-body__row month-breakdown", classList [(String.toLower item.season, True)]]
      ([ td [class "history-breakdown-body__month-title"]
-           [ a [href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id), target "_blank"]
+           [ a [href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id), target "_blank", rel "noopener noreferrer"]
                [text setTitleIndication]
            ]
       , renderCell (toString item.rating)
