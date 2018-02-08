@@ -227,5 +227,10 @@ update msg model =
         | settings = updatedSettings
         }, Cmd.none)
 
+    Msgs.UpdateSeriesSearch txt ->
+      ( { model
+        | searchText = txt
+        }, Cmd.none)
+        
     _ ->
       ( model, Cmd.none )

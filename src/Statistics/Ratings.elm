@@ -4,29 +4,33 @@ import Html exposing (..)
 import Html.Attributes exposing (id, class, style)
 import Msgs exposing (Msg)
 import General.ProgressBar
-import Models exposing (Model, CountData, Count, emptyCount)
+import Statistics.SeriesList
+import Models exposing (Model, SeriesData, CountData, Count, emptyCount)
 import Utils.Common as Common
 import Utils.Constants as Constants
 import Round
 
 
-view : CountData -> Html Msg
-view list =
+view : String -> CountData -> SeriesData -> Html Msg
+view searchText ratingList seriesList =
   let
     total =
-      Common.calculateTotalOfValues list
+      Common.calculateTotalOfValues ratingList
 
     ratings =
-      Common.splitList 1 list
+      Common.splitList 1 ratingList
 
     viewRatingBar =
       viewSingleRating total
 
   in
-    div [id "rating-container"]
-        ([ viewTotalAverageRating total list
-         ]
-         ++ List.map viewRatingBar ratings)
+    div []
+        [ div [id "rating-container"]
+             ([ viewTotalAverageRating total ratingList
+              ]
+              ++ List.map viewRatingBar ratings)
+        , Statistics.SeriesList.view searchText seriesList
+        ]
 
 
 viewTotalAverageRating : Int -> CountData -> Html Msg

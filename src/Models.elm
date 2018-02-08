@@ -16,8 +16,10 @@ type alias Model =
     , historyDetail: WebData HistoryDetailData
     , historyYear: WebData HistoryYearData
     , rating: WebData CountData
+    , seriesList: WebData SeriesData
     , route: Route
     , settings: Settings
+    , searchText: String
     }
 
 
@@ -45,6 +47,7 @@ initialModel flags route =
     , historyDetail = RemoteData.Loading
     , historyYear = RemoteData.Loading
     , rating = RemoteData.Loading
+    , seriesList = RemoteData.Loading
     , route = route
     , settings =
       { activeTab = "History"
@@ -58,6 +61,7 @@ initialModel flags route =
       , isAdult = flags.isAdult
       , requireKey = False
       }
+    , searchText = ""
     }
 
 
@@ -141,6 +145,15 @@ emptyHistoryYearDetail =
 type ObjectsWithValue
   = HistoryYearData
   | CountData
+
+type alias Series =
+  { id: String
+  , name: String
+  , rating: Int
+  }
+
+type alias SeriesData =
+  List Series
 
 
 -- Constant models

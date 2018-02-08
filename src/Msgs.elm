@@ -22,3 +22,4 @@ type Msg
     | UpdateIsAdult Bool
     | UpdateContentType String
     | UpdateRequireKey Bool
+    | UpdateSeriesSearch String

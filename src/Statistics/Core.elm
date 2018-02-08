@@ -41,13 +41,16 @@ view model =
       viewRender model.historyYear
 
     ratings =
-      model.rating
+      viewRender model.rating
+
+    seriesList =
+      viewRender model.seriesList
 
   in
     div [ class "flex-column flex-grow" ]
         [ viewRender status |> viewStatus
         , viewTabContainer activeTab [("History", [Statistics.HistoryTable.view model.settings history detail yearDetail])
-                                     ,("Ratings", [viewRender ratings |> Statistics.Ratings.view])
+                                     ,("Ratings", [Statistics.Ratings.view model.searchText ratings seriesList])
                                      ]
         ]
 
