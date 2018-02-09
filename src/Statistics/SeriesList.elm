@@ -20,7 +20,7 @@ view settings filters seriesList =
 
 viewSelectedRatings : List Int -> Html Msg
 viewSelectedRatings selectedRatings =
-    ul [id "selected-ratings"]
+    ul [id "selected-ratings", class "list"]
       ([] ++
         List.map viewSelectedRating selectedRatings)
 

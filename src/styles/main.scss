@@ -45,6 +45,10 @@
     }
   }
 
+  .clear-input:before {
+    content: "\2573";
+  }
+
   #series-by-ratings-list {
     min-width: 200px;
     max-width: 75%;
@@ -53,9 +57,29 @@
       display: flex;
       justify-content: space-between;
     }
-
+  }
+  #selected-ratings {
+    .input-chip {
+      height: 32px;
+      font-family: "Roboto","Helvetica","Arial",sans-serif;
+      line-height: 32px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 16px;
+      background-color: #dedede;
+      display: inline-block;
+      color: rgba(0, 0, 0, 0.87);
+      margin: 1px 0;
+      font-size: 0;
+      white-space: nowrap;
+    }
+    .input-chip-text {
+      font-size: 13px;
+      vertical-align: middle;
+      display: inline-block;
+    }
     .input-chip-delete:before {
-      content: "\u2573";
+      content: "\2573";
     }
   }
 
