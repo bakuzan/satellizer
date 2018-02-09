@@ -19,7 +19,7 @@ type alias Model =
     , seriesList: WebData SeriesData
     , route: Route
     , settings: Settings
-    , searchText: String
+    , ratingsFilters: RatingFilters
     }
 
 
@@ -37,6 +37,11 @@ type alias Settings =
 type alias Sort =
   { field: String
   , isDesc: Bool
+  }
+
+type alias RatingFilters =
+  { searchText: String
+  , ratings: List Int
   }
 
 
@@ -61,7 +66,10 @@ initialModel flags route =
       , isAdult = flags.isAdult
       , requireKey = False
       }
-    , searchText = ""
+    , ratingsFilters =
+      { searchText = ""
+      , ratingsFilters = []
+      }
     }
 
 

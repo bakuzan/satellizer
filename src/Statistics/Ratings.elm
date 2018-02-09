@@ -5,14 +5,14 @@ import Html.Attributes exposing (id, class, style)
 import Msgs exposing (Msg)
 import General.ProgressBar
 import Statistics.SeriesList
-import Models exposing (Model, SeriesData, CountData, Count, emptyCount)
+import Models exposing (Model, RatingFilters, SeriesData, CountData, Count, emptyCount)
 import Utils.Common as Common
 import Utils.Constants as Constants
 import Round
 
 
-view : String -> CountData -> SeriesData -> Html Msg
-view searchText ratingList seriesList =
+view : RatingFilters -> CountData -> SeriesData -> Html Msg
+view filters ratingList seriesList =
   let
     total =
       Common.calculateTotalOfValues ratingList
@@ -29,7 +29,7 @@ view searchText ratingList seriesList =
              ([ viewTotalAverageRating total ratingList
               ]
               ++ List.map viewRatingBar ratings)
-        , Statistics.SeriesList.view searchText seriesList
+        , Statistics.SeriesList.view filters seriesList
         ]
 
 

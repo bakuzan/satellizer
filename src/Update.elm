@@ -228,9 +228,16 @@ update msg model =
         }, Cmd.none)
 
     Msgs.UpdateSeriesSearch txt ->
+      let
+          updatedFilters =
+            { ratingFilters
+            | searchText = txt
+            }
+
+      in
       ( { model
-        | searchText = txt
+        | ratingsFilters = updatedFilters
         }, Cmd.none)
-        
+
     _ ->
       ( model, Cmd.none )

@@ -3,15 +3,15 @@ module Statistics.SeriesList exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (id)
 import Msgs exposing (Msg)
-import Models exposing (Model, SeriesData, Series)
+import Models exposing (Model, RatingFilters, SeriesData, Series)
 
 import General.ClearableInput
 
 
-view : String -> SeriesData -> Html Msg
-view searchText seriesList =
+view : RatingFilters -> SeriesData -> Html Msg
+view filters seriesList =
   div [id "series-by-ratings-container"]
-      [ General.ClearableInput.view "search" "search" searchText
+      [ General.ClearableInput.view "search" "search" filters.searchText
       , viewSeriesList seriesList
       ]
 
