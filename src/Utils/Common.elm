@@ -47,7 +47,7 @@ setRole : String -> Attribute msg
 setRole value =
   attribute "role" value
 
-setIcon : String -> Attribute Msg
+setIcon : String -> Attribute msg
 setIcon str =
     attribute "icon" str
 
