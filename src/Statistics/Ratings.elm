@@ -24,7 +24,7 @@ view searchText ratingList seriesList =
       viewSingleRating total
 
   in
-    div []
+    div [id "ratings-tab"]
         [ div [id "rating-container"]
              ([ viewTotalAverageRating total ratingList
               ]

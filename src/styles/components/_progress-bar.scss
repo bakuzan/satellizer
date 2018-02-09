@@ -1,0 +1,22 @@
+@import "../variables.scss";
+
+// Progress bar
+.percentage-breakdown {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  height: 30px;
+  width: 100%;
+
+  .percentage-breakdown__bar {
+    height: 100%;
+
+    @each $key, $colour in $rating-colours {
+      &.#{$key} {
+        background: $colour;
+      }
+    }
+
+  }
+
+}

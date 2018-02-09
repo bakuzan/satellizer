@@ -1,0 +1,28 @@
+@import "../variables.scss";
+
+#season-key {
+  position: fixed;
+  top: 75px;
+  right: 10px;
+  background: $white;
+  box-shadow: 1px 1px 5px 1px;
+  z-index: map-get($z-index, above-siblings);
+
+  .key-entry {
+    display: flex;
+    margin: 1px;
+
+    div:first-child {
+      width: 25px;
+      height: 25px;
+    }
+
+    .label {
+      width: 25px;
+      font-weight: bold;
+      font-size: 1.2em;
+      text-align: center;
+    }
+  }
+
+}
