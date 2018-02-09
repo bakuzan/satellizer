@@ -54,6 +54,9 @@
       justify-content: space-between;
     }
 
+    .input-chip-delete:before {
+      content: "\u2573";
+    }
   }
 
   @import "./components/_history-detail.scss";

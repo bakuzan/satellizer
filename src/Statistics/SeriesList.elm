@@ -5,7 +5,6 @@ import Html.Attributes exposing (id, class, href, type_, title)
 import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
 import Models exposing (Model, Settings, RatingFilters, SeriesData, Series)
-import Utils.Common as Common
 
 import General.ClearableInput
 import General.NewTabLink
@@ -32,7 +31,6 @@ viewSelectedRating rating =
        , button [ type_ "button"
                 , class "button-icon small input-chip-delete"
                 , title "Remove"
-                , Common.setIcon "\u2573"
                 , onClick (Msgs.ToggleRatingFilter rating)
                 ] []
        ]
