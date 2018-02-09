@@ -5,14 +5,32 @@ import Html.Attributes exposing (id, class, style)
 import Msgs exposing (Msg)
 import General.ProgressBar
 import Statistics.SeriesList
-import Models exposing (Model, RatingFilters, SeriesData, CountData, Count, emptyCount)
+import Models exposing (Model, Settings, RatingFilters, SeriesData, CountData, Count, emptyCount)
 import Utils.Common as Common
 import Utils.Constants as Constants
 import Round
 
 
-view : RatingFilters -> CountData -> SeriesData -> Html Msg
-view filters ratingList seriesList =
+tempSeriesList : SeriesData
+tempSeriesList =
+    [
+    { id = "1"
+    , name = "Baccano"
+    , rating = 8
+    },
+    { id = "2"
+    , name = "snow queen"
+    , rating = 7
+    },
+    { id = "3"
+    , name = "durarara"
+    , rating = 9
+    }
+    ]
+
+
+view : Settings -> RatingFilters -> CountData -> SeriesData -> Html Msg
+view settings filters ratingList seriesList =
   let
     total =
       Common.calculateTotalOfValues ratingList
@@ -29,7 +47,7 @@ view filters ratingList seriesList =
              ([ viewTotalAverageRating total ratingList
               ]
               ++ List.map viewRatingBar ratings)
-        , Statistics.SeriesList.view filters seriesList
+        , Statistics.SeriesList.view settings filters tempSeriesList
         ]
 
 

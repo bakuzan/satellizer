@@ -1,33 +1,37 @@
 module Statistics.SeriesList exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (id)
+import Html.Attributes exposing (id, class, href)
 import Msgs exposing (Msg)
-import Models exposing (Model, RatingFilters, SeriesData, Series)
+import Models exposing (Model, Settings, RatingFilters, SeriesData, Series)
 
 import General.ClearableInput
+import General.NewTabLink
 
 
-view : RatingFilters -> SeriesData -> Html Msg
-view filters seriesList =
+view : Settings -> RatingFilters -> SeriesData -> Html Msg
+view settings filters seriesList =
   div [id "series-by-ratings-container"]
       [ General.ClearableInput.view "search" "search" filters.searchText
-      , viewSeriesList seriesList
+      , viewSeriesList settings seriesList
       ]
 
 
-viewSeriesList : SeriesData -> Html Msg
-viewSeriesList seriesList =
+viewSeriesList : Settings -> SeriesData -> Html Msg
+viewSeriesList settings seriesList =
   div []
-      [ text "Placeholder"
-      , ul [id "series-by-ratings-list"]
+      [ ul [id "series-by-ratings-list", class "list column one"]
            ([] ++
-           List.map viewSeriesEntry seriesList)
+           List.map (viewSeriesEntry settings.contentType) seriesList)
       ]
 
-viewSeriesEntry : Series -> Html Msg
-viewSeriesEntry entry =
+viewSeriesEntry : String -> Series -> Html Msg
+viewSeriesEntry contentType entry =
+  let
+    seriesLink =
+      "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ entry.id
+  in
   li []
-     [ a [] [text entry.name]
+     [ General.NewTabLink.view [href seriesLink] [text entry.name]
      , span [] [text (toString entry.rating)]
      ]

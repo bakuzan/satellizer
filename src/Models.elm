@@ -68,7 +68,7 @@ initialModel flags route =
       }
     , ratingsFilters =
       { searchText = ""
-      , ratingsFilters = []
+      , ratings = []
       }
     }
 

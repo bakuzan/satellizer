@@ -26,10 +26,13 @@
     width: 100%;
     padding: 10px 5px;
   }
-  #rating-container {
+  #rating-container,
+  #series-by-ratings-container {
     display: flex;
     flex-direction: column;
     width: 50%;
+  }
+  #rating-container {
     > div {
       display: inline-flex;
       flex-direction: row;
@@ -39,6 +42,16 @@
       align-items: center;
       justify-content: center;
       width: 25px;
+    }
+  }
+
+  #series-by-ratings-list {
+    min-width: 200px;
+    max-width: 75%;
+
+    li {
+      display: flex;
+      justify-content: space-between;
     }
   }
 

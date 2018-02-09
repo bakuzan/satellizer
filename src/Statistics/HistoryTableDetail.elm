@@ -6,6 +6,7 @@ import Html.Events exposing(onClick)
 import Msgs exposing (Msg)
 import Models exposing (HistoryDetailData, HistoryDetail, emptyHistoryDetail, EpisodeStatistic, Settings, Sort)
 import General.Accordion
+import General.NewTabLink
 import Utils.TableFunctions exposing (getBreakdownName)
 import Utils.Common as Common
 import Round
@@ -149,8 +150,8 @@ viewTableRow contentType item =
   in
   tr [class "history-breakdown-body__row month-breakdown", classList [(String.toLower item.season, True)]]
      ([ td [class "history-breakdown-body__month-title"]
-           [ a [href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id), target "_blank", rel "noopener noreferrer"]
-               [text setTitleIndication]
+           [ General.NewTabLink.view [href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id)]
+                                     [text setTitleIndication]
            ]
       , renderCell (toString item.rating)
       ] ++ renderEpisodeStatistics es)

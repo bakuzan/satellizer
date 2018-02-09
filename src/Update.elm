@@ -229,8 +229,11 @@ update msg model =
 
     Msgs.UpdateRatingSearch txt ->
       let
+          ratingsFilters =
+            model.ratingsFilters
+            
           updatedFilters =
-            { ratingFilters
+            { ratingsFilters
             | searchText = txt
             }
 

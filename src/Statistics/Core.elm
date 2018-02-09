@@ -50,7 +50,7 @@ view model =
     div [ class "flex-column flex-grow" ]
         [ viewRender status |> viewStatus
         , viewTabContainer activeTab [("History", [Statistics.HistoryTable.view model.settings history detail yearDetail])
-                                     ,("Ratings", [Statistics.Ratings.view model.ratingsFilters ratings seriesList])
+                                     ,("Ratings", [Statistics.Ratings.view model.settings model.ratingsFilters ratings seriesList])
                                      ]
         ]
 
