@@ -30,15 +30,36 @@ tempSeriesList =
     }
     ]
 
+tempRatingList : CountData
+tempRatingList =
+    [
+    { key = "10"
+    , value = 4
+    },
+    { key = "8"
+    , value = 23
+    },
+    { key = "6"
+    , value = 64
+    },
+    { key = "4"
+    , value = 27
+    },
+    { key = "0"
+    , value = 40
+    }
+    ]
+
+
 
 view : Settings -> RatingFilters -> CountData -> SeriesData -> Html Msg
 view settings filters ratingList seriesList =
   let
     total =
-      Common.calculateTotalOfValues ratingList
+      Common.calculateTotalOfValues tempRatingList
 
     ratings =
-      Common.splitList 1 ratingList
+      Common.splitList 1 tempRatingList
 
     viewRatingBar =
       viewSingleRating filters.ratings total
@@ -46,7 +67,7 @@ view settings filters ratingList seriesList =
   in
     div [id "ratings-tab"]
         [ div [id "rating-container"]
-             ([ viewTotalAverageRating total ratingList
+             ([ viewTotalAverageRating total tempRatingList
               ]
               ++ List.map viewRatingBar ratings)
         , Statistics.SeriesList.view settings filters tempSeriesList
@@ -98,9 +119,11 @@ viewSingleRating selectedRatings total rating =
         |> getRatingText
 
     number =
-      numberString
-       |> String.toInt
-       |> Result.withDefault 0
+      if numberString == "-"
+        then 0
+        else numberString
+        |> String.toInt
+        |> Result.withDefault 0
 
     isSelected =
       List.member number selectedRatings
