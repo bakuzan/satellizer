@@ -15,6 +15,10 @@ update msg model =
     sorting =
       settings.sorting
 
+    ratingsFilters =
+      model.ratingsFilters
+
+
     getBreakdownType contentType =
       if contentType == "anime"
         then settings.breakdownType
@@ -229,12 +233,26 @@ update msg model =
 
     Msgs.UpdateRatingSearch txt ->
       let
-          ratingsFilters =
-            model.ratingsFilters
-            
           updatedFilters =
             { ratingsFilters
             | searchText = txt
+            }
+
+      in
+      ( { model
+        | ratingsFilters = updatedFilters
+        }, Cmd.none)
+
+    Msgs.ToggleRatingFilter rating ->
+      let
+          updatedRatings =
+            if List.member rating ratingsFilters.ratings
+              then List.filter (\x -> x /= rating) ratingsFilters.ratings
+              else List.append ratingsFilters.ratings [rating]
+
+          updatedFilters =
+            { ratingsFilters
+            | ratings = updatedRatings
             }
 
       in

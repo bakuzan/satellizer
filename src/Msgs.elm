@@ -23,3 +23,4 @@ type Msg
     | UpdateContentType String
     | UpdateRequireKey Bool
     | UpdateRatingSearch String
+    | ToggleRatingFilter Int

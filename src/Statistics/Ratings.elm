@@ -1,7 +1,8 @@
 module Statistics.Ratings exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (id, class, style)
+import Html.Attributes exposing (id, class, classList, style)
+import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
 import General.ProgressBar
 import Statistics.SeriesList
@@ -39,7 +40,7 @@ view settings filters ratingList seriesList =
       Common.splitList 1 ratingList
 
     viewRatingBar =
-      viewSingleRating total
+      viewSingleRating filters.ratings total
 
   in
     div [id "ratings-tab"]
@@ -81,24 +82,34 @@ viewTotalAverageRating total list =
       ]
 
 
-viewSingleRating : Int -> CountData -> Html Msg
-viewSingleRating total rating =
+viewSingleRating : List Int -> Int -> CountData -> Html Msg
+viewSingleRating selectedRatings total rating =
   let
     getRatingText obj =
       if obj.key == "0" then "-" else obj.key
 
-    number =
+    numberObj =
       List.head rating
         |> Maybe.withDefault { key = "-", value = 0 }
+
+    number =
+      numberObj
+        |> .value
+
+    numberString =
+      numberObj
         |> getRatingText
+
+    isSelected =
+      List.member number selectedRatings
 
     updatedRating =
       List.map (\x -> { x | key = (setRatingKey x) }) rating
 
   in
   div []
-      [ div [class "rating-label"]
-            [text number]
+      [ button [class "button ripple rating-label", classList [("selected", isSelected)], onClick (Msgs.ToggleRatingFilter number)]
+               [text numberString]
       , General.ProgressBar.viewProgressBar total updatedRating
       ]
 
