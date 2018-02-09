@@ -22,18 +22,19 @@ viewSelectedRatings : List Int -> Html Msg
 viewSelectedRatings selectedRatings =
     ul [id "selected-ratings"]
       ([] ++
-        List.map viewSelectedRating selectedRatings
+        List.map viewSelectedRating selectedRatings)
+
 
 viewSelectedRating : Int -> Html Msg
 viewSelectedRating rating =
-    li [class "input-chip input-chip-deleteable"]
-       [ span [class "input-chip-text"] [text (toString rating)]
-       , button [ type_ "button"
-                , class "button-icon small input-chip-delete"
-                , title "Remove"
-                , onClick (Msgs.ToggleRatingFilter rating)
-                ] []
-       ]
+  li [class "input-chip input-chip-deleteable"]
+  [ span [class "input-chip-text"] [text (toString rating)]
+  , button [ type_ "button"
+  , class "button-icon small input-chip-delete"
+  , title "Remove"
+  , onClick (Msgs.ToggleRatingFilter rating)
+  ] []
+  ]
 
 viewSeriesList : Settings -> SeriesData -> Html Msg
 viewSeriesList settings seriesList =
