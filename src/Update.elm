@@ -227,7 +227,7 @@ update msg model =
         | settings = updatedSettings
         }, Cmd.none)
 
-    Msgs.UpdateSeriesSearch txt ->
+    Msgs.UpdateRatingSearch txt ->
       let
           updatedFilters =
             { ratingFilters
