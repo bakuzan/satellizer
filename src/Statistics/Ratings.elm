@@ -4,12 +4,13 @@ import Html exposing (..)
 import Html.Attributes exposing (id, class, classList, style)
 import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
-import General.ProgressBar
-import Statistics.SeriesList
 import Models exposing (Model, Settings, RatingFilters, SeriesData, CountData, Count, emptyCount)
 import Utils.Common as Common
 import Utils.Constants as Constants
 import Round
+
+import General.ProgressBar
+import Statistics.SeriesList
 
 
 tempSeriesList : SeriesData

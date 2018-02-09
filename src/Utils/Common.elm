@@ -47,7 +47,9 @@ setRole : String -> Attribute msg
 setRole value =
   attribute "role" value
 
-
+setIcon : String -> Attribute Msg
+setIcon str =
+    attribute "icon" str
 
 calculateTotalOfValues : CountData -> Int
 calculateTotalOfValues list =
