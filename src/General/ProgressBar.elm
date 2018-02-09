@@ -1,7 +1,7 @@
 module General.ProgressBar exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, style, title, attribute)
+import Html.Attributes exposing (class, classList, style, title, attribute)
 import Msgs exposing(Msg)
 import Models exposing(CountData, Count)
 import Utils.Common exposing (divide)
@@ -26,16 +26,27 @@ viewProgressBar total values =
 
 viewProgressSegment : Int -> Count -> Html Msg
 viewProgressSegment total pair =
-  div [ class ("percentage-breakdown__bar tooltip-bottom" ++ " " ++ pair.key)
-      , style [("width", (getPercentage pair.value total))]
+  let
+    percentageString =
+      (toString (getPercentage pair.value total)) ++ "%"
+
+    percentage =
+      getPercentage pair.value total
+
+    isLongEnough =
+      percentage > 11
+
+  in
+  div [ class "percentage-breakdown__bar"
+      , classList [(pair.key, True), ("tooltip-bottom", isLongEnough), ("tooltip-right", not isLongEnough)]
+      , style [("width", percentageString)]
       , attribute "hover-data" ((toString pair.value) ++ " series " ++ pair.key)
       ]
       []
 
-getPercentage : Int -> Int -> String
+getPercentage : Int -> Int -> Float
 getPercentage value total =
-  (toString ((divide value total) * 100)) ++ "%"
-
+  (divide value total) * 100
 
 singleSegmentPercentage : CountData -> Int -> String
 singleSegmentPercentage values total =
@@ -45,9 +56,6 @@ singleSegmentPercentage values total =
 
     returnPercentage num =
       getPercentage num total
-       |> String.dropRight 1
-       |> String.toFloat
-       |> Result.withDefault 0
        |> Round.round 2
        |> appendSign
 

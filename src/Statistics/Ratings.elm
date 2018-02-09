@@ -97,7 +97,8 @@ viewSingleRating total rating =
 
   in
   div []
-      [ div [class "rating-label"] [text number]
+      [ div [class "rating-label"]
+            [text number]
       , General.ProgressBar.viewProgressBar total updatedRating
       ]
 
