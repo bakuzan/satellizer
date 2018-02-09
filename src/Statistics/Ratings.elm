@@ -93,13 +93,14 @@ viewSingleRating selectedRatings total rating =
       List.head rating
         |> Maybe.withDefault { key = "-", value = 0 }
 
-    number =
-      numberObj
-        |> .value
-
     numberString =
       numberObj
         |> getRatingText
+
+    number =
+      numberString
+       |> String.toInt
+       |> Result.withDefault 0
 
     isSelected =
       List.member number selectedRatings
