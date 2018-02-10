@@ -3,7 +3,6 @@
     "summary": "helpful summary of your project, less than 80 characters",
     "repository": "https://github.com/bakuzan/satellizer.git",
     "license": "BSD3",
-    "proxy": "http://localhost:9003/",
     "source-directories": [
         "src"
     ],
@@ -15,6 +14,7 @@
         "elm-lang/http": "1.0.0 <= v < 2.0.0",
         "elm-lang/navigation": "2.1.0 <= v < 3.0.0",
         "evancz/url-parser": "2.0.1 <= v < 3.0.0",
+        "jamesmacaulay/elm-graphql": "1.8.0 <= v < 2.0.0",
         "krisajenkins/remotedata": "4.3.0 <= v < 5.0.0",
         "myrho/elm-round": "1.0.2 <= v < 2.0.0"
     },

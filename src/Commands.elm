@@ -3,11 +3,16 @@ module Commands exposing (..)
 import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
-import Msgs exposing (Msg)
-import Models exposing (Settings, CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearDetail, HistoryYearData, HistoryYear)
 import RemoteData
-import Utils.Common as Common
+import GraphQL.Client.Http as GraphQLClient
+import GraphQL.Request.Builder as GraphQLBuilder
+import Task exposing (Task)
 
+import Msgs exposing (Msg)
+import Models exposing (Settings, CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearDetail, HistoryYearData, HistoryYear, SeriesData)
+
+import Utils.Common as Common
+import Utils.Graphql as Graphql
 
 -- Status counts
 
@@ -152,3 +157,20 @@ historyYearDecoder =
     |> required "highest" Decode.int
     |> required "lowest" Decode.int
     |> required "mode" Decode.int
+
+
+-- Graphql Queries
+
+sendGraphqlQueryRequest : GraphQLBuilder.Request GraphQLBuilder.Query a -> Task GraphQLClient.Error a
+sendGraphqlQueryRequest request =
+    GraphQLClient.sendQuery "/" request
+
+seriesQueryRequest : String -> String -> List Int -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesData
+seriesQueryRequest contentType searchText selectedRatings =
+    Graphql.itemQuery contentType
+        |> GraphQLBuilder.request { search = searchText, ratings = selectedRatings }
+
+sendSeriesRatingsQuery : String -> String -> List Int -> Cmd Msg
+sendSeriesRatingsQuery contentType searchText selectedRatings =
+    sendGraphqlQueryRequest (seriesQueryRequest contentType searchText selectedRatings)
+        |> Task.attempt Msgs.ReceiveSeriesRatingsResponse

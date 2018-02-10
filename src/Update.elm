@@ -3,7 +3,7 @@ module Update exposing (..)
 import Routing exposing (parseLocation)
 import Msgs exposing (Msg)
 import Models exposing (Model, emptyHistoryYearDetail)
-import Commands exposing (fetchHistoryData, fetchStatusData, fetchRatingData, fetchHistoryDetailData, fetchHistoryYearData)
+import Commands
 import RemoteData
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -46,10 +46,10 @@ update msg model =
 
         callApi =
           if name == "History"
-            then (fetchHistoryData settings)
+            then (Commands.fetchHistoryData settings)
             else
               if name == "Ratings"
-                then (fetchRatingData settings)
+                then (Commands.fetchRatingData settings)
                 else Cmd.none
 
       in
@@ -101,7 +101,7 @@ update msg model =
          | historyDetail = RemoteData.Loading
          , historyYear = RemoteData.Loading
          , settings = updatedSettings
-         }, fetchStatusData updatedSettings)
+         }, Commands.fetchStatusData updatedSettings)
 
     Msgs.UpdateBreakdownType breakdown ->
       let
@@ -120,7 +120,7 @@ update msg model =
         | historyDetail = RemoteData.Loading
         , historyYear = RemoteData.Loading
         , settings = updatedSettings
-        }, (fetchHistoryData updatedSettings))
+        }, (Commands.fetchHistoryData updatedSettings))
 
     Msgs.DisplayHistoryDetail datePart ->
       let
@@ -131,8 +131,8 @@ update msg model =
 
         fetchHistoryPartition =
           if (String.contains "-" datePart) == True
-            then (fetchHistoryDetailData updatedSettings)
-            else (fetchHistoryYearData updatedSettings)
+            then (Commands.fetchHistoryDetailData updatedSettings)
+            else (Commands.fetchHistoryYearData updatedSettings)
 
       in
       ( { model
@@ -196,7 +196,7 @@ update msg model =
       in
       ( { model
         | settings = updatedSettings
-        } , fetchStatusData updatedSettings)
+        } , Commands.fetchStatusData updatedSettings)
 
     Msgs.UpdateContentType contentType ->
       let
@@ -217,7 +217,7 @@ update msg model =
       in
       ( { model
         | settings = updatedSettings
-        } , fetchStatusData updatedSettings)
+        } , Commands.fetchStatusData updatedSettings)
 
     Msgs.UpdateRequireKey required ->
       let
@@ -238,10 +238,13 @@ update msg model =
             | searchText = txt
             }
 
+          fetchSeriesRatings =
+            Commands.sendSeriesRatingsQuery model.settings.contentType txt ratingsFilters.ratings
+
       in
       ( { model
         | ratingsFilters = updatedFilters
-        }, Cmd.none)
+        }, fetchSeriesRatings)
 
     Msgs.ToggleRatingFilter rating ->
       let
@@ -255,10 +258,23 @@ update msg model =
             | ratings = updatedRatings
             }
 
+          fetchSeriesRatings =
+            Commands.sendSeriesRatingsQuery model.settings.contentType ratingsFilters.searchText updatedRatings
+
       in
       ( { model
         | ratingsFilters = updatedFilters
-        }, Cmd.none)
+        }, fetchSeriesRatings)
+
+    Msgs.ReceiveSeriesRatingsResponse seriesList ->
+      let
+        extractedSeriesList =
+            Result.withDefault [] seriesList
+
+      in
+        ( { model
+          | seriesList = extractedSeriesList
+          }, Cmd.none )
 
     _ ->
       ( model, Cmd.none )

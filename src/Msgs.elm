@@ -1,9 +1,10 @@
 module Msgs exposing (..)
 
 
-import Models exposing (CountData, HistoryDetailData, HistoryYearDetail)
+import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, SeriesData)
 import Navigation exposing (Location)
 import RemoteData exposing (WebData)
+import GraphQL.Client.Http as GraphQLClient
 
 
 type Msg
@@ -24,3 +25,4 @@ type Msg
     | UpdateRequireKey Bool
     | UpdateRatingSearch String
     | ToggleRatingFilter Int
+    | ReceiveSeriesRatingsResponse (Result GraphQLClient.Error SeriesData)

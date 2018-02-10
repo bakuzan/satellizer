@@ -18,9 +18,7 @@ viewRender model =
     RemoteData.NotAsked -> []
     RemoteData.Loading -> []
     RemoteData.Failure err -> []
-
     RemoteData.Success model -> model
-
 
 view : Model -> Html Msg
 view model =
@@ -44,7 +42,7 @@ view model =
       viewRender model.rating
 
     seriesList =
-      viewRender model.seriesList
+      model.seriesList
 
   in
     div [ class "flex-column flex-grow" ]

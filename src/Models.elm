@@ -3,7 +3,6 @@ module Models exposing (..)
 import RemoteData exposing (WebData)
 
 
-
 type alias Flags =
   { contentType: String
   , isAdult: Bool
@@ -16,7 +15,7 @@ type alias Model =
     , historyDetail: WebData HistoryDetailData
     , historyYear: WebData HistoryYearData
     , rating: WebData CountData
-    , seriesList: WebData SeriesData
+    , seriesList: SeriesData
     , route: Route
     , settings: Settings
     , ratingsFilters: RatingFilters
@@ -52,7 +51,7 @@ initialModel flags route =
     , historyDetail = RemoteData.Loading
     , historyYear = RemoteData.Loading
     , rating = RemoteData.Loading
-    , seriesList = RemoteData.Loading
+    , seriesList = []
     , route = route
     , settings =
       { activeTab = "History"
