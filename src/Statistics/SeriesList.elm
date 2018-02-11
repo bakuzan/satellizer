@@ -15,7 +15,7 @@ view settings filters seriesList =
   let
     ratingCount =
       List.length filters.ratings
-      
+
     seriesCount =
       List.length seriesList
 
@@ -30,7 +30,7 @@ view settings filters seriesList =
   in
   div [id "series-by-ratings-container"]
       [ General.ClearableInput.view "search" "search" filters.searchText
-      , div [class "flex"]
+      , div [class "flex-row"]
             [ viewSelectedRatings filters.ratings
             , viewClearRatings ratingCount
             ]

@@ -260,13 +260,24 @@ update msg model =
             | ratings = []
             }
 
-          fetchSeriesRatings =
-            Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText []
+          shouldFetch =
+            (String.length model.ratingsFilters.searchText) > 0
+
+          updatedSeriesList =
+            if shouldFetch
+              then model.seriesList
+              else []
+            
+          maybeFetchSeriesRatings =
+            if shouldFetch
+              then Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText []
+              else Cmd.none
 
       in
       ( { model
-        | ratingsFilters = updatedFilters
-        }, fetchSeriesRatings)
+        | seriesList = updatedSeriesList
+        , ratingsFilters = updatedFilters
+        }, maybeFetchSeriesRatings)
 
     Msgs.ToggleRatingFilter rating ->
       let
