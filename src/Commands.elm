@@ -163,12 +163,17 @@ historyYearDecoder =
 
 sendGraphqlQueryRequest : GraphQLBuilder.Request GraphQLBuilder.Query a -> Task GraphQLClient.Error a
 sendGraphqlQueryRequest request =
-    GraphQLClient.sendQuery "/" request
+    GraphQLClient.sendQuery "/graphql" request
 
 seriesQueryRequest : String -> String -> List Int -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesData
 seriesQueryRequest contentType searchText selectedRatings =
+  let
+    ratingsList =
+      List.map toFloat selectedRatings
+        
+  in
     Graphql.itemQuery contentType
-        |> GraphQLBuilder.request { search = searchText, ratings = selectedRatings }
+        |> GraphQLBuilder.request { search = searchText, ratings = ratingsList }
 
 sendSeriesRatingsQuery : String -> String -> List Int -> Cmd Msg
 sendSeriesRatingsQuery contentType searchText selectedRatings =
