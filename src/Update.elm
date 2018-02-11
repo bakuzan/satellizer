@@ -53,7 +53,14 @@ update msg model =
                 else Cmd.none
 
       in
-      ( { model | status = response }, callApi )
+      ( { model
+        | status = response
+        , seriesList = []
+        , ratingsFilters =
+          { searchText = ""
+          , ratings = []
+          }
+        }, callApi )
 
     Msgs.OnFetchHistory response ->
       ( { model | history = response }, Cmd.none )
