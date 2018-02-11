@@ -3,6 +3,7 @@ module Statistics.SeriesList exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (id, class, href, type_, title)
 import Html.Events exposing (onClick)
+import Ordering exposing (Ordering)
 import Msgs exposing (Msg)
 import Models exposing (Model, Settings, RatingFilters, SeriesData, Series)
 
@@ -68,11 +69,22 @@ viewSelectedRating rating =
   ] []
   ]
 
+seriesOrdering : Ordering Series
+seriesOrdering =
+  Ordering.byField .rating
+    |> Ordering.reverse
+    |> Ordering.breakTiesWith (Ordering.byField .name)
+
 viewSeriesList : Settings -> SeriesData -> Html Msg
 viewSeriesList settings seriesList =
+  let
+    sortedSeriesList =
+      List.sortWith seriesOrdering seriesList
+
+  in
   ul [id "series-by-ratings-list", class "list column one"]
     ([] ++
-     List.map (viewSeriesEntry settings.contentType) seriesList)
+     List.map (viewSeriesEntry settings.contentType) sortedSeriesList)
 
 viewSeriesEntry : String -> Series -> Html Msg
 viewSeriesEntry contentType entry =
