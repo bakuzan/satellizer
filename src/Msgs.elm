@@ -24,5 +24,6 @@ type Msg
     | UpdateContentType String
     | UpdateRequireKey Bool
     | UpdateRatingSearch String
+    | ClearSelectedRatings
     | ToggleRatingFilter Int
     | ReceiveSeriesRatingsResponse (Result GraphQLClient.Error SeriesData)

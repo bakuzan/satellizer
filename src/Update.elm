@@ -239,7 +239,22 @@ update msg model =
             }
 
           fetchSeriesRatings =
-            Commands.sendSeriesRatingsQuery model.settings.contentType txt ratingsFilters.ratings
+            Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult txt ratingsFilters.ratings
+
+      in
+      ( { model
+        | ratingsFilters = updatedFilters
+        }, fetchSeriesRatings)
+
+    Msgs.ClearSelectedRatings ->
+      let
+          updatedFilters =
+            { ratingsFilters
+            | ratings = []
+            }
+
+          fetchSeriesRatings =
+            Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText []
 
       in
       ( { model
@@ -259,7 +274,7 @@ update msg model =
             }
 
           fetchSeriesRatings =
-            Commands.sendSeriesRatingsQuery model.settings.contentType ratingsFilters.searchText updatedRatings
+            Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText updatedRatings
 
       in
       ( { model

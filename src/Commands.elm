@@ -165,17 +165,17 @@ sendGraphqlQueryRequest : GraphQLBuilder.Request GraphQLBuilder.Query a -> Task 
 sendGraphqlQueryRequest request =
     GraphQLClient.sendQuery "/graphql" request
 
-seriesQueryRequest : String -> String -> List Int -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesData
-seriesQueryRequest contentType searchText selectedRatings =
+seriesQueryRequest : String -> Bool -> String -> List Int -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesData
+seriesQueryRequest contentType isAdult searchText selectedRatings =
   let
     ratingsList =
       List.map toFloat selectedRatings
-        
+
   in
     Graphql.itemQuery contentType
-        |> GraphQLBuilder.request { search = searchText, ratings = ratingsList }
+        |> GraphQLBuilder.request { isAdult = isAdult, search = searchText, ratings = ratingsList }
 
-sendSeriesRatingsQuery : String -> String -> List Int -> Cmd Msg
-sendSeriesRatingsQuery contentType searchText selectedRatings =
-    sendGraphqlQueryRequest (seriesQueryRequest contentType searchText selectedRatings)
+sendSeriesRatingsQuery : String -> Bool -> String -> List Int -> Cmd Msg
+sendSeriesRatingsQuery contentType isAdult searchText selectedRatings =
+    sendGraphqlQueryRequest (seriesQueryRequest contentType isAdult searchText selectedRatings)
         |> Task.attempt Msgs.ReceiveSeriesRatingsResponse

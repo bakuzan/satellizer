@@ -13,45 +13,6 @@ import General.ProgressBar
 import Statistics.SeriesList
 
 
--- tempSeriesList : SeriesData
--- tempSeriesList =
---     [
---     { id = "1"
---     , name = "Baccano"
---     , rating = 8
---     },
---     { id = "2"
---     , name = "snow queen"
---     , rating = 7
---     },
---     { id = "3"
---     , name = "durarara"
---     , rating = 9
---     }
---     ]
---
--- tempRatingList : CountData
--- tempRatingList =
---     [
---     { key = "10"
---     , value = 4
---     },
---     { key = "8"
---     , value = 23
---     },
---     { key = "6"
---     , value = 64
---     },
---     { key = "4"
---     , value = 27
---     },
---     { key = "0"
---     , value = 40
---     }
---     ]
-
-
-
 view : Settings -> RatingFilters -> CountData -> SeriesData -> Html Msg
 view settings filters ratingList seriesList =
   let

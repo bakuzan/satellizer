@@ -49,6 +49,11 @@
     content: "\2573";
   }
 
+  #series-rating-title {
+    padding: 5px;
+    margin: 10px 5px;
+    text-align: left;
+  }
   #series-by-ratings-list {
     min-width: 200px;
     max-width: 75%;
@@ -56,9 +61,13 @@
     li {
       display: flex;
       justify-content: space-between;
+      padding: 0 10px;
     }
   }
   #selected-ratings {
+    min-width: 200px;
+    max-width: 75%;
+
     .input-chip {
       height: 32px;
       font-family: "Roboto","Helvetica","Arial",sans-serif;
@@ -67,7 +76,7 @@
       border: 0;
       border-radius: 16px;
       background-color: #dedede;
-      display: inline-block;
+      display: flex;
       color: rgba(0, 0, 0, 0.87);
       margin: 1px 0;
       font-size: 0;

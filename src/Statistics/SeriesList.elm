@@ -12,11 +12,43 @@ import General.NewTabLink
 
 view : Settings -> RatingFilters -> SeriesData -> Html Msg
 view settings filters seriesList =
+  let
+    ratingCount =
+      List.length filters.ratings
+      
+    seriesCount =
+      List.length seriesList
+
+    seriesCountTitle =
+      "Showing " ++ (toString seriesCount) ++ " series"
+
+    renderTitle =
+      if seriesCount < 1
+        then text ""
+        else h4 [id "series-ratings-title"] [text seriesCountTitle]
+
+  in
   div [id "series-by-ratings-container"]
       [ General.ClearableInput.view "search" "search" filters.searchText
-      , viewSelectedRatings filters.ratings
+      , div [class "flex"]
+            [ viewSelectedRatings filters.ratings
+            , viewClearRatings ratingCount
+            ]
+      , renderTitle
       , viewSeriesList settings seriesList
       ]
+
+viewClearRatings : Int -> Html Msg
+viewClearRatings ratingCount =
+    if ratingCount < 1
+      then text ""
+      else button [ type_ "button"
+                  , id "ckear-selected"
+                  , class "button ripple"
+                  , onClick Msgs.ClearSelectedRatings
+                  ]
+                  [text "Clear all ratings"]
+
 
 viewSelectedRatings : List Int -> Html Msg
 viewSelectedRatings selectedRatings =

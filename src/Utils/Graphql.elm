@@ -7,17 +7,21 @@ import GraphQL.Request.Builder.Variable as Var
 import Models exposing (SeriesData, Series)
 
 
-itemQuery : String -> Document Query SeriesData { vars | search: String, ratings : List Float }
+itemQuery : String -> Document Query SeriesData { vars | isAdult: Bool, search: String, ratings: List Float }
 itemQuery contentType =
     let
+        isAdultVar =
+          Var.required "isAdult" .isAdult Var.bool
+
         searchVar =
-            Var.required "search" .search Var.string
+          Var.required "search" .search Var.string
 
         ratingsVar =
-            Var.required "ratings" .ratings (Var.list Var.float)
+          Var.required "ratings" .ratings (Var.list Var.float)
 
         filters =
-          [ ("search", Arg.variable searchVar)
+          [ ("isAdult", Arg.variable isAdultVar)
+          , ("search", Arg.variable searchVar)
           , ("ratingIn", Arg.variable ratingsVar)
           ]
 
