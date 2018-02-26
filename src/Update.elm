@@ -275,7 +275,7 @@ update msg model =
             }
 
           fetchRepeatedSeriesList =
-            Cmd.none
+            Commands.sendRepeatedSeriesQuery model.settings.contentType model.settings.isAdult txt
 
       in
       ( { model

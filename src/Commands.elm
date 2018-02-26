@@ -1,16 +1,15 @@
 module Commands exposing (..)
 
 import Http
-import Json.Decode as Decode
-import Json.Decode.Pipeline exposing (decode, required)
 import RemoteData
 import GraphQL.Client.Http as GraphQLClient
 import GraphQL.Request.Builder as GraphQLBuilder
 import Task exposing (Task)
 
 import Msgs exposing (Msg)
-import Models exposing (Settings, CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearDetail, HistoryYearData, HistoryYear, SeriesData)
+import Models exposing (Settings, CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearDetail, HistoryYearData, HistoryYear, SeriesData, RepeatedSeriesData)
 
+import Utils.Decoders as Decoders
 import Utils.Common as Common
 import Utils.Graphql as Graphql
 
@@ -18,7 +17,7 @@ import Utils.Graphql as Graphql
 
 fetchStatusData : Settings -> Cmd Msg
 fetchStatusData settings =
-    Http.get (fetchStatusUrl settings) countDataDecoder
+    Http.get (fetchStatusUrl settings) Decoders.countDataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchStatus
 
@@ -32,7 +31,7 @@ fetchStatusUrl settings =
 
 fetchRatingData : Settings -> Cmd Msg
 fetchRatingData settings =
-    Http.get (fetchRatingUrl  settings) countDataDecoder
+    Http.get (fetchRatingUrl  settings) Decoders.countDataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchRating
 
@@ -46,7 +45,7 @@ fetchRatingUrl settings =
 
 fetchHistoryData : Settings -> Cmd Msg
 fetchHistoryData settings =
-    Http.get (fetchHistoryUrl settings) countDataDecoder
+    Http.get (fetchHistoryUrl settings) Decoders.countDataDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msgs.OnFetchHistory
 
@@ -60,7 +59,7 @@ fetchHistoryUrl settings =
 
 fetchHistoryDetailData : Settings -> Cmd Msg
 fetchHistoryDetailData settings =
-  Http.get (fetchHistoryDetailUrl settings) historyDetailDataDecoder
+  Http.get (fetchHistoryDetailUrl settings) Decoders.historyDetailDataDecoder
       |> RemoteData.sendRequest
       |> Cmd.map Msgs.OnFetchHistoryDetail
 
@@ -74,7 +73,7 @@ fetchHistoryDetailUrl settings =
 
 fetchHistoryYearData : Settings -> Cmd Msg
 fetchHistoryYearData settings =
-  Http.get (fetchHistoryYearUrl settings) historyYearDetailDecoder
+  Http.get (fetchHistoryYearUrl settings) Decoders.historyYearDetailDecoder
       |> RemoteData.sendRequest
       |> Cmd.map Msgs.OnFetchHistoryYear
 
@@ -97,74 +96,13 @@ constructUrl urlType settings =
       |> Common.replace ":isAdult" (toString settings.isAdult)
 
 
--- Decoding models
-
-countDataDecoder : Decode.Decoder CountData
-countDataDecoder =
-  Decode.list countDecoder
-
-
-countDecoder : Decode.Decoder Count
-countDecoder =
-    decode Count
-      |> required "key" Decode.string
-      |> required "value" Decode.int
-
-
-historyDetailDataDecoder : Decode.Decoder HistoryDetailData
-historyDetailDataDecoder =
-  Decode.list historyDetailDecoder
-
-
-historyDetailDecoder : Decode.Decoder HistoryDetail
-historyDetailDecoder =
-  decode HistoryDetail
-    |> required "_id" Decode.string
-    |> required "title" Decode.string
-    |> required "episodeStatistics" episodeStatisticsDecoder
-    |> required "rating" Decode.int
-    |> required "season" Decode.string
-
-
-episodeStatisticsDecoder : Decode.Decoder EpisodeStatistic
-episodeStatisticsDecoder =
-  decode EpisodeStatistic
-    |> required "_id" Decode.string
-    |> required "average" Decode.float
-    |> required "highest" Decode.int
-    |> required "lowest" Decode.int
-    |> required "mode" Decode.int
-
-
-historyYearDetailDecoder : Decode.Decoder HistoryYearDetail
-historyYearDetailDecoder =
-    decode HistoryYearDetail
-      |> required "counts" historyYearDataDecoder
-      |> required "detail" historyDetailDataDecoder
-
-
-historyYearDataDecoder : Decode.Decoder HistoryYearData
-historyYearDataDecoder =
-  Decode.list historyYearDecoder
-
-
-historyYearDecoder : Decode.Decoder HistoryYear
-historyYearDecoder =
-  decode HistoryYear
-    |> required "_id" Decode.string
-    |> required "value" Decode.int
-    |> required "average" Decode.float
-    |> required "highest" Decode.int
-    |> required "lowest" Decode.int
-    |> required "mode" Decode.int
-
-
 -- Graphql Queries
 
 sendGraphqlQueryRequest : GraphQLBuilder.Request GraphQLBuilder.Query a -> Task GraphQLClient.Error a
 sendGraphqlQueryRequest request =
     GraphQLClient.sendQuery "/graphql" request
 
+-- Ratings Series
 seriesQueryRequest : String -> Bool -> String -> List Int -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesData
 seriesQueryRequest contentType isAdult searchText selectedRatings =
   let
@@ -179,3 +117,15 @@ sendSeriesRatingsQuery : String -> Bool -> String -> List Int -> Cmd Msg
 sendSeriesRatingsQuery contentType isAdult searchText selectedRatings =
     sendGraphqlQueryRequest (seriesQueryRequest contentType isAdult searchText selectedRatings)
         |> Task.attempt Msgs.ReceiveSeriesRatingsResponse
+
+
+-- Repeated series
+repeatedSeriesQueryRequest : String -> Bool -> String -> GraphQLBuilder.Request GraphQLBuilder.Query RepeatedSeriesData
+repeatedSeriesQueryRequest contentType isAdult searchText =
+    Graphql.repeatedItemQuery contentType
+        |> GraphQLBuilder.request { isAdult = isAdult, search = searchText }
+
+sendRepeatedSeriesQuery : String -> Bool -> String -> Cmd Msg
+sendRepeatedSeriesQuery contentType isAdult searchText =
+    sendGraphqlQueryRequest (repeatedSeriesQueryRequest contentType isAdult searchText)
+        |> Task.attempt Msgs.ReceiveRepeatedSeriesResponse
