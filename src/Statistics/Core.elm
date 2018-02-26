@@ -7,6 +7,7 @@ import General.ProgressBar
 import General.Tabs exposing (..)
 import Statistics.HistoryTable
 import Statistics.Ratings
+import Statistics.Repeated
 import Models exposing (Model, CountData)
 import RemoteData exposing (WebData)
 import Utils.Common as Common
@@ -49,6 +50,7 @@ view model =
         [ viewRender status |> viewStatus
         , viewTabContainer activeTab [("History", [Statistics.HistoryTable.view model.settings history detail yearDetail])
                                      ,("Ratings", [Statistics.Ratings.view model.settings model.ratingsFilters ratings seriesList])
+                                     ,("Repeated",[Statistics.Repeated.view model.settings model.repeatedFilters model.repeatedList])
                                      ]
         ]
 

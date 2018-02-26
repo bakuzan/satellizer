@@ -18,6 +18,8 @@ update msg model =
     ratingsFilters =
       model.ratingsFilters
 
+    repeatedFilters =
+      model.repeatedFilters
 
     getBreakdownType contentType =
       if contentType == "anime"
@@ -59,6 +61,9 @@ update msg model =
         , ratingsFilters =
           { searchText = ""
           , ratings = []
+          }
+        , repeatedFilters =
+          { searchText = ""
           }
         }, callApi )
 
@@ -238,6 +243,15 @@ update msg model =
         | settings = updatedSettings
         }, Cmd.none)
 
+    Msgs.UpdateTextInput fieldName txt ->
+      case fieldName of
+        "search" ->
+          update (Msgs.UpdateRatingSearch txt) model
+        "repeatedSearch" ->
+          update (Msgs.UpdateRepeatedSearch txt) model
+        _->
+          ( model, Cmd.none )
+
     Msgs.UpdateRatingSearch txt ->
       let
           updatedFilters =
@@ -253,6 +267,21 @@ update msg model =
         | ratingsFilters = updatedFilters
         }, fetchSeriesRatings)
 
+    Msgs.UpdateRepeatedSearch txt ->
+      let
+          updatedFilters =
+            { repeatedFilters
+            | searchText = txt
+            }
+
+          fetchRepeatedSeriesList =
+            Cmd.none
+
+      in
+      ( { model
+        | repeatedFilters = updatedFilters
+        }, fetchRepeatedSeriesList)
+
     Msgs.ClearSelectedRatings ->
       let
           updatedFilters =
@@ -267,7 +296,7 @@ update msg model =
             if shouldFetch
               then model.seriesList
               else []
-            
+
           maybeFetchSeriesRatings =
             if shouldFetch
               then Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText []
@@ -307,6 +336,16 @@ update msg model =
       in
         ( { model
           | seriesList = extractedSeriesList
+          }, Cmd.none )
+
+    Msgs.ReceiveRepeatedSeriesResponse repeatedSeriesList ->
+      let
+        extractedSeriesList =
+            Result.withDefault [] repeatedSeriesList
+
+      in
+        ( { model
+          | repeatedList = extractedSeriesList
           }, Cmd.none )
 
     _ ->

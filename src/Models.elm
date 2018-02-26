@@ -16,9 +16,11 @@ type alias Model =
     , historyYear: WebData HistoryYearData
     , rating: WebData CountData
     , seriesList: SeriesData
+    , repeatedList: RepeatedSeriesData
     , route: Route
     , settings: Settings
     , ratingsFilters: RatingFilters
+    , repeatedFilters: RepeatedFilters
     }
 
 
@@ -43,6 +45,9 @@ type alias RatingFilters =
   , ratings: List Int
   }
 
+type alias RepeatedFilters =
+  { searchText: String
+  }
 
 initialModel : Flags -> Route -> Model
 initialModel flags route =
@@ -52,6 +57,7 @@ initialModel flags route =
     , historyYear = RemoteData.Loading
     , rating = RemoteData.Loading
     , seriesList = []
+    , repeatedList = []
     , route = route
     , settings =
       { activeTab = "History"
@@ -68,6 +74,9 @@ initialModel flags route =
     , ratingsFilters =
       { searchText = ""
       , ratings = []
+      }
+    , repeatedFilters =
+      { searchText = ""
       }
     }
 
@@ -162,6 +171,17 @@ type alias Series =
 type alias SeriesData =
   List Series
 
+type alias RepeatedSeries =
+  { id: String
+  , name: String
+  , timesCompleted: Int
+  , rating: Int
+  , isOwned: Bool
+  , lastRepeatDate: String
+  }
+
+type alias RepeatedSeriesData =
+  List RepeatedSeries
 
 -- Constant models
 
