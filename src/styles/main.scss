@@ -21,11 +21,16 @@
     right: 0;
   }
 
-  #ratings-tab {
+  #ratings-tab,
+  #repeated-tab {
     display: flex;
     width: 100%;
     padding: 10px 5px;
   }
+  #repeated-tab {
+    flex-flow: column;
+  }
+
   #rating-container,
   #series-by-ratings-container {
     display: flex;
@@ -54,6 +59,7 @@
     margin: 10px 5px;
     text-align: left;
   }
+
   #series-by-ratings-list {
     min-width: 200px;
     max-width: 75%;
@@ -64,6 +70,40 @@
       padding: 0 10px;
     }
   }
+
+  #repeated-series-table {
+    min-width: 400px;
+    max-width: 75%;
+
+    td.left-align,
+    th.left-align {
+      text-align: left;
+    }
+    td.right-align,
+    th.right-align {
+      text-align: right;
+    }
+
+    .is-owned {
+      display: inline-block;
+      width: 20px;
+      height: 100%;
+      line-height: 1;
+
+      &::before {
+        content: "";
+        font-size: 0.9rem;
+      }
+      &.owned::before {
+        content: "\2713";
+      }
+      &.not-owned::before {
+        content: "\2573";
+      }
+    }
+
+  }
+
   #selected-ratings {
     flex: 1 1 75%;
     min-width: 200px;

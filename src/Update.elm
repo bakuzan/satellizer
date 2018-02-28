@@ -52,7 +52,10 @@ update msg model =
             else
               if name == "Ratings"
                 then (Commands.fetchRatingData settings)
-                else Cmd.none
+                else
+                  if name == "Repeated"
+                    then (Commands.sendRepeatedSeriesQuery settings.contentType settings.isAdult "")
+                    else Cmd.none
 
       in
       ( { model

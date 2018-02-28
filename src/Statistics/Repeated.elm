@@ -1,7 +1,7 @@
 module Statistics.Repeated exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (id, class, href)
+import Html.Attributes exposing (id, class, classList, href, title)
 import Ordering exposing (Ordering)
 import Msgs exposing (Msg)
 import Models exposing (Model, Settings, RepeatedFilters, RepeatedSeriesData, RepeatedSeries)
@@ -45,19 +45,62 @@ viewSeriesList settings seriesList =
       List.sortWith seriesOrdering seriesList
 
   in
-  ul [id "repeated-series-list", class "list column one"]
-    ([] ++
-     List.map (viewSeriesEntry settings.contentType) sortedSeriesList)
+  table [id "repeated-series-table"]
+        [ thead []
+                [ tr [] [ th [class "left-align"]
+                             [ strong []
+                                      [text "Title"]
+                             ]
+                        , th [class "right-align"]
+                             [ strong []
+                                      [text "Rating"]
+                             ]
+                        , th [class "right-align"]
+                             [ strong []
+                                      [text "Repeats"]
+                             ]
+                        , th [class "right-align"]
+                             [ strong []
+                                      [text "Last repeat"]
+                             ]
+                        ]
+                ]
+        , tbody []
+               ([] ++
+               List.map (viewSeriesEntry settings.contentType) sortedSeriesList)
+        ]
 
 viewSeriesEntry : String -> RepeatedSeries -> Html Msg
 viewSeriesEntry contentType entry =
   let
     seriesLink =
       "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ entry.id
+
+    lastRepeatDate =
+      List.head entry.lastRepeatDate
+        |> Maybe.withDefault "Unknown"
+
+    isOwnedTitle =
+      if entry.isOwned then "Owned" else "Not owned"
+
   in
-  li []
-     [ General.NewTabLink.view [href seriesLink] [text entry.name]
-     , span [] [text (toString entry.timesCompleted)]
-     , span [] [text (toString entry.isOwned)]
-     , span [] [text (toString entry.lastRepeatDate)]
+  tr [id entry.id, class "repeated-series-table-row"]
+     [ td [class "left-align"]
+          [ div [ class "is-owned"
+                , classList [("owned", entry.isOwned), ("not-owned", not entry.isOwned)]
+                , title isOwnedTitle
+                ]
+                []
+          , General.NewTabLink.view [href seriesLink, title ("View " ++ entry.name ++ " details")]
+                                    [text entry.name]
+          ]
+     , td [class "right-align"]
+          [ span [] [text (toString entry.rating)]
+          ]
+     , td [class "right-align"]
+          [ span [] [text (toString entry.timesCompleted)]
+          ]
+     , td [class "right-align"]
+          [ span [] [text lastRepeatDate]
+          ]
      ]

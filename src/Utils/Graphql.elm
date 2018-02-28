@@ -4,7 +4,7 @@ import GraphQL.Request.Builder exposing (..)
 import GraphQL.Request.Builder.Arg as Arg
 import GraphQL.Request.Builder.Variable as Var
 
-import Models exposing (SeriesData, Series, RepeatedSeriesData, RepeatedSeries, SeriesHistory)
+import Models exposing (SeriesData, Series, RepeatedSeriesData, RepeatedSeries)
 
 
 itemQuery : String -> Document Query SeriesData { vars | isAdult: Bool, search: String, ratings: List Float }
@@ -72,11 +72,7 @@ repeatedItemQuery contentType =
                           [ ("limit", Arg.int 1)
                           , ("sort", Arg.enum "DATE_DESC")
                           ]
-                          (list (object SeriesHistory
-                                  |> with (field "date" [] int)
-                                  |> with (field "dateStr" [] string)
-                                )
-                          )
+                          (list (extract (field "dateStr" [] string)))
                         )
                       )
 
