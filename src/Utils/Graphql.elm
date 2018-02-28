@@ -4,7 +4,7 @@ import GraphQL.Request.Builder exposing (..)
 import GraphQL.Request.Builder.Arg as Arg
 import GraphQL.Request.Builder.Variable as Var
 
-import Models exposing (SeriesData, Series, RepeatedSeriesData, RepeatedSeries)
+import Models exposing (SeriesData, Series, RepeatedSeriesData, RepeatedSeries, SeriesHistory)
 
 
 itemQuery : String -> Document Query SeriesData { vars | isAdult: Bool, search: String, ratings: List Float }
@@ -66,8 +66,19 @@ repeatedItemQuery contentType =
               |> with (field "title" [] string)
               |> with (field "timesCompleted" [] int)
               |> with (field "rating" [] int)
-              |> with (field "isOwned" [] bool)
-              |> with (field "lastRepeatDate" [] string)
+              |> with (aliasAs "isOwned" (field "owned" [] bool))
+              |> with (aliasAs "lastRepeatDate"
+                        (field "historyList"
+                          [ ("limit", Arg.int 1)
+                          , ("sort", Arg.enum "DATE_DESC")
+                          ]
+                          (list (object SeriesHistory
+                                  |> with (field "date" [] int)
+                                  |> with (field "dateStr" [] string)
+                                )
+                          )
+                        )
+                      )
 
         items =
             list item
@@ -75,7 +86,7 @@ repeatedItemQuery contentType =
         queryRoot =
             extract
                 (aliasAs "seriesList"
-                    (field (contentType ++ "Many")
+                    (field (contentType ++ "ManyRepeated")
                         [ ("filter", Arg.object filters)
                         ]
                         items

@@ -177,11 +177,16 @@ type alias RepeatedSeries =
   , timesCompleted: Int
   , rating: Int
   , isOwned: Bool
-  , lastRepeatDate: String
+  , lastRepeatDate: List SeriesHistory
   }
 
 type alias RepeatedSeriesData =
   List RepeatedSeries
+
+type alias SeriesHistory =
+  { date: Int
+  , dateStr: String
+  }
 
 -- Constant models
 
