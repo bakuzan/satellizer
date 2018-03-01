@@ -1,9 +1,12 @@
 module Update exposing (..)
 
 import Routing exposing (parseLocation)
+import Debounce
+
 import Msgs exposing (Msg)
 import Models exposing (Model, emptyHistoryYearDetail)
 import Commands
+import Debouncers
 import RemoteData
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -40,6 +43,17 @@ update msg model =
 
       in
         ( { model | route = newRoute }, Cmd.none )
+
+    Msgs.DebounceMsg msg ->
+        let
+            ( debounce, cmd ) =
+                Debounce.update
+                    Debouncers.debounceConfig
+                    (Debounce.takeLast Debouncers.saveSearchString)
+                    msg
+                    model.debounce
+        in
+        ( { model | debounce = debounce }, cmd )
 
     Msgs.OnFetchStatus response ->
       let
@@ -247,43 +261,38 @@ update msg model =
         }, Cmd.none)
 
     Msgs.UpdateTextInput fieldName txt ->
-      case fieldName of
-        "search" ->
-          update (Msgs.UpdateRatingSearch txt) model
-        "repeatedSearch" ->
-          update (Msgs.UpdateRepeatedSearch txt) model
-        _->
-          ( model, Cmd.none )
-
-    Msgs.UpdateRatingSearch txt ->
       let
-          updatedFilters =
+          ( debounce, cmd ) =
+              Debounce.push Debouncers.debounceConfig { name = fieldName, value = txt } model.debounce
+
+          isRatingInput =
+            fieldName == "search"
+
+          updatedRatingFilters =
             { ratingsFilters
-            | searchText = txt
+            | searchText = if isRatingInput then txt else ratingsFilters.searchText
             }
-
-          fetchSeriesRatings =
-            Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult txt ratingsFilters.ratings
-
-      in
-      ( { model
-        | ratingsFilters = updatedFilters
-        }, fetchSeriesRatings)
-
-    Msgs.UpdateRepeatedSearch txt ->
-      let
-          updatedFilters =
+          updatedReaptedFilters =
             { repeatedFilters
-            | searchText = txt
+            | searchText = if not isRatingInput then txt else repeatedFilters.searchText
             }
-
-          fetchRepeatedSeriesList =
-            Commands.sendRepeatedSeriesQuery model.settings.contentType model.settings.isAdult txt
 
       in
       ( { model
-        | repeatedFilters = updatedFilters
-        }, fetchRepeatedSeriesList)
+        | debounce = debounce
+        , ratingsFilters = updatedRatingFilters
+        , repeatedFilters = updatedReaptedFilters
+        }
+        , cmd )
+
+    Msgs.SaveTextInput fieldName fieldValue ->
+      let
+          cmd =
+            if fieldName == "search"
+              then Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult fieldValue ratingsFilters.ratings
+              else Commands.sendRepeatedSeriesQuery model.settings.contentType model.settings.isAdult fieldValue
+      in
+      ( model, cmd )
 
     Msgs.ClearSelectedRatings ->
       let

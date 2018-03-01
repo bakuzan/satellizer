@@ -2,6 +2,7 @@
   "name": "satellizer",
   "version": "1.0.0",
   "description": "statistics ui",
+  "proxy": "http://localhost:9003",
   "main": "index.js",
   "directories": {
     "test": "tests"

@@ -1,5 +1,6 @@
 module Models exposing (..)
 
+import Debounce exposing (Debounce)
 import RemoteData exposing (WebData)
 
 
@@ -8,9 +9,14 @@ type alias Flags =
   , isAdult: Bool
   }
 
+type alias InputField =
+  { name: String
+  , value: String
+  }
 
 type alias Model =
-    { status : WebData CountData
+    { debounce: Debounce InputField
+    , status : WebData CountData
     , history: WebData CountData
     , historyDetail: WebData HistoryDetailData
     , historyYear: WebData HistoryYearData
@@ -51,7 +57,8 @@ type alias RepeatedFilters =
 
 initialModel : Flags -> Route -> Model
 initialModel flags route =
-    { status = RemoteData.Loading
+    { debounce = Debounce.init
+    , status = RemoteData.Loading
     , history = RemoteData.Loading
     , historyDetail = RemoteData.Loading
     , historyYear = RemoteData.Loading

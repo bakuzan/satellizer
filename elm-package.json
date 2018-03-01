@@ -16,6 +16,7 @@
         "elm-lang/navigation": "2.1.0 <= v < 3.0.0",
         "evancz/url-parser": "2.0.1 <= v < 3.0.0",
         "jamesmacaulay/elm-graphql": "1.8.0 <= v < 2.0.0",
+        "jinjor/elm-debounce": "2.1.2 <= v < 3.0.0",
         "krisajenkins/remotedata": "4.3.0 <= v < 5.0.0",
         "matthewsj/elm-ordering": "1.1.0 <= v < 2.0.0",
         "myrho/elm-round": "1.0.2 <= v < 2.0.0"
