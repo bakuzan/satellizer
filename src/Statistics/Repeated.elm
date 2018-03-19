@@ -2,12 +2,12 @@ module Statistics.Repeated exposing (view)
 
 import Html exposing (..)
 import Html.Attributes exposing (id, class, classList, href, title)
-import Ordering exposing (Ordering)
 import Msgs exposing (Msg)
 import Models exposing (Model, Settings, RepeatedFilters, RepeatedSeriesData, RepeatedSeries)
 
 import General.ClearableInput
 import General.NewTabLink
+import Utils.Sorters as Sorters
 
 
 view : Settings -> RepeatedFilters -> RepeatedSeriesData -> Html Msg
@@ -32,17 +32,11 @@ view settings filters repeatedList =
         ]
 
 
-seriesOrdering : Ordering RepeatedSeries
-seriesOrdering =
-  Ordering.byField .timesCompleted
-    |> Ordering.reverse
-    |> Ordering.breakTiesWith (Ordering.byField .name)
-
 viewSeriesList : Settings -> RepeatedSeriesData -> Html Msg
 viewSeriesList settings seriesList =
   let
     sortedSeriesList =
-      List.sortWith seriesOrdering seriesList
+      List.sortWith Sorters.repeatedSeriesOrdering seriesList
 
   in
   table [id "repeated-series-table"]

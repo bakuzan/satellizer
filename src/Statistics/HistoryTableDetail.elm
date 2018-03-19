@@ -9,6 +9,7 @@ import General.Accordion
 import General.NewTabLink
 import Utils.TableFunctions exposing (getBreakdownName)
 import Utils.Common as Common
+import Utils.Sorters as Sorters
 import Round
 
 
@@ -60,34 +61,26 @@ viewDetailTable contentType breakdown sorting list =
     isDesc =
       sorting.isDesc
 
+    setDirection arr =
+      if isDesc == True
+        then List.reverse arr
+        else arr
+
     sortedList =
       case sorting.field of
-        "TITLE" -> sortedBy isDesc (\x -> (String.toLower x.title)) list
-        "RATING" -> sortedBy isDesc .rating list
-        "AVERAGE" -> sortedBy isDesc (\x -> x.episodeStatistics.average) list
-        "HIGHEST" -> sortedBy isDesc (\x -> x.episodeStatistics.highest) list
-        "LOWEST" -> sortedBy isDesc (\x -> x.episodeStatistics.lowest) list
-        "MODE" -> sortedBy isDesc (\x -> x.episodeStatistics.mode) list
+        "TITLE" -> List.sortWith Sorters.historyDetailOrderByTitle list
+        "RATING" -> List.sortWith Sorters.historyDetailOrderByRating list
+        "AVERAGE" -> List.sortWith Sorters.historyDetailOrderByAverage list
+        "HIGHEST" -> List.sortWith Sorters.historyDetailOrderByHighest list
+        "LOWEST" -> List.sortWith Sorters.historyDetailOrderByLowest list
+        "MODE" -> List.sortWith Sorters.historyDetailOrderByMode list
         _ -> list
 
   in
   table [class "history-breakdown__table"]
         [ viewTableHeader breakdown sorting
-        , viewTableBody contentType sortedList
+        , viewTableBody contentType (setDirection sortedList)
         ]
-
-
-setDirection : Bool -> HistoryDetailData -> HistoryDetailData
-setDirection isDesc arr =
-  if isDesc == True
-    then List.reverse arr
-    else arr
-
-
-sortedBy : Bool -> (HistoryDetail -> comparable) -> HistoryDetailData -> HistoryDetailData
-sortedBy isDesc func list =
-  List.sortBy func list
-    |> setDirection isDesc
 
 
 viewTableHeader : String -> Sort -> Html Msg
