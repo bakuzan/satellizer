@@ -61,25 +61,20 @@ viewDetailTable contentType breakdown sorting list =
     isDesc =
       sorting.isDesc
 
-    setDirection arr =
-      if isDesc == True
-        then List.reverse arr
-        else arr
-
     sortedList =
       case sorting.field of
-        "TITLE" -> List.sortWith Sorters.historyDetailOrderByTitle list
-        "RATING" -> List.sortWith Sorters.historyDetailOrderByRating list
-        "AVERAGE" -> List.sortWith Sorters.historyDetailOrderByAverage list
-        "HIGHEST" -> List.sortWith Sorters.historyDetailOrderByHighest list
-        "LOWEST" -> List.sortWith Sorters.historyDetailOrderByLowest list
-        "MODE" -> List.sortWith Sorters.historyDetailOrderByMode list
+        "TITLE" -> List.sortWith (Sorters.historyDetailOrderByTitle isDesc) list
+        "RATING" -> List.sortWith (Sorters.historyDetailOrderByRating isDesc) list
+        "AVERAGE" -> List.sortWith (Sorters.historyDetailOrderByAverage isDesc) list
+        "HIGHEST" -> List.sortWith (Sorters.historyDetailOrderByHighest isDesc) list
+        "LOWEST" -> List.sortWith (Sorters.historyDetailOrderByLowest isDesc) list
+        "MODE" -> List.sortWith (Sorters.historyDetailOrderByMode isDesc) list
         _ -> list
 
   in
   table [class "history-breakdown__table"]
         [ viewTableHeader breakdown sorting
-        , viewTableBody contentType (setDirection sortedList)
+        , viewTableBody contentType sortedList
         ]
 
 

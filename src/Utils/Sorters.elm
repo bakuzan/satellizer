@@ -19,36 +19,49 @@ seriesOrdering =
     |> Ordering.breakTiesWith (Ordering.byField .name)
 
 
-historyDetailOrderByTitle : Ordering HistoryDetail
-historyDetailOrderByTitle =
+historyDetailDirection : Bool -> (Ordering a -> Ordering a)
+historyDetailDirection isDesc =
+  if isDesc == True
+    then Ordering.reverse
+    else (\x -> x)
+
+
+historyDetailOrderByTitle : Bool -> Ordering HistoryDetail
+historyDetailOrderByTitle isDesc =
   Ordering.byField .title
+    |> historyDetailDirection isDesc
 
 
-historyDetailOrderByRating : Ordering HistoryDetail
-historyDetailOrderByRating =
+historyDetailOrderByRating : Bool -> Ordering HistoryDetail
+historyDetailOrderByRating isDesc =
   Ordering.byField .rating
+    |> historyDetailDirection isDesc
     |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
-historyDetailOrderByAverage : Ordering HistoryDetail
-historyDetailOrderByAverage =
+historyDetailOrderByAverage : Bool -> Ordering HistoryDetail
+historyDetailOrderByAverage isDesc =
   Ordering.byField (\x -> x.episodeStatistics.average)
+    |> historyDetailDirection isDesc
     |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
-historyDetailOrderByHighest : Ordering HistoryDetail
-historyDetailOrderByHighest =
+historyDetailOrderByHighest : Bool -> Ordering HistoryDetail
+historyDetailOrderByHighest isDesc =
   Ordering.byField (\x -> x.episodeStatistics.highest)
+    |> historyDetailDirection isDesc
     |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
-historyDetailOrderByLowest : Ordering HistoryDetail
-historyDetailOrderByLowest =
+historyDetailOrderByLowest : Bool -> Ordering HistoryDetail
+historyDetailOrderByLowest isDesc =
   Ordering.byField (\x -> x.episodeStatistics.lowest)
+    |> historyDetailDirection isDesc
     |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
-historyDetailOrderByMode : Ordering HistoryDetail
-historyDetailOrderByMode =
+historyDetailOrderByMode : Bool -> Ordering HistoryDetail
+historyDetailOrderByMode isDesc =
   Ordering.byField (\x -> x.episodeStatistics.mode)
+    |> historyDetailDirection isDesc
     |> Ordering.breakTiesWith (Ordering.byField .title)
