@@ -11,5 +11,8 @@ if (process.env.NODE_ENV === "development") {
   Main.embed(document.getElementById("satellizer"), {
     contentType: "anime",
     isAdult: false,
+    activeTab: "History",
+    breakdownType: "SEASON",
+    detailGroup: "2018-04"
   })
 }

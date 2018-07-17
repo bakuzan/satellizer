@@ -30,9 +30,17 @@ update msg model =
         else "MONTHS"
 
     ensureValidSortField breakdown =
-      if breakdown == "SEASON" || sorting.field == "TITLE" || sorting.field == "RATING"
+      if breakdown == "SEASON" || sorting.field == "RATING" || sorting.field == "RATING"
         then sorting.field
-        else "TITLE"
+        else "RATING"
+
+    getHistoryPartitionCommand dateString params = 
+      if dateString == ""
+        then Cmd.none
+        else
+          if (String.contains "-" dateString) == True
+            then (Commands.fetchHistoryDetailData params)
+            else (Commands.fetchHistoryYearData params)
 
   in
   case msg of
@@ -85,7 +93,15 @@ update msg model =
         }, callApi )
 
     Msgs.OnFetchHistory response ->
-      ( { model | history = response }, Cmd.none )
+    let
+      datePart =
+        settings.detailGroup
+
+      maybeDetailCommand = 
+        getHistoryPartitionCommand datePart settings
+
+    in
+      ( { model | history = response }, maybeDetailCommand )
 
     Msgs.OnFetchHistoryDetail response ->
       ( { model | historyDetail = response }, Cmd.none )
@@ -159,9 +175,7 @@ update msg model =
           }
 
         fetchHistoryPartition =
-          if (String.contains "-" datePart) == True
-            then (Commands.fetchHistoryDetailData updatedSettings)
-            else (Commands.fetchHistoryYearData updatedSettings)
+          getHistoryPartitionCommand datePart updatedSettings
 
       in
       ( { model
