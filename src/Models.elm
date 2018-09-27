@@ -7,6 +7,9 @@ import RemoteData exposing (WebData)
 type alias Flags =
   { contentType: String
   , isAdult: Bool
+  , activeTab: String
+  , breakdownType: String
+  , detailGroup: String
   }
 
 type alias InputField =
@@ -67,12 +70,12 @@ initialModel flags route =
     , repeatedList = []
     , route = route
     , settings =
-      { activeTab = "History"
-      , breakdownType = "MONTHS"
-      , detailGroup = ""
+      { activeTab = flags.activeTab
+      , breakdownType = flags.breakdownType
+      , detailGroup = flags.detailGroup
       , sorting =
-        { field = "TITLE"
-        , isDesc = False
+        { field = "RATING"
+        , isDesc = True
         }
       , contentType = flags.contentType
       , isAdult = flags.isAdult
