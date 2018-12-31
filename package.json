@@ -1,6 +1,6 @@
 {
   "name": "satellizer",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "statistics ui",
   "proxy": "http://localhost:9003",
   "main": "index.js",
@@ -10,7 +10,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-css": "node-sass-chokidar src/ -o src/",
-    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
+    "watch-css":
+      "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+    "build": "npm run build-css && elm-app build",
+    "post-build": "node ./rename-output.js"
   },
   "repository": {
     "type": "git",

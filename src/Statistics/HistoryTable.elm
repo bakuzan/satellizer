@@ -109,7 +109,7 @@ viewRow breakdown total data =
      if breakdown == "MONTHS" then 1 else -2
 
    getKey x =
-     String.right 2 ("0" ++ (toString (x.number + fixValue)))
+     String.right 2 ("0" ++ (String.fromInt (x.number + fixValue)))
 
    fixedData =
      let
@@ -152,13 +152,13 @@ viewCell breakdown total obj =
       obj.value == 0
 
   in
-   td [ attribute "hover-data" ((toString obj.value) ++ " in " ++ (viewDate obj.key))
+   td [ attribute "hover-data" ((String.fromInt obj.value) ++ " in " ++ (viewDate obj.key))
       , class "history-breakdown-body__data-cell"
       , classList [("disabled", isDisabled)]
       ]
       [ button [onClick (Msgs.DisplayHistoryDetail obj.key), disabled isDisabled]
                [ div [ class"history-breakdown-body__data-cell__background"
-                     , style [("opacity", toString (Common.divide obj.value total))]
+                     , style "opacity" (String.fromFloat (Common.divide obj.value total))
                      ]
                      []
                ]

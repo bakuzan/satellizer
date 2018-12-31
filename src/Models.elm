@@ -26,7 +26,7 @@ type alias Model =
     , rating: WebData CountData
     , seriesList: SeriesData
     , repeatedList: RepeatedSeriesData
-    , route: Route
+    -- , route: Route
     , settings: Settings
     , ratingsFilters: RatingFilters
     , repeatedFilters: RepeatedFilters
@@ -58,8 +58,8 @@ type alias RepeatedFilters =
   { searchText: String
   }
 
-initialModel : Flags -> Route -> Model
-initialModel flags route =
+initialModel : Flags -> Model
+initialModel flags =
     { debounce = Debounce.init
     , status = RemoteData.Loading
     , history = RemoteData.Loading
@@ -68,7 +68,7 @@ initialModel flags route =
     , rating = RemoteData.Loading
     , seriesList = []
     , repeatedList = []
-    , route = route
+    -- , route = route
     , settings =
       { activeTab = flags.activeTab
       , breakdownType = flags.breakdownType

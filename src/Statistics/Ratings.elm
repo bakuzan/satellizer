@@ -51,7 +51,7 @@ viewTotalAverageRating total list =
     weight obj =
       obj.value * (
         String.toInt obj.key
-          |> Result.withDefault 0
+          |> Maybe.withDefault 0
       )
 
     totalAverage =
@@ -84,7 +84,7 @@ viewSingleRating selectedRatings total rating =
         then 0
         else numberString
         |> String.toInt
-        |> Result.withDefault 0
+        |> Maybe.withDefault 0
 
     isSelected =
       List.member number selectedRatings
@@ -108,7 +108,7 @@ setRatingKey obj =
 getNumberName : String -> String
 getNumberName str =
   String.toInt str
-    |> Result.withDefault 0
+    |> Maybe.withDefault 0
     |> (\x -> List.drop (x - 1) Constants.numberNames)
     |> List.head
     |> Maybe.withDefault "missing"

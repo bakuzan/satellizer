@@ -15,7 +15,7 @@ view fieldName fieldLabel fieldValue =
         , label [] [ text fieldLabel ]
         , viewClearButton fieldName fieldValue
         , span [class "clearable-input-count"]
-               [ text ((toString (String.length fieldValue)) ++ "/100")
+               [ text ((String.fromInt (String.length fieldValue)) ++ "/100")
                ]
         ]
 

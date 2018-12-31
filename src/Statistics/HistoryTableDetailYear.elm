@@ -71,7 +71,7 @@ viewTableBody breakdown data =
      if breakdown == "MONTHS" then 1 else -2
 
    getKey x =
-     String.right 2 ("0" ++ (toString (x.number + fixValue)))
+     String.right 2 ("0" ++ (String.fromInt (x.number + fixValue)))
 
    fixedData =
      let
@@ -91,36 +91,29 @@ viewTableBody breakdown data =
 
   in
     tbody [class "history-breakdown-body"]
-          [ viewTableRow "Average" .average cells
-          , viewTableRow "Highest" .highest cells
-          , viewTableRow "Lowest" .lowest cells
-          , viewTableRow "Mode" .mode cells
+          [ viewTableRow "Average" (floatToString .average) cells
+          , viewTableRow "Highest" (intToString .highest) cells
+          , viewTableRow "Lowest" (intToString .lowest) cells
+          , viewTableRow "Mode" (intToString .mode) cells
           ]
 
+floatToString : (HistoryYear -> Float) -> HistoryYear -> String
+floatToString fun v =
+  Round.round 2 (fun v)
+  
+intToString : (HistoryYear -> Int) -> HistoryYear -> String
+intToString fun v =
+  String.fromInt (fun v)
 
-viewTableRow : String -> (HistoryYear -> comparable) -> HistoryYearData -> Html Msg
+viewTableRow : String -> (HistoryYear -> String) -> HistoryYearData -> Html Msg
 viewTableRow name fun data =
   tr [class "history-breakdown-body__row year-breakdown"]
-     ([ th [class "history-breakdown-body__year-statistic"]
-           [text name]
-      ] ++ List.map (viewTableCell fun) data)
+    ([ th [class "history-breakdown-body__year-statistic"]
+          [text name]
+      ] ++ List.map (\x -> fun x |> viewTableCell) data)
 
+viewTableCell : String -> Html Msg
+viewTableCell value =
+  td []
+     [text value]
 
-viewTableCell : (HistoryYear -> comparable) -> HistoryYear -> Html Msg
-viewTableCell fun obj =
-  let
-    processValue val isFloat =
-      if isFloat == True
-        then String.toFloat val
-               |> Result.withDefault 0.0
-               |> Round.round 2
-        else val
-
-    formatValue val =
-      toString val
-       |> String.contains "."
-       |> (processValue (toString val))
-
-  in
-    td []
-       [text (formatValue (fun obj))]

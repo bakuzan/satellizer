@@ -21,7 +21,7 @@ view settings filters seriesList =
       List.length seriesList
 
     seriesCountTitle =
-      "Showing " ++ (toString seriesCount) ++ " series"
+      "Showing " ++ (String.fromInt seriesCount) ++ " series"
 
     renderTitle =
       if seriesCount < 1
@@ -61,7 +61,7 @@ viewSelectedRatings selectedRatings =
 viewSelectedRating : Int -> Html Msg
 viewSelectedRating rating =
   li [class "input-chip input-chip-deleteable"]
-  [ span [class "input-chip-text"] [text (toString rating)]
+  [ span [class "input-chip-text"] [text (String.fromInt rating)]
   , button [ type_ "button"
   , class "button-icon small input-chip-delete"
   , title "Remove"
@@ -89,5 +89,5 @@ viewSeriesEntry contentType entry =
   in
   li []
      [ General.NewTabLink.view [href seriesLink] [text entry.name]
-     , span [] [text (toString entry.rating)]
+     , span [] [text (String.fromInt entry.rating)]
      ]

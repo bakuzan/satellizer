@@ -1,22 +1,23 @@
 port module Main exposing (..)
 
+import Browser
 import Commands exposing (fetchStatusData)
 import Models exposing (Model, Flags, initialModel)
 import Msgs exposing (Msg)
-import Navigation exposing (Location)
-import Routing
+-- import Navigation exposing (Location)
+-- import Routing
 import Update exposing (update)
 import View exposing (view)
 
 
-init : Flags -> Location -> ( Model, Cmd Msg )
-init flags location =
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     let
-        currentRoute =
-            Routing.parseLocation location
+        -- currentRoute =
+        --     Routing.parseLocation location
 
         model =
-          initialModel flags currentRoute
+          initialModel flags
 
     in
         ( model, fetchStatusData model.settings)
@@ -36,7 +37,7 @@ subscriptions model =
 
 main : Program Flags Model Msg
 main =
-    Navigation.programWithFlags Msgs.OnLocationChange
+    Browser.element
         { init = init
         , view = view
         , update = update

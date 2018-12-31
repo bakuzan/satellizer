@@ -2,7 +2,7 @@ module Routing exposing (..)
 
 import Navigation exposing (Location)
 import Models exposing (Route(..))
-import UrlParser exposing (..)
+import UrlParser as Url exposing (..)
 
 
 matchers : Parser (Route -> a) a

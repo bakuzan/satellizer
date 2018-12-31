@@ -27,19 +27,21 @@ divide part total =
 
 maxOfField : (a -> comparable) -> List a -> Maybe a
 maxOfField field =
-  let f x acc =
-    case acc of
-      Nothing -> Just x
-      Just y -> if field x > field y then Just x else Just y
+  let 
+    f x acc =
+      case acc of
+        Nothing -> Just x
+        Just y -> if field x > field y then Just x else Just y
   in List.foldr f Nothing
 
 
 minOfField : (a -> comparable) -> List a -> Maybe a
 minOfField field =
-  let f x acc =
-    case acc of
-      Nothing -> Just x
-      Just y -> if field x < field y then Just x else Just y
+  let 
+    f x acc =
+      case acc of
+        Nothing -> Just x
+        Just y -> if field x < field y then Just x else Just y
   in List.foldr f Nothing
 
 
@@ -74,7 +76,7 @@ calculateAverageOfRatings list =
     |> divideTotalByCount (List.length (List.filter (\x -> x /= 0) ratings))
     |> Round.round 2
     |> String.toFloat
-    |> Result.withDefault 0.0
+    |> Maybe.withDefault 0.0
 
 
 divideTotalByCount : Int -> Int -> Float

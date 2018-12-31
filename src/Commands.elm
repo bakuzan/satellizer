@@ -93,7 +93,7 @@ constructHistoryBreakdownUrl settings =
 constructUrl : String -> Settings -> String
 constructUrl urlType settings =
     Common.replace ":type" settings.contentType ("/api/statistics/" ++ urlType ++ "/:type/:isAdult")
-      |> Common.replace ":isAdult" (toString settings.isAdult)
+      |> Common.replace ":isAdult" (if settings.isAdult then "true" else "false")
 
 
 -- Graphql Queries

@@ -41,7 +41,7 @@ viewHistoryDetail settings data =
         else getBreakdownName breakdown detailGroup
 
     detailSummary =
-      (toString (List.length data)) ++ " series for " ++ displayPartition ++ " " ++ (Common.getYear detailGroup)
+      (String.fromInt (List.length data)) ++ " series for " ++ displayPartition ++ " " ++ (Common.getYear detailGroup)
 
   in
   div []
@@ -141,7 +141,7 @@ viewTableRow contentType item =
            [ General.NewTabLink.view [href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id)]
                                      [text setTitleIndication]
            ]
-      , renderCell (toString item.rating)
+      , renderCell (String.fromInt item.rating)
       ] ++ renderEpisodeStatistics es)
 
 
@@ -154,9 +154,9 @@ renderEpisodeStatistics es =
   in
   if es.id /= ""
     then [ renderCell (processFloat es.average)
-         , renderCell (toString es.highest)
-         , renderCell (toString es.lowest)
-         , renderCell (toString es.mode)
+         , renderCell (String.fromInt es.highest)
+         , renderCell (String.fromInt es.lowest)
+         , renderCell (String.fromInt es.mode)
          ]
     else []
 
@@ -171,6 +171,9 @@ renderCell str =
 viewDetailBreakdowns : HistoryDetailData -> Html Msg
 viewDetailBreakdowns list =
   let
+    listNoZeroes = 
+      List.filter (\x -> x.rating /= 0) list
+
     average =
       Common.calculateAverageOfRatings list
 
@@ -180,7 +183,7 @@ viewDetailBreakdowns list =
         |> .rating
 
     lowest =
-      Common.minOfField .rating list
+      Common.minOfField .rating listNoZeroes
         |> Maybe.withDefault emptyHistoryDetail
         |> .rating
 
@@ -201,7 +204,7 @@ viewDetailBreakdowns list =
         rating -> (List.filter (matchHead rating) arr) :: buildNest (List.filter (notMatchHead rating) arr)
 
     mode =
-      buildNest list
+      buildNest listNoZeroes
         |> List.foldr (\x y -> if List.length x > List.length y then x else y) []
         |> getHead
 
@@ -209,20 +212,20 @@ viewDetailBreakdowns list =
   div [class "history-detail-breakdown"]
       [ General.Accordion.view "Overall" [ ul [class "list column two"]
                                               ([]
-                                              ++ viewBreakdownPair "Average" average
-                                              ++ viewBreakdownPair "Highest" highest
-                                              ++ viewBreakdownPair "Lowest" lowest
-                                              ++ viewBreakdownPair "Mode" mode)
+                                              ++ viewBreakdownPair "Average" (String.fromFloat average)
+                                              ++ viewBreakdownPair "Highest" (String.fromInt highest)
+                                              ++ viewBreakdownPair "Lowest" (String.fromInt lowest)
+                                              ++ viewBreakdownPair "Mode" (String.fromInt mode))
                                          ]
       ]
 
 
-viewBreakdownPair : String -> a -> List (Html Msg)
+viewBreakdownPair : String -> String -> List (Html Msg)
 viewBreakdownPair name statistic =
   [ li [class "label"]
-       [ text name
-       ]
+      [ text name
+      ]
   , li [class "value"]
-       [ text (toString statistic)
-       ]
+      [ text statistic
+      ]
   ]

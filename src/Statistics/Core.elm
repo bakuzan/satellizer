@@ -19,7 +19,7 @@ viewRender model =
     RemoteData.NotAsked -> []
     RemoteData.Loading -> []
     RemoteData.Failure err -> []
-    RemoteData.Success model -> model
+    RemoteData.Success m -> m
 
 view : Model -> Html Msg
 view model =

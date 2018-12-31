@@ -58,7 +58,7 @@ prepareMonthAsInt : String -> Int
 prepareMonthAsInt str =
     String.slice 5 (String.length str) str
       |> String.toInt
-      |> Result.withDefault 0
+      |> Maybe.withDefault 0
 
 
 shiftHeader : List Header -> Header

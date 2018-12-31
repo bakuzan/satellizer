@@ -10,7 +10,7 @@ import Models exposing (InputField)
 
 debounceConfig : Debounce.Config Msg
 debounceConfig =
-    { strategy = Debounce.later (1 * Time.second)
+    { strategy = Debounce.later 1
     , transform = Msgs.DebounceMsg
     }
 

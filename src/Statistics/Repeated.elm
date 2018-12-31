@@ -17,7 +17,7 @@ view settings filters repeatedList =
       List.length repeatedList
 
     seriesCountTitle =
-      "Showing " ++ (toString seriesCount) ++ " series"
+      "Showing " ++ (String.fromInt seriesCount) ++ " series"
 
     renderTitle =
       if seriesCount < 1
@@ -89,10 +89,10 @@ viewSeriesEntry contentType entry =
                                     [text entry.name]
           ]
      , td [class "right-align"]
-          [ span [] [text (toString entry.rating)]
+          [ span [] [text (String.fromInt entry.rating)]
           ]
      , td [class "right-align"]
-          [ span [] [text (toString entry.timesCompleted)]
+          [ span [] [text (String.fromInt entry.timesCompleted)]
           ]
      , td [class "right-align date-column"]
           [ span [] [text lastRepeatDate]

@@ -17,7 +17,7 @@ viewProgressBar total values =
     progressItems =
       if (List.length values) > 1
         then segments
-        else (segments ++ [ div [class "vertically-center", style [("padding", "0 10px")] ] [text (singleSegmentPercentage values total)]
+        else (segments ++ [ div [class "vertically-center", style "padding" "0 10px" ] [text (singleSegmentPercentage values total)]
                         ])
   in
     div [ class "percentage-breakdown" ]
@@ -28,7 +28,7 @@ viewProgressSegment : Int -> Count -> Html Msg
 viewProgressSegment total pair =
   let
     percentageString =
-      (toString (getPercentage pair.value total)) ++ "%"
+      (String.fromFloat (getPercentage pair.value total)) ++ "%"
 
     percentage =
       getPercentage pair.value total
@@ -39,8 +39,8 @@ viewProgressSegment total pair =
   in
   div [ class "percentage-breakdown__bar"
       , classList [(pair.key, True), ("tooltip-bottom", isLongEnough), ("tooltip-right", not isLongEnough)]
-      , style [("width", percentageString)]
-      , attribute "hover-data" ((toString pair.value) ++ " series " ++ pair.key)
+      , style "width" percentageString
+      , attribute "hover-data" ((String.fromInt pair.value) ++ " series " ++ pair.key)
       ]
       []
 

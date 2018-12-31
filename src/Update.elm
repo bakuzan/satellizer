@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Routing exposing (parseLocation)
+-- import Routing expkosing (parseLocation)
 import Debounce
 
 import Msgs exposing (Msg)
@@ -44,24 +44,16 @@ update msg model =
 
   in
   case msg of
-    Msgs.OnLocationChange location ->
+    Msgs.DebounceMsg debmsg ->
       let
-        newRoute =
-          parseLocation location
-
+          ( debounce, cmd ) =
+              Debounce.update
+                  Debouncers.debounceConfig
+                  (Debounce.takeLast Debouncers.saveSearchString)
+                  debmsg
+                  model.debounce
       in
-        ( { model | route = newRoute }, Cmd.none )
-
-    Msgs.DebounceMsg msg ->
-        let
-            ( debounce, cmd ) =
-                Debounce.update
-                    Debouncers.debounceConfig
-                    (Debounce.takeLast Debouncers.saveSearchString)
-                    msg
-                    model.debounce
-        in
-        ( { model | debounce = debounce }, cmd )
+      ( { model | debounce = debounce }, cmd )
 
     Msgs.OnFetchStatus response ->
       let
@@ -93,15 +85,15 @@ update msg model =
         }, callApi )
 
     Msgs.OnFetchHistory response ->
-    let
-      datePart =
-        settings.detailGroup
+      let
+        datePart =
+          settings.detailGroup
 
-      maybeDetailCommand = 
-        getHistoryPartitionCommand datePart settings
+        maybeDetailCommand = 
+          getHistoryPartitionCommand datePart settings
 
-    in
-      ( { model | history = response }, maybeDetailCommand )
+      in
+        ( { model | history = response }, maybeDetailCommand )
 
     Msgs.OnFetchHistoryDetail response ->
       ( { model | historyDetail = response }, Cmd.none )
@@ -113,7 +105,7 @@ update msg model =
             RemoteData.NotAsked -> emptyHistoryYearDetail
             RemoteData.Loading -> emptyHistoryYearDetail
             RemoteData.Failure err -> emptyHistoryYearDetail
-            RemoteData.Success data -> data
+            RemoteData.Success val -> val
 
         counts =
           (extractData response)

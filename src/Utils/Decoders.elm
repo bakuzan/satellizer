@@ -1,7 +1,7 @@
 module Utils.Decoders exposing (..)
 
 import Json.Decode as Decode
-import Json.Decode.Pipeline exposing (decode, required)
+import Json.Decode.Pipeline exposing (required)
 
 import Models exposing (CountData, Count, HistoryDetailData, HistoryDetail, EpisodeStatistic, HistoryYearDetail, HistoryYearData, HistoryYear, SeriesData)
 
@@ -15,7 +15,7 @@ countDataDecoder =
 
 countDecoder : Decode.Decoder Count
 countDecoder =
-    decode Count
+    Decode.succeed Count
       |> required "key" Decode.string
       |> required "value" Decode.int
 
@@ -27,7 +27,7 @@ historyDetailDataDecoder =
 
 historyDetailDecoder : Decode.Decoder HistoryDetail
 historyDetailDecoder =
-  decode HistoryDetail
+  Decode.succeed HistoryDetail
     |> required "_id" Decode.string
     |> required "title" Decode.string
     |> required "episodeStatistics" episodeStatisticsDecoder
@@ -37,7 +37,7 @@ historyDetailDecoder =
 
 episodeStatisticsDecoder : Decode.Decoder EpisodeStatistic
 episodeStatisticsDecoder =
-  decode EpisodeStatistic
+  Decode.succeed EpisodeStatistic
     |> required "_id" Decode.string
     |> required "average" Decode.float
     |> required "highest" Decode.int
@@ -47,7 +47,7 @@ episodeStatisticsDecoder =
 
 historyYearDetailDecoder : Decode.Decoder HistoryYearDetail
 historyYearDetailDecoder =
-    decode HistoryYearDetail
+    Decode.succeed HistoryYearDetail
       |> required "counts" historyYearDataDecoder
       |> required "detail" historyDetailDataDecoder
 
@@ -59,7 +59,7 @@ historyYearDataDecoder =
 
 historyYearDecoder : Decode.Decoder HistoryYear
 historyYearDecoder =
-  decode HistoryYear
+  Decode.succeed HistoryYear
     |> required "_id" Decode.string
     |> required "value" Decode.int
     |> required "average" Decode.float

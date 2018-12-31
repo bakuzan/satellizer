@@ -3,14 +3,14 @@ module Msgs exposing (..)
 
 import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, SeriesData, RepeatedSeriesData)
 import Debounce
-import Navigation exposing (Location)
+-- import Navigation exposing (Location)
 import RemoteData exposing (WebData)
 import GraphQL.Client.Http as GraphQLClient
 
 
 type Msg
     = NoOp
-    | OnLocationChange Location
+    -- | OnLocationChange Location
     | DebounceMsg Debounce.Msg
     | SaveTextInput String String
     | OnFetchStatus (WebData CountData)
