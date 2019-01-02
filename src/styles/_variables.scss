@@ -2,6 +2,7 @@ $teal: #008080;
 $white: #fff;
 $black: #000;
 $grey80: #ccc;
+$grey73: #bbb;
 $green: #0f0;
 $red: #f00;
 $blue: #00f;
@@ -20,6 +21,7 @@ $rating-colours: (
   "onhold": $blue,
   "completed": $red,
   "ongoing": $green,
+  "planned": $grey73,
   "ten": $gold,
   "nine": $gold,
   "eight": $silver,
