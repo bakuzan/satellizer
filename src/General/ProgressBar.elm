@@ -33,12 +33,9 @@ viewProgressSegment total pair =
     percentage =
       getPercentage pair.value total
 
-    isLongEnough =
-      percentage > 11
-
   in
   div [ class "percentage-breakdown__bar"
-      , classList [(pair.key, True), ("tooltip-bottom", isLongEnough), ("tooltip-right", not isLongEnough)]
+      , classList [(pair.key, True), ("tooltip-bottom", True)]
       , style "width" percentageString
       , attribute "hover-data" ((String.fromInt pair.value) ++ " series " ++ pair.key)
       ]

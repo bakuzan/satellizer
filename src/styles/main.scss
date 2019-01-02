@@ -1,7 +1,8 @@
-@import "./_variables.scss";
+@import './_variables.scss';
+@import './_accordion.scss';
+@import './_hover-data.scss';
 
 #satellizer {
-
   .vertically-center {
     display: flex;
     align-items: center;
@@ -48,10 +49,14 @@
       justify-content: center;
       width: 25px;
     }
+    .ratings-filters {
+      display: flex;
+      margin-top: 5px;
+    }
   }
 
   .clear-input:before {
-    content: "\2573";
+    content: '\2573';
   }
 
   #series-rating-title {
@@ -95,17 +100,16 @@
       line-height: 1;
 
       &::before {
-        content: "";
+        content: '';
         font-size: 0.9rem;
       }
       &.owned::before {
-        content: "\2713";
+        content: '\2713';
       }
       &.not-owned::before {
-        content: "\2573";
+        content: '\2573';
       }
     }
-
   }
 
   #selected-ratings {
@@ -113,34 +117,33 @@
     min-width: 200px;
     max-width: 75%;
 
-    .input-chip {
-      height: 32px;
-      font-family: "Roboto","Helvetica","Arial",sans-serif;
-      line-height: 32px;
-      padding: 0 12px;
-      border: 0;
-      border-radius: 16px;
-      background-color: #dedede;
-      display: flex;
-      color: rgba(0, 0, 0, 0.87);
-      margin: 1px 0;
-      font-size: 0;
-      white-space: nowrap;
-    }
-    .input-chip-text {
-      font-size: 13px;
-      vertical-align: middle;
-      display: inline-block;
-    }
+    // .input-chip {
+    //   height: 32px;
+    //   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    //   line-height: 32px;
+    //   padding: 0 12px;
+    //   border: 0;
+    //   border-radius: 16px;
+    //   background-color: #dedede;
+    //   display: flex;
+    //   color: rgba(0, 0, 0, 0.87);
+    //   margin: 1px 0;
+    //   font-size: 0;
+    //   white-space: nowrap;
+    // }
+    // .input-chip-text {
+    //   font-size: 13px;
+    //   vertical-align: middle;
+    //   display: inline-block;
+    // }
     .input-chip-delete:before {
-      content: "\2573";
+      content: '\2573';
     }
   }
 
-  @import "./components/_history-detail.scss";
-  @import "./components/_history-table.scss";
-  @import "./components/_progress-bar.scss";
-  @import "./components/_season-key.scss";
-  @import "./_season-colours.scss";
-
+  @import './components/_history-detail.scss';
+  @import './components/_history-table.scss';
+  @import './components/_progress-bar.scss';
+  @import './components/_season-key.scss';
+  @import './_season-colours.scss';
 }

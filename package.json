@@ -9,10 +9,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-css": "node-sass-chokidar src/ -o src/",
+    "build-css": "node-sass-chokidar src/ -o src/ --output-style=compressed",
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
-    "build": "npm run build-css && elm-app build",
-    "post-build": "node ./rename-output.js"
+    "build": "bash ./tools/optimise.sh 'src/Main.elm' && npm run post-build",
+    "post-build": "npm run build-css && node ./tools/copy-styles.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,6 @@
     "url": "https://github.com/bakuzan/satellizer/issues"
   },
   "homepage": "https://github.com/bakuzan/satellizer#readme",
-  "dependencies": {},
   "devDependencies": {
     "node-sass-chokidar": "^1.3.4"
   }

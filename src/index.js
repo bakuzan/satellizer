@@ -1,9 +1,5 @@
-import './styles/hover-data.css';
-import './styles/accordion.css';
 import './styles/main.css';
 import { Elm } from './Main.elm';
-
-export default Elm;
 
 if (process.env.NODE_ENV === 'development') {
   console.log(

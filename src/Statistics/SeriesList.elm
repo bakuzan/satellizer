@@ -31,7 +31,7 @@ view settings filters seriesList =
   in
   div [id "series-by-ratings-container"]
       [ General.ClearableInput.view "search" "search" filters.searchText
-      , div [class "flex-row"]
+      , div [class "ratings-filters"]
             [ viewSelectedRatings filters.ratings
             , viewClearRatings ratingCount
             ]
