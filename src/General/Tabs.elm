@@ -1,8 +1,8 @@
 module General.Tabs exposing (viewTabContainer)
 
-import Html exposing (..)
-import Html.Attributes exposing (type_, class, classList)
-import Html.Events exposing (onClick)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (type_, class, classList)
+import Html.Styled.Events exposing (onClick)
 import Msgs exposing (Msg)
 import Utils.Common as Common
 

@@ -3,19 +3,6 @@
 @import './_hover-data.scss';
 
 #satellizer {
-  .vertically-center {
-    display: flex;
-    align-items: center;
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  #status-container {
-    margin: 15px;
-  }
-
   #total-average-rating {
     position: absolute;
     top: 0;
@@ -117,33 +104,10 @@
     min-width: 200px;
     max-width: 75%;
 
-    // .input-chip {
-    //   height: 32px;
-    //   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
-    //   line-height: 32px;
-    //   padding: 0 12px;
-    //   border: 0;
-    //   border-radius: 16px;
-    //   background-color: #dedede;
-    //   display: flex;
-    //   color: rgba(0, 0, 0, 0.87);
-    //   margin: 1px 0;
-    //   font-size: 0;
-    //   white-space: nowrap;
-    // }
-    // .input-chip-text {
-    //   font-size: 13px;
-    //   vertical-align: middle;
-    //   display: inline-block;
-    // }
     .input-chip-delete:before {
       content: '\2573';
     }
   }
 
-  @import './components/_history-detail.scss';
-  @import './components/_history-table.scss';
-  @import './components/_progress-bar.scss';
-  @import './components/_season-key.scss';
   @import './_season-colours.scss';
 }

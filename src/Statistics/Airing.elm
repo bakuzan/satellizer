@@ -1,10 +1,10 @@
-module Statistics.HistoryTableDetail exposing (view)
+module Statistics.Airing exposing (view)
 
 import Css exposing (..)
 import General.Accordion
 import General.NewTabLink
 import Html.Styled exposing (Html, button, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
-import Html.Styled.Attributes exposing (class, classList, css, href, id, style)
+import Html.Styled.Attributes exposing (class, classList, css, href, id)
 import Html.Styled.Events exposing (onClick)
 import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Settings, Sort, emptyHistoryDetail)
 import Msgs exposing (Msg)
@@ -16,63 +16,24 @@ import Utils.TableFunctions exposing (getBreakdownName)
 
 
 view : Settings -> HistoryDetailData -> Html Msg
-view settings data =
-    if settings.detailGroup == "" then
-        div [] []
-
-    else
-        viewHistoryDetail settings data
-
-
-viewHistoryDetail : Settings -> HistoryDetailData -> Html Msg
-viewHistoryDetail settings data =
+view settings seriesList =
     let
         contentType =
-            settings.contentType
+            "anime"
 
         breakdown =
-            settings.breakdownType
-
-        detailGroup =
-            settings.detailGroup
-
-        isYearBreakdown =
-            not (String.contains "-" settings.detailGroup)
-
-        displayPartition =
-            if isYearBreakdown then
-                ""
-
-            else
-                getBreakdownName breakdown detailGroup
+            "seasonal"
 
         detailSummary =
-            String.fromInt (List.length data) ++ " series for " ++ displayPartition ++ " " ++ Common.getYear detailGroup
+            String.fromInt (List.length seriesList) ++ " seasonal series airing"
     in
-    div []
-        [ viewDetailBreakdowns data
-        , div
-            [ class "history-detail"
-            , css
-                [ margin2 (px 20) (px 10)
-                ]
-            ]
-            [ h2
-                [ css
-                    [ padding (px 5)
-                    , margin2 (px 10) (px 5)
-                    , textAlign left
-                    ]
-                ]
-                [ text detailSummary ]
-            , div
-                [ classList [ ( "year-breakdown", isYearBreakdown ) ]
-                , css
-                    [ displayFlex
-                    , flexDirection column
-                    ]
-                ]
-                [ viewDetailTable contentType breakdown settings.sorting data
+    div
+        [ id "airing-tab" ]
+        [ viewDetailBreakdowns seriesList
+        , div [ class "history-detail" ]
+            [ h2 [] [ text detailSummary ]
+            , div [ class "flex-column" ]
+                [ viewDetailTable contentType breakdown settings.sorting seriesList
                 ]
             ]
         ]
@@ -107,12 +68,7 @@ viewDetailTable contentType breakdown sorting list =
                 _ ->
                     list
     in
-    table
-        [ class "history-breakdown__table"
-        , css
-            [ width (pct 100)
-            ]
-        ]
+    table [ class "history-breakdown__table", css [ width (pct 100) ] ]
         [ viewTableHeader breakdown sorting
         , viewTableBody contentType sortedList
         ]
@@ -120,50 +76,32 @@ viewDetailTable contentType breakdown sorting list =
 
 viewTableHeader : String -> Sort -> Html Msg
 viewTableHeader breakdown sorting =
-    let
-        hideHeader =
-            breakdown == "MONTHS"
-    in
     thead []
-        [ viewHeaderCell False "Title" sorting [ paddingLeft (px 5), textAlign left ]
-        , viewHeaderCell False "Rating" sorting []
-        , viewHeaderCell hideHeader "Average" sorting []
-        , viewHeaderCell hideHeader "Highest" sorting []
-        , viewHeaderCell hideHeader "Lowest" sorting []
-        , viewHeaderCell hideHeader "Mode" sorting []
+        [ viewHeaderCell "Title" sorting [ paddingLeft (px 5), textAlign left ]
+        , viewHeaderCell "Rating" sorting []
+        , viewHeaderCell "Average" sorting []
+        , viewHeaderCell "Highest" sorting []
+        , viewHeaderCell "Lowest" sorting []
+        , viewHeaderCell "Mode" sorting []
         ]
 
 
-viewHeaderCell : Bool -> String -> Sort -> List Css.Style -> Html Msg
-viewHeaderCell hide title sorting cssStyle =
+viewHeaderCell : String -> Sort -> List Css.Style -> Html Msg
+viewHeaderCell title sorting style =
     let
-        iconStyle =
+        icon =
             if sorting.field /= String.toUpper title then
-                []
+                ""
 
             else if sorting.isDesc == True then
-                [ after [ property "content" "▼" ] ]
+                " sort--desc"
 
             else
-                [ after [ property "content" "▲" ] ]
+                " sort--asc"
     in
-    th
-        [ css
-            (if hide then
-                [ display none ]
-
-             else
-                cssStyle
-            )
-        ]
+    th [ css style ]
         [ button [ class "button", onClick (Msgs.UpdateSortField (String.toUpper title)) ]
-            [ strong
-                [ css
-                    ([ lineHeight (int 1)
-                     ]
-                        ++ iconStyle
-                    )
-                ]
+            [ strong [ class ("sort" ++ icon) ]
                 [ text title ]
             ]
         ]
@@ -200,13 +138,7 @@ viewTableRow contentType item =
             [ class "history-breakdown-body__month-title"
             , css [ paddingLeft (px 5), textAlign left ]
             ]
-            [ General.NewTabLink.view
-                [ href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id)
-                , css
-                    [ width (pct 75)
-                    , textAlign left
-                    ]
-                ]
+            [ General.NewTabLink.view [ href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id) ]
                 [ text setTitleIndication ]
             ]
          , renderCell (String.fromInt item.rating)
@@ -290,7 +222,7 @@ viewDetailBreakdowns list =
                     []
                 |> getHead
     in
-    div [ class "history-detail-breakdown", css [ marginLeft auto ] ]
+    div [ class "history-detail-breakdown" ]
         [ General.Accordion.view "Overall"
             [ ul [ class "list column two" ]
                 ([]
@@ -305,10 +237,10 @@ viewDetailBreakdowns list =
 
 viewBreakdownPair : String -> String -> List (Html Msg)
 viewBreakdownPair name statistic =
-    [ li [ class "label", css [ displayFlex, justifyContent spaceBetween, margin (px 2) ] ]
+    [ li [ class "label" ]
         [ text name
         ]
-    , li [ class "value", css [ displayFlex, justifyContent spaceBetween ] ]
+    , li [ class "value" ]
         [ text statistic
         ]
     ]

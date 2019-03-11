@@ -1,7 +1,7 @@
 module General.Accordion exposing (view)
 
-import Html exposing (..)
-import Html.Attributes exposing (class, type_, id, name, for)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (class, type_, id, name, for)
 import Msgs exposing(Msg)
 
 

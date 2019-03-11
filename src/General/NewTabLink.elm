@@ -1,7 +1,7 @@
 module General.NewTabLink exposing (view)
 
-import Html exposing (..)
-import Html.Attributes exposing (target, rel)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (target, rel)
 import Msgs exposing(Msg)
 
 

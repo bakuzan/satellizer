@@ -1,44 +1,47 @@
 module Statistics.HistoryTableDetailYear exposing (view)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Css exposing (..)
+import Html.Styled exposing (Html, button, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
+import Html.Styled.Attributes exposing (class, classList, css, href, id, style)
+import Models exposing (HistoryYear, HistoryYearData, Settings, emptyHistoryYear)
 import Msgs exposing (Msg)
-import Models exposing (HistoryYearData, HistoryYear, emptyHistoryYear, Settings)
-import Utils.Constants as Constants
-import Utils.Common as Common
 import Round
+import Utils.Common as Common
+import Utils.Constants as Constants
+import Utils.Styles as Styles
 
 
 view : Settings -> HistoryYearData -> Html Msg
 view settings data =
-  if settings.detailGroup == ""
-    then div [] []
-    else viewHistoryYearDetail settings data
+    if settings.detailGroup == "" then
+        div [] []
+
+    else
+        viewHistoryYearDetail settings data
 
 
 viewHistoryYearDetail : Settings -> HistoryYearData -> Html Msg
 viewHistoryYearDetail settings data =
-  let
-    breakdown =
-      settings.breakdownType
+    let
+        breakdown =
+            settings.breakdownType
 
-    detailGroup =
-      settings.detailGroup
+        detailGroup =
+            settings.detailGroup
 
-    getYearCount =
-      Common.calculateTotalOfValuesTemp data
-
-  in
-  div [ class "history-detail" ]
-      [ div [class "flex-row"]
+        getYearCount =
+            Common.calculateTotalOfValuesTemp data
+    in
+    div [ class "history-detail" ]
+        [ div [ class "flex-row" ]
             [ viewDetailTable breakdown data
             ]
-      ]
+        ]
 
 
 viewDetailTable : String -> HistoryYearData -> Html Msg
 viewDetailTable breakdown data =
-  table [class "history-breakdown__table", classList [(String.toLower breakdown, True), ("year", True)] ]
+    table [ class "history-breakdown__table", classList [ ( String.toLower breakdown, True ), ( "year", True ) ], css [ width (pct 100) ] ]
         [ viewTableHead breakdown
         , viewTableBody breakdown data
         ]
@@ -46,74 +49,90 @@ viewDetailTable breakdown data =
 
 viewTableHead : String -> Html Msg
 viewTableHead breakdown =
-  let
-    viewHeader obj =
-      th [class (String.toLower obj.name)]
-         [ text obj.name
-         ]
+    let
+        viewHeader obj =
+            th [ class (String.toLower obj.name) ]
+                [ text obj.name
+                ]
 
-    getHeaderList =
-      if breakdown == "MONTHS"
-        then Constants.months
-        else Constants.seasons
+        getHeaderList =
+            if breakdown == "MONTHS" then
+                Constants.months
 
-  in
-  thead [class "history-breakdown-header"]
+            else
+                Constants.seasons
+    in
+    thead [ class "history-breakdown-header" ]
         ([ th [] []
-        ] ++ List.map viewHeader getHeaderList)
-
+         ]
+            ++ List.map viewHeader getHeaderList
+        )
 
 
 viewTableBody : String -> HistoryYearData -> Html Msg
 viewTableBody breakdown data =
-  let
-   fixValue =
-     if breakdown == "MONTHS" then 1 else -2
+    let
+        fixValue =
+            if breakdown == "MONTHS" then
+                1
 
-   getKey x =
-     String.right 2 ("0" ++ (String.fromInt (x.number + fixValue)))
+            else
+                -2
 
-   fixedData =
-     let
-       values =
-         List.map .id data
+        getKey x =
+            String.right 2 ("0" ++ String.fromInt (x.number + fixValue))
 
-     in
-     List.filter (\x -> not (List.member (getKey x) values)) headers
-       |> List.map (\x -> { emptyHistoryYear | id = (getKey x) })
-       |> List.append data
+        fixedData =
+            let
+                values =
+                    List.map .id data
+            in
+            List.filter (\x -> not (List.member (getKey x) values)) headers
+                |> List.map (\x -> { emptyHistoryYear | id = getKey x })
+                |> List.append data
 
-   headers =
-     if breakdown == "MONTHS" then Constants.months else Constants.seasons
+        headers =
+            if breakdown == "MONTHS" then
+                Constants.months
 
-   cells =
-    List.sortBy .id fixedData
+            else
+                Constants.seasons
 
-  in
-    tbody [class "history-breakdown-body"]
-          [ viewTableRow "Average" (floatToString .average) cells
-          , viewTableRow "Highest" (intToString .highest) cells
-          , viewTableRow "Lowest" (intToString .lowest) cells
-          , viewTableRow "Mode" (intToString .mode) cells
-          ]
+        cells =
+            List.sortBy .id fixedData
+    in
+    tbody [ class "history-breakdown-body" ]
+        [ viewTableRow "Average" (floatToString .average) cells
+        , viewTableRow "Highest" (intToString .highest) cells
+        , viewTableRow "Lowest" (intToString .lowest) cells
+        , viewTableRow "Mode" (intToString .mode) cells
+        ]
+
 
 floatToString : (HistoryYear -> Float) -> HistoryYear -> String
 floatToString fun v =
-  Round.round 2 (fun v)
-  
+    Round.round 2 (fun v)
+
+
 intToString : (HistoryYear -> Int) -> HistoryYear -> String
 intToString fun v =
-  String.fromInt (fun v)
+    String.fromInt (fun v)
+
 
 viewTableRow : String -> (HistoryYear -> String) -> HistoryYearData -> Html Msg
 viewTableRow name fun data =
-  tr [class "history-breakdown-body__row year-breakdown"]
-    ([ th [class "history-breakdown-body__year-statistic"]
-          [text name]
-      ] ++ List.map (\x -> fun x |> viewTableCell) data)
+    tr
+        [ class "history-breakdown-body__row year-breakdown"
+        , css Styles.breakdownBodyRow
+        ]
+        ([ th [ class "history-breakdown-body__year-statistic", css [ paddingLeft (px 5), textAlign left ] ]
+            [ text name ]
+         ]
+            ++ List.map (\x -> fun x |> viewTableCell) data
+        )
+
 
 viewTableCell : String -> Html Msg
 viewTableCell value =
-  td []
-     [text value]
-
+    td [ css [ textAlign center ] ]
+        [ text value ]

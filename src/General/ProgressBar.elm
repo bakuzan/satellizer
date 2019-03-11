@@ -1,63 +1,89 @@
-module General.ProgressBar exposing (..)
+module General.ProgressBar exposing (getPercentage, singleSegmentPercentage, viewProgressBar, viewProgressSegment)
 
-import Html exposing (..)
-import Html.Attributes exposing (class, classList, style, title, attribute)
-import Msgs exposing(Msg)
-import Models exposing(CountData, Count)
-import Utils.Common exposing (divide)
+import Css exposing (..)
+import Html.Styled exposing (Html, div, text)
+import Html.Styled.Attributes exposing (attribute, class, classList, css, style, title)
+import Models exposing (Count, CountData)
+import Msgs exposing (Msg)
 import Round
+import Utils.Colours exposing (ratingColours)
+import Utils.Common exposing (divide)
 
 
 viewProgressBar : Int -> CountData -> Html Msg
 viewProgressBar total values =
-  let
-    segments =
-      List.map (viewProgressSegment total) values
+    let
+        segments =
+            List.map (viewProgressSegment total) values
 
-    progressItems =
-      if (List.length values) > 1
-        then segments
-        else (segments ++ [ div [class "vertically-center", style "padding" "0 10px" ] [text (singleSegmentPercentage values total)]
-                        ])
-  in
-    div [ class "percentage-breakdown" ]
+        progressItems =
+            if List.length values > 1 then
+                segments
+
+            else
+                segments
+                    ++ [ div
+                            [ css [ displayFlex, alignItems center, padding2 (px 0) (px 10) ]
+                            ]
+                            [ text (singleSegmentPercentage values total) ]
+                       ]
+    in
+    div
+        [ css
+            [ displayFlex
+            , flexDirection row
+            , position relative
+            , height (px 30)
+            , width (pct 100)
+            ]
+        ]
         ([] ++ progressItems)
 
 
 viewProgressSegment : Int -> Count -> Html Msg
 viewProgressSegment total pair =
-  let
-    percentageString =
-      (String.fromFloat (getPercentage pair.value total)) ++ "%"
+    let
+        percentageString =
+            String.fromFloat (getPercentage pair.value total) ++ "%"
 
-    percentage =
-      getPercentage pair.value total
+        percentage =
+            getPercentage pair.value total
 
-  in
-  div [ class "percentage-breakdown__bar"
-      , classList [(pair.key, True), ("tooltip-bottom", True)]
-      , style "width" percentageString
-      , attribute "hover-data" ((String.fromInt pair.value) ++ " series " ++ pair.key)
-      ]
-      []
+        barColour =
+            List.filter (\x -> Tuple.first x == pair.key) ratingColours
+                |> List.head
+                |> Maybe.withDefault ( "", "000" )
+                |> Tuple.second
+    in
+    div
+        [ classList [ ( pair.key, True ), ( "tooltip-bottom", True ) ]
+        , style "width" percentageString
+        , attribute "hover-data" (String.fromInt pair.value ++ " series " ++ pair.key)
+        , css
+            [ height (pct 100)
+            , backgroundColor (hex barColour)
+            ]
+        ]
+        []
+
 
 getPercentage : Int -> Int -> Float
 getPercentage value total =
-  (divide value total) * 100
+    divide value total * 100
+
 
 singleSegmentPercentage : CountData -> Int -> String
 singleSegmentPercentage values total =
-  let
-    appendSign value =
-      value ++ "%"
+    let
+        appendSign value =
+            value ++ "%"
 
-    returnPercentage num =
-      getPercentage num total
-       |> Round.round 2
-       |> appendSign
-
-  in
-  List.head values
-    |> Maybe.withDefault { key = "", value = 0 }
-    |> .value
-    |> returnPercentage
+        returnPercentage num =
+            getPercentage num total
+                |> Round.round 2
+                |> appendSign
+    in
+    List.head values
+        |> Maybe.withDefault { key = "", value = 0 }
+        |> .value
+        |> returnPercentage

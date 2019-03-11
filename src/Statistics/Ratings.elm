@@ -1,8 +1,8 @@
 module Statistics.Ratings exposing (view)
 
-import Html exposing (..)
-import Html.Attributes exposing (id, class, classList, style)
-import Html.Events exposing (onClick)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (id, class, classList, style)
+import Html.Styled.Events exposing (onClick)
 import Msgs exposing (Msg)
 import Models exposing (Model, Settings, RatingFilters, SeriesData, CountData, Count, emptyCount)
 import Utils.Common as Common

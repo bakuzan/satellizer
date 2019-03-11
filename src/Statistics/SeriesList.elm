@@ -1,8 +1,8 @@
 module Statistics.SeriesList exposing (view)
 
-import Html exposing (..)
-import Html.Attributes exposing (id, class, href, type_, title)
-import Html.Events exposing (onClick)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (id, class, href, type_, title)
+import Html.Styled.Events exposing (onClick)
 import Msgs exposing (Msg)
 import Models exposing (Model, Settings, RatingFilters, SeriesData, Series)
 

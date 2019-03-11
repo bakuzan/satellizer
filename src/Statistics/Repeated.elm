@@ -1,7 +1,7 @@
 module Statistics.Repeated exposing (view)
 
-import Html exposing (..)
-import Html.Attributes exposing (id, class, classList, href, title)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (id, class, classList, href, title)
 import Msgs exposing (Msg)
 import Models exposing (Model, Settings, RepeatedFilters, RepeatedSeriesData, RepeatedSeries)
 

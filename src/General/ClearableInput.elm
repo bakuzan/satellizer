@@ -1,9 +1,9 @@
 module General.ClearableInput exposing (view)
 
 
-import Html exposing (Html, div, label, span, input, button, text)
-import Html.Attributes exposing (class, type_, name, placeholder, maxlength, value, autocomplete)
-import Html.Events exposing (onInput, onClick)
+import Html.Styled exposing (Html, div, label, span, input, button, text)
+import Html.Styled.Attributes exposing (class, type_, name, placeholder, maxlength, value, autocomplete)
+import Html.Styled.Events exposing (onInput, onClick)
 
 import Msgs exposing (Msg)
 

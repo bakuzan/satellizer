@@ -1,16 +1,15 @@
-module Msgs exposing (..)
+module Msgs exposing (Msg(..))
 
-
-import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, SeriesData, RepeatedSeriesData)
-import Debounce
 -- import Navigation exposing (Location)
-import RemoteData exposing (WebData)
+
+import Debounce
 import GraphQL.Client.Http as GraphQLClient
+import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Theme)
+import RemoteData exposing (WebData)
 
 
 type Msg
     = NoOp
-    -- | OnLocationChange Location
     | DebounceMsg Debounce.Msg
     | SaveTextInput String String
     | OnFetchStatus (WebData CountData)
@@ -26,8 +25,10 @@ type Msg
     | UpdateIsAdult Bool
     | UpdateContentType String
     | UpdateRequireKey Bool
+    | UpdateTheme Theme
     | UpdateTextInput String String
     | ClearSelectedRatings
     | ToggleRatingFilter Int
     | ReceiveSeriesRatingsResponse (Result GraphQLClient.Error SeriesData)
     | ReceiveRepeatedSeriesResponse (Result GraphQLClient.Error RepeatedSeriesData)
+    | ReceiveAiringSeriesResponse (Result GraphQLClient.Error HistoryDetailData)
