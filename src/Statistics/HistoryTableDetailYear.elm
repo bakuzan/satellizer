@@ -1,9 +1,9 @@
 module Statistics.HistoryTableDetailYear exposing (view)
 
 import Css exposing (..)
-import Html.Styled exposing (Html, button, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
+import Html.Styled exposing (Html, button, div, li, strong, table, tbody, td, text, th, thead, tr, ul)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, style)
-import Models exposing (HistoryYear, HistoryYearData, Settings, emptyHistoryYear)
+import Models exposing (HistoryYear, HistoryYearData, Model, Settings, Theme, emptyHistoryYear)
 import Msgs exposing (Msg)
 import Round
 import Utils.Common as Common
@@ -11,18 +11,21 @@ import Utils.Constants as Constants
 import Utils.Styles as Styles
 
 
-view : Settings -> HistoryYearData -> Html Msg
-view settings data =
-    if settings.detailGroup == "" then
-        div [] []
+view : Model -> HistoryYearData -> Html Msg
+view model data =
+    if model.settings.detailGroup == "" then
+        text ""
 
     else
-        viewHistoryYearDetail settings data
+        viewHistoryYearDetail model data
 
 
-viewHistoryYearDetail : Settings -> HistoryYearData -> Html Msg
-viewHistoryYearDetail settings data =
+viewHistoryYearDetail : Model -> HistoryYearData -> Html Msg
+viewHistoryYearDetail model data =
     let
+        settings =
+            model.settings
+
         breakdown =
             settings.breakdownType
 
@@ -34,16 +37,18 @@ viewHistoryYearDetail settings data =
     in
     div [ class "history-detail" ]
         [ div [ class "flex-row" ]
-            [ viewDetailTable breakdown data
+            [ table
+                [ class "history-breakdown__table"
+                , classList
+                    [ ( String.toLower breakdown, True )
+                    , ( "year", True )
+                    ]
+                , css [ width (pct 100) ]
+                ]
+                [ viewTableHead breakdown
+                , viewTableBody model.theme breakdown data
+                ]
             ]
-        ]
-
-
-viewDetailTable : String -> HistoryYearData -> Html Msg
-viewDetailTable breakdown data =
-    table [ class "history-breakdown__table", classList [ ( String.toLower breakdown, True ), ( "year", True ) ], css [ width (pct 100) ] ]
-        [ viewTableHead breakdown
-        , viewTableBody breakdown data
         ]
 
 
@@ -69,8 +74,8 @@ viewTableHead breakdown =
         )
 
 
-viewTableBody : String -> HistoryYearData -> Html Msg
-viewTableBody breakdown data =
+viewTableBody : Theme -> String -> HistoryYearData -> Html Msg
+viewTableBody theme breakdown data =
     let
         fixValue =
             if breakdown == "MONTHS" then
@@ -100,12 +105,15 @@ viewTableBody breakdown data =
 
         cells =
             List.sortBy .id fixedData
+
+        renderRow =
+            viewTableRow theme
     in
     tbody [ class "history-breakdown-body" ]
-        [ viewTableRow "Average" (floatToString .average) cells
-        , viewTableRow "Highest" (intToString .highest) cells
-        , viewTableRow "Lowest" (intToString .lowest) cells
-        , viewTableRow "Mode" (intToString .mode) cells
+        [ renderRow "Average" (floatToString .average) cells
+        , renderRow "Highest" (intToString .highest) cells
+        , renderRow "Lowest" (intToString .lowest) cells
+        , renderRow "Mode" (intToString .mode) cells
         ]
 
 
@@ -119,11 +127,11 @@ intToString fun v =
     String.fromInt (fun v)
 
 
-viewTableRow : String -> (HistoryYear -> String) -> HistoryYearData -> Html Msg
-viewTableRow name fun data =
+viewTableRow : Theme -> String -> (HistoryYear -> String) -> HistoryYearData -> Html Msg
+viewTableRow theme name fun data =
     tr
         [ class "history-breakdown-body__row year-breakdown"
-        , css Styles.breakdownBodyRow
+        , css (Styles.breakdownBodyRow theme)
         ]
         ([ th [ class "history-breakdown-body__year-statistic", css [ paddingLeft (px 5), textAlign left ] ]
             [ text name ]

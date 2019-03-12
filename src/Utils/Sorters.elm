@@ -1,67 +1,97 @@
-module Utils.Sorters exposing (..)
+module Utils.Sorters exposing (repeatedSeriesOrdering, seriesOrdering, sortHistoryDetailList)
 
+import Models exposing (HistoryDetail, HistoryDetailData, RepeatedSeries, Series)
 import Ordering exposing (Ordering)
-
-import Models exposing (RepeatedSeries, Series, HistoryDetail)
 
 
 repeatedSeriesOrdering : Ordering RepeatedSeries
 repeatedSeriesOrdering =
-  Ordering.byField .timesCompleted
-    |> Ordering.reverse
-    |> Ordering.breakTiesWith (Ordering.byField .name)
+    Ordering.byField .timesCompleted
+        |> Ordering.reverse
+        |> Ordering.breakTiesWith (Ordering.byField .name)
 
 
 seriesOrdering : Ordering Series
 seriesOrdering =
-  Ordering.byField .rating
-    |> Ordering.reverse
-    |> Ordering.breakTiesWith (Ordering.byField .name)
+    Ordering.byField .rating
+        |> Ordering.reverse
+        |> Ordering.breakTiesWith (Ordering.byField .name)
 
 
 historyDetailDirection : Bool -> (Ordering a -> Ordering a)
 historyDetailDirection isDesc =
-  if isDesc == True
-    then Ordering.reverse
-    else (\x -> x)
+    if isDesc == True then
+        Ordering.reverse
+
+    else
+        \x -> x
 
 
 historyDetailOrderByTitle : Bool -> Ordering HistoryDetail
 historyDetailOrderByTitle isDesc =
-  Ordering.byField .title
-    |> historyDetailDirection isDesc
+    Ordering.byField .title
+        |> historyDetailDirection isDesc
 
 
 historyDetailOrderByRating : Bool -> Ordering HistoryDetail
 historyDetailOrderByRating isDesc =
-  Ordering.byField .rating
-    |> historyDetailDirection isDesc
-    |> Ordering.breakTiesWith (Ordering.byField .title)
+    Ordering.byField .rating
+        |> historyDetailDirection isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByAverage : Bool -> Ordering HistoryDetail
 historyDetailOrderByAverage isDesc =
-  Ordering.byField (\x -> x.episodeStatistics.average)
-    |> historyDetailDirection isDesc
-    |> Ordering.breakTiesWith (Ordering.byField .title)
+    Ordering.byField (\x -> x.episodeStatistics.average)
+        |> historyDetailDirection isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByHighest : Bool -> Ordering HistoryDetail
 historyDetailOrderByHighest isDesc =
-  Ordering.byField (\x -> x.episodeStatistics.highest)
-    |> historyDetailDirection isDesc
-    |> Ordering.breakTiesWith (Ordering.byField .title)
+    Ordering.byField (\x -> x.episodeStatistics.highest)
+        |> historyDetailDirection isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByLowest : Bool -> Ordering HistoryDetail
 historyDetailOrderByLowest isDesc =
-  Ordering.byField (\x -> x.episodeStatistics.lowest)
-    |> historyDetailDirection isDesc
-    |> Ordering.breakTiesWith (Ordering.byField .title)
+    Ordering.byField (\x -> x.episodeStatistics.lowest)
+        |> historyDetailDirection isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByMode : Bool -> Ordering HistoryDetail
 historyDetailOrderByMode isDesc =
-  Ordering.byField (\x -> x.episodeStatistics.mode)
-    |> historyDetailDirection isDesc
-    |> Ordering.breakTiesWith (Ordering.byField .title)
+    Ordering.byField (\x -> x.episodeStatistics.mode)
+        |> historyDetailDirection isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .title)
+
+
+
+-- Handler
+
+
+sortHistoryDetailList : String -> Bool -> HistoryDetailData -> HistoryDetailData
+sortHistoryDetailList field isDesc list =
+    case field of
+        "TITLE" ->
+            List.sortWith (historyDetailOrderByTitle isDesc) list
+
+        "RATING" ->
+            List.sortWith (historyDetailOrderByRating isDesc) list
+
+        "AVERAGE" ->
+            List.sortWith (historyDetailOrderByAverage isDesc) list
+
+        "HIGHEST" ->
+            List.sortWith (historyDetailOrderByHighest isDesc) list
+
+        "LOWEST" ->
+            List.sortWith (historyDetailOrderByLowest isDesc) list
+
+        "MODE" ->
+            List.sortWith (historyDetailOrderByMode isDesc) list
+
+        _ ->
+            list

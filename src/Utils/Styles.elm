@@ -1,18 +1,19 @@
-module Utils.Styles exposing (breakdownBodyRow, containerStyles, listTabStyles)
+module Utils.Styles exposing (appearance, breakdownBodyRow, containerStyles, containers, content, icon, list, listTabStyles)
 
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
+import Models exposing (Theme)
 
 
-breakdownBodyRow : List Css.Style
-breakdownBodyRow =
+breakdownBodyRow : Theme -> List Css.Style
+breakdownBodyRow theme =
     [ borderSpacing (px 0)
     , hover
-        [ backgroundColor (hex "1a1a1a")
-        , color (hex "fff")
+        [ backgroundColor (hex theme.primaryBackground)
+        , color (hex theme.primaryColour)
         , children
-            [ typeSelector "a"
-                [ color (hex "fff")
+            [ typeSelector "td > a"
+                [ color (hex theme.primaryColour) -- anchorColourHover
                 ]
             ]
         ]
@@ -33,3 +34,161 @@ containerStyles =
     , flexDirection column
     , width (pct 50)
     ]
+
+
+
+-- Generic styles
+
+
+icon : Css.Style
+icon =
+    before
+        [ property "content" "attr(icon)"
+        ]
+
+
+content : String -> Css.Style
+content str =
+    property "content" ("'" ++ str ++ "'")
+
+
+appearance : String -> Css.Style
+appearance str =
+    Css.batch
+        [ property "-webkit-appearance" str
+        , property "appearance" str
+        ]
+
+
+containers : Theme -> List Css.Style
+containers theme =
+    floatLabel
+        ++ [ position relative
+           , displayFlex
+           , alignItems center
+
+           --    , flex (int 1)
+           , padding (px 5)
+           , minHeight (px 35)
+           , boxSizing contentBox
+           , focus
+                [ important (borderBottomColor (hex theme.colour))
+                ]
+           ]
+
+
+floatLabel : List Css.Style
+floatLabel =
+    [ displayFlex
+    , position relative
+    , children
+        [ typeSelector "label"
+            [ position absolute
+            , left (px 5)
+            , top (px 1)
+            , cursor text_
+            , fontSize (em 0.75)
+            , opacity (int 1)
+            , property "transition" "all 0.2s"
+            ]
+        , typeSelector "select" ([ appearance "none" ] ++ controlFloatLabelStyle ++ [ marginBottom (px 0) ])
+        , typeSelector "input" controlFloatLabelStyle
+        ]
+    ]
+
+
+controlFloatLabelStyle : List Css.Style
+controlFloatLabelStyle =
+    [ fontSize inherit
+    , paddingBottom (px 0)
+    , paddingLeft (em 0.5)
+    , paddingTop (em 1)
+    , marginBottom (px 2)
+    , property "border" "none"
+    , borderRadius (px 0)
+    , borderBottom3 (px 2) solid (rgba 0 0 0 0.1)
+    , pseudoElement "-webkit-input-placeholder"
+        [ opacity (int 1)
+        , property "transition" "all 0.2s"
+        ]
+    , pseudoClass "placeholder-shown:not(:focus) + label"
+        [ opacity (int 0)
+        , fontSize (em 1.3)
+        , property "opacity" "0.7"
+        , pointerEvents none
+        , top (em 0.6)
+        , left (em 0.5)
+        ]
+    , focus
+        [ outline none
+        ]
+    ]
+
+
+list : Theme -> Bool -> Int -> List Css.Style
+list theme isColumn columns =
+    let
+        isColumnStyle =
+            if isColumn then
+                [ flexDirection row
+                , flexWrap wrap
+                ]
+
+            else
+                []
+
+        columnsStyle =
+            let
+                colVal =
+                    pct (toFloat 100 / toFloat columns)
+            in
+            if columns == 0 then
+                []
+
+            else
+                [ typeSelector "li" [ flexBasis colVal, width colVal ] ]
+    in
+    [ displayFlex
+    , flexDirection row
+    , padding (px 5)
+    , margin2 (px 5) (px 0)
+    , listStyleType none
+    , children
+        ([ typeSelector ".label"
+            [ displayFlex
+            , alignItems center
+            , padding2 (px 2) (px 10)
+            , fontWeight bold
+            ]
+         , typeSelector ".value"
+            [ displayFlex
+            , alignItems center
+            , padding2 (px 2) (px 10)
+            , before
+                [ icon
+                , fontWeight bold
+                ]
+            ]
+         ]
+            ++ columnsStyle
+        )
+    ]
+        ++ isColumnStyle
+        ++ (if isColumn then
+                [ children
+                    [ typeSelector ".label:nth-child(odd)"
+                        [ hover
+                            [ backgroundColor (hex theme.primaryBackground)
+                            , color (hex theme.primaryColour)
+                            ]
+                        ]
+                    , typeSelector ".label:nth-child(odd):hover + .value"
+                        [ backgroundColor (hex theme.primaryBackground)
+                        , color (hex theme.primaryColour)
+                        ]
+                    ]
+                ]
+
+            else
+                []
+           )

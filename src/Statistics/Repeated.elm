@@ -1,11 +1,11 @@
 module Statistics.Repeated exposing (view)
 
+import Components.ClearableInput
+import Components.NewTabLink
 import Css exposing (..)
-import General.ClearableInput
-import General.NewTabLink
 import Html.Styled exposing (Html, button, div, h4, span, strong, table, tbody, td, text, th, thead, tr)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
-import Models exposing (Model, RepeatedFilters, RepeatedSeries, RepeatedSeriesData, Settings)
+import Models exposing (Model, RepeatedFilters, RepeatedSeries, RepeatedSeriesData, Settings, Theme)
 import Msgs exposing (Msg)
 import Utils.Common as Common
 import Utils.Sorters as Sorters
@@ -22,9 +22,12 @@ rightAlign =
     [ textAlign right ]
 
 
-view : Settings -> RepeatedFilters -> RepeatedSeriesData -> Html Msg
-view settings filters repeatedList =
+view : Model -> RepeatedFilters -> RepeatedSeriesData -> Html Msg
+view model filters repeatedList =
     let
+        settings =
+            model.settings
+
         seriesCount =
             List.length repeatedList
 
@@ -39,14 +42,14 @@ view settings filters repeatedList =
                 h4 [ id "series-title" ] [ text seriesCountTitle ]
     in
     div [ id "repeated-tab", css (Styles.listTabStyles ++ [ flexDirection column ]) ]
-        [ General.ClearableInput.view "repeatedSearch" "search" filters.searchText
+        [ Components.ClearableInput.view model.theme "repeatedSearch" "search" filters.searchText []
         , renderTitle
-        , viewSeriesList settings repeatedList
+        , viewSeriesList model repeatedList
         ]
 
 
-viewSeriesList : Settings -> RepeatedSeriesData -> Html Msg
-viewSeriesList settings seriesList =
+viewSeriesList : Model -> RepeatedSeriesData -> Html Msg
+viewSeriesList model seriesList =
     let
         sortedSeriesList =
             List.sortWith Sorters.repeatedSeriesOrdering seriesList
@@ -80,13 +83,13 @@ viewSeriesList settings seriesList =
             ]
         , tbody []
             ([]
-                ++ List.map (viewSeriesEntry settings.contentType) sortedSeriesList
+                ++ List.map (viewSeriesEntry model.theme model.settings.contentType) sortedSeriesList
             )
         ]
 
 
-viewSeriesEntry : String -> RepeatedSeries -> Html Msg
-viewSeriesEntry contentType entry =
+viewSeriesEntry : Theme -> String -> RepeatedSeries -> Html Msg
+viewSeriesEntry theme contentType entry =
     let
         seriesLink =
             "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ entry.id
@@ -107,7 +110,7 @@ viewSeriesEntry contentType entry =
                 "✓"
 
             else
-                "╳"
+                "❌︎"
     in
     tr [ id entry.id, class "repeated-series-table-row" ]
         [ td [ class "left-align", css leftAlign ]
@@ -118,18 +121,20 @@ viewSeriesEntry contentType entry =
                 , Common.setCustomAttr "aria-label" isOwnedTitle
                 , Common.setIcon icon
                 , css
-                    [ display inlineBlock
+                    [ Styles.icon
+                    , display inlineBlock
                     , width (px 20)
                     , height (pct 100)
                     , lineHeight (int 1)
                     , before
-                        [ property "content" ""
-                        , fontSize (rem 0.9)
+                        [ fontSize (em 0.8)
+                        , fontWeight bold
                         ]
                     ]
                 ]
                 []
-            , General.NewTabLink.view [ href seriesLink, title ("View " ++ entry.name ++ " details") ]
+            , Components.NewTabLink.view theme
+                [ href seriesLink, title ("View " ++ entry.name ++ " details") ]
                 [ text entry.name ]
             ]
         , td [ class "right-align", css rightAlign ]

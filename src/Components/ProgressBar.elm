@@ -1,4 +1,4 @@
-module General.ProgressBar exposing (getPercentage, singleSegmentPercentage, viewProgressBar, viewProgressSegment)
+module Components.ProgressBar exposing (getPercentage, singleSegmentPercentage, viewProgressBar, viewProgressSegment)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, div, text)
@@ -54,11 +54,15 @@ viewProgressSegment total pair =
                 |> List.head
                 |> Maybe.withDefault ( "", "000" )
                 |> Tuple.second
+
+        dataMessage =
+            String.fromInt pair.value ++ " series " ++ pair.key
     in
     div
         [ classList [ ( pair.key, True ), ( "tooltip-bottom", True ) ]
         , style "width" percentageString
-        , attribute "hover-data" (String.fromInt pair.value ++ " series " ++ pair.key)
+        , attribute "hover-data" dataMessage
+        , attribute "aria-label" dataMessage
         , css
             [ height (pct 100)
             , backgroundColor (hex barColour)

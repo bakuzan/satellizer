@@ -240,6 +240,13 @@ update msg model =
                     else
                         breakdown
 
+                activeTab =
+                    if isAdult && settings.activeTab == "Airing" then
+                        "History"
+
+                    else
+                        settings.activeTab
+
                 breakdownType =
                     getBreakdownType settings.contentType
                         |> ensureValidDetailGroup
@@ -253,6 +260,7 @@ update msg model =
                             { sorting
                                 | field = ensureValidSortField breakdownType
                             }
+                        , activeTab = activeTab
                     }
             in
             ( { model
@@ -266,6 +274,13 @@ update msg model =
                 breakdownType =
                     getBreakdownType contentType
 
+                activeTab =
+                    if contentType /= "anime" && settings.activeTab == "Airing" then
+                        "History"
+
+                    else
+                        settings.activeTab
+
                 updatedSettings =
                     { settings
                         | contentType = contentType
@@ -275,6 +290,7 @@ update msg model =
                             { sorting
                                 | field = ensureValidSortField breakdownType
                             }
+                        , activeTab = activeTab
                     }
             in
             ( { model

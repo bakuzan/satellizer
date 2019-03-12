@@ -1,6 +1,6 @@
 module Utils.Constants exposing (..)
 
-import General.RadioButton exposing (RadioOption)
+import Components.RadioButton exposing (RadioOption)
 import Models exposing (Header)
 import Msgs
 

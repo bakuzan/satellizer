@@ -1,32 +1,54 @@
 module Statistics.HistoryTableDetail exposing (view)
 
+import Components.Accordion
+import Components.Button as Button
+import Components.NewTabLink
 import Css exposing (..)
-import General.Accordion
-import General.NewTabLink
+import Css.Global exposing (children, typeSelector)
 import Html.Styled exposing (Html, button, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, style)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Settings, Sort, emptyHistoryDetail)
+import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Settings, Sort, Theme, emptyHistoryDetail)
 import Msgs exposing (Msg)
 import Round
+import Utils.Colours exposing (getSeasonColour)
 import Utils.Common as Common
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 import Utils.TableFunctions exposing (getBreakdownName)
 
 
-view : Settings -> HistoryDetailData -> Html Msg
-view settings data =
-    if settings.detailGroup == "" then
-        div [] []
+type alias DetailTableProps =
+    { isYearBreakdown : Bool
+    , contentType : String
+    , breakdown : String
+    , theme : Theme
+    , sorting : Sort
+    }
+
+
+type alias HeaderProps =
+    { hide : Bool
+    , title : String
+    , style : List Css.Style
+    }
+
+
+view : Model -> HistoryDetailData -> Html Msg
+view model data =
+    if model.settings.detailGroup == "" then
+        text ""
 
     else
-        viewHistoryDetail settings data
+        viewHistoryDetail model data
 
 
-viewHistoryDetail : Settings -> HistoryDetailData -> Html Msg
-viewHistoryDetail settings data =
+viewHistoryDetail : Model -> HistoryDetailData -> Html Msg
+viewHistoryDetail model data =
     let
+        settings =
+            model.settings
+
         contentType =
             settings.contentType
 
@@ -50,7 +72,7 @@ viewHistoryDetail settings data =
             String.fromInt (List.length data) ++ " series for " ++ displayPartition ++ " " ++ Common.getYear detailGroup
     in
     div []
-        [ viewDetailBreakdowns data
+        [ viewDetailBreakdowns model.theme data
         , div
             [ class "history-detail"
             , css
@@ -59,7 +81,8 @@ viewHistoryDetail settings data =
             ]
             [ h2
                 [ css
-                    [ padding (px 5)
+                    [ fontSize (em 1.25)
+                    , padding (px 5)
                     , margin2 (px 10) (px 5)
                     , textAlign left
                     ]
@@ -72,40 +95,27 @@ viewHistoryDetail settings data =
                     , flexDirection column
                     ]
                 ]
-                [ viewDetailTable contentType breakdown settings.sorting data
+                [ viewDetailTable
+                    { contentType = contentType
+                    , breakdown = breakdown
+                    , sorting = settings.sorting
+                    , isYearBreakdown = isYearBreakdown
+                    , theme = model.theme
+                    }
+                    data
                 ]
             ]
         ]
 
 
-viewDetailTable : String -> String -> Sort -> HistoryDetailData -> Html Msg
-viewDetailTable contentType breakdown sorting list =
+viewDetailTable : DetailTableProps -> HistoryDetailData -> Html Msg
+viewDetailTable props list =
     let
-        isDesc =
-            sorting.isDesc
+        sorting =
+            props.sorting
 
         sortedList =
-            case sorting.field of
-                "TITLE" ->
-                    List.sortWith (Sorters.historyDetailOrderByTitle isDesc) list
-
-                "RATING" ->
-                    List.sortWith (Sorters.historyDetailOrderByRating isDesc) list
-
-                "AVERAGE" ->
-                    List.sortWith (Sorters.historyDetailOrderByAverage isDesc) list
-
-                "HIGHEST" ->
-                    List.sortWith (Sorters.historyDetailOrderByHighest isDesc) list
-
-                "LOWEST" ->
-                    List.sortWith (Sorters.historyDetailOrderByLowest isDesc) list
-
-                "MODE" ->
-                    List.sortWith (Sorters.historyDetailOrderByMode isDesc) list
-
-                _ ->
-                    list
+            Sorters.sortHistoryDetailList sorting.field sorting.isDesc list
     in
     table
         [ class "history-breakdown__table"
@@ -113,70 +123,74 @@ viewDetailTable contentType breakdown sorting list =
             [ width (pct 100)
             ]
         ]
-        [ viewTableHeader breakdown sorting
-        , viewTableBody contentType sortedList
+        [ viewTableHeader props
+        , viewTableBody props sortedList
         ]
 
 
-viewTableHeader : String -> Sort -> Html Msg
-viewTableHeader breakdown sorting =
+viewTableHeader : DetailTableProps -> Html Msg
+viewTableHeader props =
     let
         hideHeader =
-            breakdown == "MONTHS"
+            props.breakdown == "MONTHS"
+
+        renderHeaderCell =
+            viewHeaderCell props.sorting props.theme
     in
     thead []
-        [ viewHeaderCell False "Title" sorting [ paddingLeft (px 5), textAlign left ]
-        , viewHeaderCell False "Rating" sorting []
-        , viewHeaderCell hideHeader "Average" sorting []
-        , viewHeaderCell hideHeader "Highest" sorting []
-        , viewHeaderCell hideHeader "Lowest" sorting []
-        , viewHeaderCell hideHeader "Mode" sorting []
+        [ renderHeaderCell { hide = False, title = "Title", style = [ paddingLeft (px 5), textAlign left ] }
+        , renderHeaderCell { hide = False, title = "Rating", style = [] }
+        , renderHeaderCell { hide = hideHeader, title = "Average", style = [] }
+        , renderHeaderCell { hide = hideHeader, title = "Highest", style = [] }
+        , renderHeaderCell { hide = hideHeader, title = "Lowest", style = [] }
+        , renderHeaderCell { hide = hideHeader, title = "Mode", style = [] }
         ]
 
 
-viewHeaderCell : Bool -> String -> Sort -> List Css.Style -> Html Msg
-viewHeaderCell hide title sorting cssStyle =
+viewHeaderCell : Sort -> Theme -> HeaderProps -> Html Msg
+viewHeaderCell sorting theme props =
     let
-        iconStyle =
-            if sorting.field /= String.toUpper title then
-                []
+        icon =
+            if sorting.field /= String.toUpper props.title then
+                ""
 
             else if sorting.isDesc == True then
-                [ after [ property "content" "▼" ] ]
+                "▼"
 
             else
-                [ after [ property "content" "▲" ] ]
+                "▲"
     in
     th
         [ css
-            (if hide then
+            (if props.hide then
                 [ display none ]
 
              else
-                cssStyle
+                props.style
             )
         ]
-        [ button [ class "button", onClick (Msgs.UpdateSortField (String.toUpper title)) ]
+        [ Button.view { isPrimary = False, theme = theme }
+            [ onClick (Msgs.UpdateSortField (String.toUpper props.title)) ]
             [ strong
-                [ css
-                    ([ lineHeight (int 1)
-                     ]
-                        ++ iconStyle
-                    )
+                [ Common.setIcon icon
+                , css
+                    [ lineHeight (int 1)
+                    , Styles.icon
+                    ]
                 ]
-                [ text title ]
+                [ text props.title ]
             ]
         ]
 
 
-viewTableBody : String -> HistoryDetailData -> Html Msg
-viewTableBody contentType list =
+viewTableBody : DetailTableProps -> HistoryDetailData -> Html Msg
+viewTableBody props list =
     tbody [ class "history-breakdown-body" ]
-        ([] ++ List.map (viewTableRow contentType) list)
+        ([] ++ List.map (viewTableRow props) list)
 
 
-viewTableRow : String -> HistoryDetail -> Html Msg
-viewTableRow contentType item =
+viewTableRow : DetailTableProps -> HistoryDetail -> Html Msg
+viewTableRow props item =
     let
         es =
             item.episodeStatistics
@@ -190,18 +204,38 @@ viewTableRow contentType item =
 
         setTitleIndication =
             indicate ++ item.title
+
+        seasonStr =
+            String.toLower item.season
+
+        additonalStyles =
+            if props.isYearBreakdown then
+                [ hover
+                    [ backgroundColor (hex (getSeasonColour seasonStr))
+                    , color (hex "fff")
+                    , children
+                        [ typeSelector "td > a"
+                            [ backgroundColor inherit
+                            , color inherit
+                            ]
+                        ]
+                    ]
+                ]
+
+            else
+                []
     in
     tr
         [ class "history-breakdown-body__row month-breakdown"
-        , classList [ ( String.toLower item.season, True ) ]
-        , css Styles.breakdownBodyRow
+        , classList [ ( seasonStr, True ) ]
+        , css (Styles.breakdownBodyRow props.theme ++ additonalStyles)
         ]
         ([ td
             [ class "history-breakdown-body__month-title"
             , css [ paddingLeft (px 5), textAlign left ]
             ]
-            [ General.NewTabLink.view
-                [ href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id)
+            [ Components.NewTabLink.view props.theme
+                [ href ("http://localhost:9003/erza/" ++ props.contentType ++ "-view/" ++ item.id)
                 , css
                     [ width (pct 75)
                     , textAlign left
@@ -239,8 +273,8 @@ renderCell str =
         ]
 
 
-viewDetailBreakdowns : HistoryDetailData -> Html Msg
-viewDetailBreakdowns list =
+viewDetailBreakdowns : Theme -> HistoryDetailData -> Html Msg
+viewDetailBreakdowns theme list =
     let
         listNoZeroes =
             List.filter (\x -> x.rating /= 0) list
@@ -290,9 +324,11 @@ viewDetailBreakdowns list =
                     []
                 |> getHead
     in
-    div [ class "history-detail-breakdown", css [ marginLeft auto ] ]
-        [ General.Accordion.view "Overall"
-            [ ul [ class "list column two" ]
+    div [ class "history-detail-breakdown", css [ margin (px 10), marginLeft auto ] ]
+        [ Components.Accordion.view theme
+            "Overall"
+            "Overall"
+            [ ul [ css (Styles.list theme True 2) ]
                 ([]
                     ++ viewBreakdownPair "Average" (String.fromFloat average)
                     ++ viewBreakdownPair "Highest" (String.fromInt highest)

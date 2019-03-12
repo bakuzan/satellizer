@@ -1,22 +1,23 @@
-module General.Accordion exposing (view)
+module Components.Accordion exposing (view)
 
 import Css exposing (..)
 import Css.Global exposing (children, global, typeSelector)
 import Html.Styled exposing (Html, div, input, label, text)
 import Html.Styled.Attributes exposing (class, css, for, id, name, type_)
+import Models exposing (Theme)
 import Msgs exposing (Msg)
 
 
-view : String -> List (Html Msg) -> Html Msg
-view title children =
+view : Theme -> String -> String -> List (Html Msg) -> Html Msg
+view theme htmlId title children =
     let
         idLink =
-            title ++ "-accordion"
+            htmlId ++ "-accordion"
 
         labelPseudoStyle =
             [ position absolute
-            , backgroundColor (hex "000")
-            , property "content" ""
+            , backgroundColor (hex theme.baseBackground)
+            , property "content" " "
             , transform (rotate (deg 0))
             , property "transition" "0.5s"
             , top (pct 50)
@@ -27,7 +28,7 @@ view title children =
         , css
             [ width (pct 25)
             , minWidth (px 500)
-            , margin4 (px 0) auto (px 0) (px 10)
+            , margin (px 0)
             , borderBottom3 (px 2) solid (hex "888")
             ]
         ]

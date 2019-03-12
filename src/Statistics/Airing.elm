@@ -1,12 +1,13 @@
 module Statistics.Airing exposing (view)
 
+import Components.Accordion
+import Components.Button as Button
+import Components.NewTabLink
 import Css exposing (..)
-import General.Accordion
-import General.NewTabLink
 import Html.Styled exposing (Html, button, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
 import Html.Styled.Attributes exposing (class, classList, css, href, id)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Settings, Sort, emptyHistoryDetail)
+import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Settings, Sort, Theme, emptyHistoryDetail)
 import Msgs exposing (Msg)
 import Round
 import Utils.Common as Common
@@ -15,106 +16,78 @@ import Utils.Styles as Styles
 import Utils.TableFunctions exposing (getBreakdownName)
 
 
-view : Settings -> HistoryDetailData -> Html Msg
-view settings seriesList =
+view : Model -> HistoryDetailData -> Html Msg
+view model seriesList =
     let
-        contentType =
-            "anime"
-
-        breakdown =
-            "seasonal"
-
         detailSummary =
             String.fromInt (List.length seriesList) ++ " seasonal series airing"
+
+        sorting =
+            model.settings.sorting
+
+        isDesc =
+            sorting.isDesc
+
+        sortedList =
+            Sorters.sortHistoryDetailList sorting.field sorting.isDesc seriesList
+
+        renderHeaderCell =
+            viewHeaderCell sorting model.theme
     in
     div
         [ id "airing-tab" ]
-        [ viewDetailBreakdowns seriesList
+        [ viewDetailBreakdowns model.theme seriesList
         , div [ class "history-detail" ]
-            [ h2 [] [ text detailSummary ]
+            [ h2 [ css [ fontSize (em 1.25) ] ] [ text detailSummary ]
             , div [ class "flex-column" ]
-                [ viewDetailTable contentType breakdown settings.sorting seriesList
+                [ table [ class "history-breakdown__table", css [ width (pct 100) ] ]
+                    [ thead []
+                        [ renderHeaderCell "Title" [ paddingLeft (px 5), textAlign left ]
+                        , renderHeaderCell "Rating" []
+                        , renderHeaderCell "Average" []
+                        , renderHeaderCell "Highest" []
+                        , renderHeaderCell "Lowest" []
+                        , renderHeaderCell "Mode" []
+                        ]
+                    , tbody [ class "history-breakdown-body" ]
+                        ([] ++ List.map (viewTableRow model.theme) sortedList)
+                    ]
                 ]
             ]
         ]
 
 
-viewDetailTable : String -> String -> Sort -> HistoryDetailData -> Html Msg
-viewDetailTable contentType breakdown sorting list =
-    let
-        isDesc =
-            sorting.isDesc
-
-        sortedList =
-            case sorting.field of
-                "TITLE" ->
-                    List.sortWith (Sorters.historyDetailOrderByTitle isDesc) list
-
-                "RATING" ->
-                    List.sortWith (Sorters.historyDetailOrderByRating isDesc) list
-
-                "AVERAGE" ->
-                    List.sortWith (Sorters.historyDetailOrderByAverage isDesc) list
-
-                "HIGHEST" ->
-                    List.sortWith (Sorters.historyDetailOrderByHighest isDesc) list
-
-                "LOWEST" ->
-                    List.sortWith (Sorters.historyDetailOrderByLowest isDesc) list
-
-                "MODE" ->
-                    List.sortWith (Sorters.historyDetailOrderByMode isDesc) list
-
-                _ ->
-                    list
-    in
-    table [ class "history-breakdown__table", css [ width (pct 100) ] ]
-        [ viewTableHeader breakdown sorting
-        , viewTableBody contentType sortedList
-        ]
-
-
-viewTableHeader : String -> Sort -> Html Msg
-viewTableHeader breakdown sorting =
-    thead []
-        [ viewHeaderCell "Title" sorting [ paddingLeft (px 5), textAlign left ]
-        , viewHeaderCell "Rating" sorting []
-        , viewHeaderCell "Average" sorting []
-        , viewHeaderCell "Highest" sorting []
-        , viewHeaderCell "Lowest" sorting []
-        , viewHeaderCell "Mode" sorting []
-        ]
-
-
-viewHeaderCell : String -> Sort -> List Css.Style -> Html Msg
-viewHeaderCell title sorting style =
+viewHeaderCell : Sort -> Theme -> String -> List Css.Style -> Html Msg
+viewHeaderCell sorting theme title styles =
     let
         icon =
             if sorting.field /= String.toUpper title then
                 ""
 
             else if sorting.isDesc == True then
-                " sort--desc"
+                "▼"
 
             else
-                " sort--asc"
+                "▲"
     in
-    th [ css style ]
-        [ button [ class "button", onClick (Msgs.UpdateSortField (String.toUpper title)) ]
-            [ strong [ class ("sort" ++ icon) ]
+    th
+        [ css styles ]
+        [ Button.view { isPrimary = False, theme = theme }
+            [ onClick (Msgs.UpdateSortField (String.toUpper title)) ]
+            [ strong
+                [ Common.setIcon icon
+                , css
+                    [ lineHeight (int 1)
+                    , Styles.icon
+                    ]
+                ]
                 [ text title ]
             ]
         ]
 
 
-viewTableBody : String -> HistoryDetailData -> Html Msg
-viewTableBody contentType list =
-    tbody [ class "history-breakdown-body" ]
-        ([] ++ List.map (viewTableRow contentType) list)
-
-
-viewTableRow : String -> HistoryDetail -> Html Msg
-viewTableRow contentType item =
+viewTableRow : Theme -> HistoryDetail -> Html Msg
+viewTableRow theme item =
     let
         es =
             item.episodeStatistics
@@ -132,13 +105,14 @@ viewTableRow contentType item =
     tr
         [ class "history-breakdown-body__row month-breakdown"
         , classList [ ( String.toLower item.season, True ) ]
-        , css Styles.breakdownBodyRow
+        , css (Styles.breakdownBodyRow theme)
         ]
         ([ td
             [ class "history-breakdown-body__month-title"
             , css [ paddingLeft (px 5), textAlign left ]
             ]
-            [ General.NewTabLink.view [ href ("http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ item.id) ]
+            [ Components.NewTabLink.view theme
+                [ href ("http://localhost:9003/erza/anime-view/" ++ item.id) ]
                 [ text setTitleIndication ]
             ]
          , renderCell (String.fromInt item.rating)
@@ -171,8 +145,8 @@ renderCell str =
         ]
 
 
-viewDetailBreakdowns : HistoryDetailData -> Html Msg
-viewDetailBreakdowns list =
+viewDetailBreakdowns : Theme -> HistoryDetailData -> Html Msg
+viewDetailBreakdowns theme list =
     let
         listNoZeroes =
             List.filter (\x -> x.rating /= 0) list
@@ -223,8 +197,10 @@ viewDetailBreakdowns list =
                 |> getHead
     in
     div [ class "history-detail-breakdown" ]
-        [ General.Accordion.view "Overall"
-            [ ul [ class "list column two" ]
+        [ Components.Accordion.view theme
+            "AiringOverall"
+            "Overall"
+            [ ul [ css (Styles.list theme True 2) ]
                 ([]
                     ++ viewBreakdownPair "Average" (String.fromFloat average)
                     ++ viewBreakdownPair "Highest" (String.fromInt highest)

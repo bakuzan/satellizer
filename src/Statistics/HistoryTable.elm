@@ -1,12 +1,13 @@
 module Statistics.HistoryTable exposing (view)
 
+import Components.Button as Button
+import Components.RadioButton exposing (radioGroup)
+import Components.SeasonKey as SeasonKey
 import Css exposing (..)
-import General.RadioButton exposing (viewRadioGroup)
-import General.SeasonKey as SeasonKey
 import Html.Styled exposing (Html, button, div, table, tbody, td, text, th, thead, tr)
 import Html.Styled.Attributes exposing (attribute, class, classList, css, id, style)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (Count, CountData, Header, HistoryDetailData, HistoryYearData, Settings, emptyCount)
+import Models exposing (Count, CountData, Header, HistoryDetailData, HistoryYearData, Model, Settings, Theme, emptyCount)
 import Msgs exposing (Msg)
 import Statistics.HistoryTableDetail
 import Statistics.HistoryTableDetailYear
@@ -16,9 +17,19 @@ import Utils.Constants as Constants
 import Utils.TableFunctions exposing (getBreakdownName)
 
 
-view : Settings -> CountData -> HistoryDetailData -> HistoryYearData -> Html Msg
-view settings data detail yearDetail =
+type alias TableProps =
+    { theme : Theme
+    , breakdown : String
+    , isYearBreakdown : Bool
+    }
+
+
+view : Model -> CountData -> HistoryDetailData -> HistoryYearData -> Html Msg
+view model data detail yearDetail =
     let
+        settings =
+            model.settings
+
         breakdownType =
             settings.breakdownType
 
@@ -32,15 +43,20 @@ view settings data detail yearDetail =
             , margin2 (px 5) (px 0)
             ]
         ]
-        [ viewBreakdownToggle settings
-        , viewTable data breakdownType isYearBreakdown
-        , viewTableDetail settings detail yearDetail
-        , SeasonKey.view (isYearBreakdown && breakdownType /= "MONTHS" && settings.requireKey)
+        [ viewBreakdownToggle model.theme settings
+        , viewTable
+            { theme = model.theme
+            , breakdown = breakdownType
+            , isYearBreakdown = isYearBreakdown
+            }
+            data
+        , viewTableDetail model detail yearDetail
+        , SeasonKey.view model.theme (isYearBreakdown && breakdownType /= "MONTHS" && settings.requireKey)
         ]
 
 
-viewBreakdownToggle : Settings -> Html Msg
-viewBreakdownToggle settings =
+viewBreakdownToggle : Theme -> Settings -> Html Msg
+viewBreakdownToggle theme settings =
     let
         blockInteraction =
             if settings.contentType == "manga" || settings.isAdult == True then
@@ -52,23 +68,23 @@ viewBreakdownToggle settings =
         radioOptions =
             List.map (\x -> { x | disabled = blockInteraction }) Constants.breakdownOptions
     in
-    viewRadioGroup "breakdown" settings.breakdownType radioOptions
+    radioGroup theme "breakdown" settings.breakdownType radioOptions
 
 
-viewTableDetail : Settings -> HistoryDetailData -> HistoryYearData -> Html Msg
-viewTableDetail settings detail yearDetail =
-    if String.contains "-" settings.detailGroup == True then
-        Statistics.HistoryTableDetail.view settings detail
+viewTableDetail : Model -> HistoryDetailData -> HistoryYearData -> Html Msg
+viewTableDetail model detail yearDetail =
+    if String.contains "-" model.settings.detailGroup == True then
+        Statistics.HistoryTableDetail.view model detail
 
     else
         div [ id "history-breakdown-detail" ]
-            [ Statistics.HistoryTableDetailYear.view settings yearDetail
-            , Statistics.HistoryTableDetail.view settings detail
+            [ Statistics.HistoryTableDetailYear.view model yearDetail
+            , Statistics.HistoryTableDetail.view model detail
             ]
 
 
-viewTable : CountData -> String -> Bool -> Html Msg
-viewTable countData breakdown isYearBreakdown =
+viewTable : TableProps -> CountData -> Html Msg
+viewTable props countData =
     let
         total =
             Common.maxOfField .value data
@@ -80,7 +96,7 @@ viewTable countData breakdown isYearBreakdown =
                 |> List.reverse
 
         isMonths =
-            breakdown == "MONTHS"
+            props.breakdown == "MONTHS"
 
         headers =
             if isMonths then
@@ -91,13 +107,13 @@ viewTable countData breakdown isYearBreakdown =
     in
     table
         [ class "history-breakdown__table"
-        , classList [ ( String.toLower breakdown, True ), ( "year", isYearBreakdown ) ]
+        , classList [ ( String.toLower props.breakdown, True ), ( "year", props.isYearBreakdown ) ]
         , css
             [ width (pct 100)
             ]
         ]
-        [ viewHeader { isSeason = not isMonths, isYear = isYearBreakdown } headers
-        , viewBody breakdown total data
+        [ viewHeader { isSeason = not isMonths, isYear = props.isYearBreakdown } headers
+        , viewBody props.theme props.breakdown total data
         ]
 
 
@@ -134,18 +150,18 @@ viewHeader settings headers =
         )
 
 
-viewBody : String -> Int -> CountData -> Html Msg
-viewBody breakdown total data =
+viewBody : Theme -> String -> Int -> CountData -> Html Msg
+viewBody theme breakdown total data =
     let
         displayRow =
-            viewRow breakdown total
+            viewRow theme breakdown total
     in
     tbody [ class "history-breakdown-body" ]
         ([] ++ List.map displayRow (split data))
 
 
-viewRow : String -> Int -> List Count -> Html Msg
-viewRow breakdown total data =
+viewRow : Theme -> String -> Int -> List Count -> Html Msg
+viewRow theme breakdown total data =
     let
         fixValue =
             if breakdown == "MONTHS" then
@@ -181,17 +197,18 @@ viewRow breakdown total data =
     in
     tr [ class "history-breakdown-body__row" ]
         ([ th []
-            [ button [ class "button", onClick (Msgs.DisplayHistoryDetail rowYear) ]
+            [ Button.view { isPrimary = False, theme = theme }
+                [ onClick (Msgs.DisplayHistoryDetail rowYear) ]
                 [ text rowYear
                 ]
             ]
          ]
-            ++ List.map (viewCell breakdown total) cells
+            ++ List.map (viewCell theme breakdown total) cells
         )
 
 
-viewCell : String -> Int -> Count -> Html Msg
-viewCell breakdown total obj =
+viewCell : Theme -> String -> Int -> Count -> Html Msg
+viewCell theme breakdown total obj =
     let
         viewDate str =
             getBreakdownName breakdown str ++ " " ++ Common.getYear str
@@ -232,7 +249,7 @@ viewCell breakdown total obj =
                 , css
                     [ width (pct 100)
                     , height (pct 100)
-                    , backgroundColor (hex "000")
+                    , backgroundColor (hex theme.contrast)
                     ]
                 ]
                 []

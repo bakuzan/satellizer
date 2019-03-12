@@ -1,30 +1,31 @@
-module General.SeasonKey exposing (view)
+module Components.SeasonKey exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, div, text)
 import Html.Styled.Attributes exposing (class, classList, css, id)
+import Models exposing (Theme)
 import Msgs exposing (Msg)
 import Utils.Colours exposing (seasonColours)
 
 
-view : Bool -> Html Msg
-view shouldDisplay =
+view : Theme -> Bool -> Html Msg
+view theme shouldDisplay =
     if shouldDisplay then
-        viewKey
+        viewKey theme
 
     else
         text ""
 
 
-viewKey : Html Msg
-viewKey =
+viewKey : Theme -> Html Msg
+viewKey theme =
     div
         [ id "season-key"
         , css
             [ position fixed
             , top (px 75)
             , right (px 10)
-            , backgroundColor (hex "fff")
+            , backgroundColor (hex theme.baseBackground)
             , boxShadow4 (px 1) (px 1) (px 5) (px 1)
             , zIndex (int 10)
             ]

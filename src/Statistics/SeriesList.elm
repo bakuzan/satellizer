@@ -1,21 +1,25 @@
 module Statistics.SeriesList exposing (view)
 
+import Components.Button as Button
+import Components.ClearableInput
+import Components.NewTabLink
 import Css exposing (..)
-import General.ClearableInput
-import General.NewTabLink
 import Html.Styled exposing (Html, button, div, h4, li, span, text, ul)
 import Html.Styled.Attributes exposing (class, css, href, id, title, type_)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (Model, RatingFilters, Series, SeriesData, Settings)
+import Models exposing (Model, RatingFilters, Series, SeriesData, Settings, Theme)
 import Msgs exposing (Msg)
 import Utils.Common as Common
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 
 
-view : Settings -> RatingFilters -> SeriesData -> Html Msg
-view settings filters seriesList =
+view : Model -> RatingFilters -> SeriesData -> Html Msg
+view model filters seriesList =
     let
+        settings =
+            model.settings
+
         ratingCount =
             List.length filters.ratings
 
@@ -33,56 +37,71 @@ view settings filters seriesList =
                 h4 [ id "series-ratings-title" ] [ text seriesCountTitle ]
     in
     div [ id "series-by-ratings-container", css Styles.containerStyles ]
-        [ General.ClearableInput.view "search" "search" filters.searchText
+        [ Components.ClearableInput.view model.theme "search" "search" filters.searchText []
         , div [ class "ratings-filters", css [ displayFlex, marginTop (px 5) ] ]
-            [ viewSelectedRatings filters.ratings
-            , viewClearRatings ratingCount
+            [ viewSelectedRatings model.theme filters.ratings
+            , viewClearRatings model.theme ratingCount
             ]
         , renderTitle
-        , viewSeriesList settings seriesList
+        , viewSeriesList model seriesList
         ]
 
 
-viewClearRatings : Int -> Html Msg
-viewClearRatings ratingCount =
+viewClearRatings : Theme -> Int -> Html Msg
+viewClearRatings theme ratingCount =
     if ratingCount < 1 then
         text ""
 
     else
-        button
-            [ type_ "button"
-            , id "ckear-selected"
-            , class "button ripple"
+        Button.view { isPrimary = False, theme = theme }
+            [ id "clear-selected"
             , onClick Msgs.ClearSelectedRatings
             ]
             [ text "Clear all ratings" ]
 
 
-viewSelectedRatings : List Int -> Html Msg
-viewSelectedRatings selectedRatings =
+viewSelectedRatings : Theme -> List Int -> Html Msg
+viewSelectedRatings theme selectedRatings =
     ul
         [ id "selected-ratings"
-        , class "list"
         , css
-            [ flex3 (int 1) (int 1) (pct 75)
-            , minWidth (px 200)
-            , maxWidth (pct 75)
-            ]
+            (Styles.list theme True 0
+                ++ [ flex3 (int 1) (int 1) (pct 75)
+                   , minWidth (px 200)
+                   , maxWidth (pct 75)
+                   ]
+            )
         ]
         ([]
-            ++ List.map viewSelectedRating selectedRatings
+            ++ List.map (viewSelectedRating theme) selectedRatings
         )
 
 
-viewSelectedRating : Int -> Html Msg
-viewSelectedRating rating =
-    li [ class "input-chip input-chip-deleteable" ]
-        [ span [ class "input-chip-text" ] [ text (String.fromInt rating) ]
-        , button
-            [ type_ "button"
-            , class "button-icon small input-chip-delete"
+viewSelectedRating : Theme -> Int -> Html Msg
+viewSelectedRating theme rating =
+    li
+        [ css
+            [ displayFlex
+            , alignItems center
+            , height (px 32)
+            , lineHeight (px 32)
+            , backgroundColor (hex "ccc")
+            , color (hex "555")
+            , padding2 (px 0) (px 12)
+            , paddingRight (px 2)
+            , borderRadius (px 16)
+            , margin2 (px 0) (px 2)
+            ]
+        ]
+        [ span [ css [ fontSize (em 1.2) ] ] [ text (String.fromInt rating) ]
+        , Button.viewIcon "❌︎"
+            { isPrimary = False, theme = theme }
+            [ css
+                [ important (backgroundColor inherit)
+                , color (hex "555")
+                , fontSize (em 0.8)
+                ]
             , title "Remove"
-            , Common.setIcon "╳"
             , Common.setCustomAttr "aria-label" "Remove"
             , onClick (Msgs.ToggleRatingFilter rating)
             ]
@@ -90,25 +109,25 @@ viewSelectedRating rating =
         ]
 
 
-viewSeriesList : Settings -> SeriesData -> Html Msg
-viewSeriesList settings seriesList =
+viewSeriesList : Model -> SeriesData -> Html Msg
+viewSeriesList model seriesList =
     let
         sortedSeriesList =
             List.sortWith Sorters.seriesOrdering seriesList
     in
-    ul [ id "series-by-ratings-list", class "list column one", css [ minWidth (px 200), maxWidth (pct 75) ] ]
+    ul [ id "series-by-ratings-list", css (Styles.list model.theme True 1 ++ [ minWidth (px 200), maxWidth (pct 75) ]) ]
         ([]
-            ++ List.map (viewSeriesEntry settings.contentType) sortedSeriesList
+            ++ List.map (viewSeriesEntry model.theme model.settings.contentType) sortedSeriesList
         )
 
 
-viewSeriesEntry : String -> Series -> Html Msg
-viewSeriesEntry contentType entry =
+viewSeriesEntry : Theme -> String -> Series -> Html Msg
+viewSeriesEntry theme contentType entry =
     let
         seriesLink =
             "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ entry.id
     in
     li [ css [ displayFlex, justifyContent spaceBetween, padding2 (px 0) (px 10) ] ]
-        [ General.NewTabLink.view [ href seriesLink ] [ text entry.name ]
+        [ Components.NewTabLink.view theme [ href seriesLink ] [ text entry.name ]
         , span [] [ text (String.fromInt entry.rating) ]
         ]

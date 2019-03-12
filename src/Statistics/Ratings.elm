@@ -1,12 +1,13 @@
 module Statistics.Ratings exposing (view)
 
+import Components.Button as Button
+import Components.ProgressBar
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
-import General.ProgressBar
 import Html.Styled exposing (Html, button, div, text)
 import Html.Styled.Attributes exposing (class, classList, css, id, style)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (Count, CountData, Model, RatingFilters, SeriesData, Settings, emptyCount)
+import Models exposing (Count, CountData, Model, RatingFilters, SeriesData, Settings, Theme, emptyCount)
 import Msgs exposing (Msg)
 import Round
 import Statistics.SeriesList
@@ -15,9 +16,12 @@ import Utils.Constants as Constants
 import Utils.Styles as Styles
 
 
-view : Settings -> RatingFilters -> CountData -> SeriesData -> Html Msg
-view settings filters ratingList seriesList =
+view : Model -> RatingFilters -> CountData -> SeriesData -> Html Msg
+view model filters ratingList seriesList =
     let
+        settings =
+            model.settings
+
         total =
             Common.calculateTotalOfValues ratingList
 
@@ -25,7 +29,7 @@ view settings filters ratingList seriesList =
             Common.splitList 1 ratingList
 
         viewRatingBar =
-            viewSingleRating filters.ratings total
+            viewSingleRating model.theme filters.ratings total
     in
     div [ id "ratings-tab", css Styles.listTabStyles ]
         [ div
@@ -45,7 +49,7 @@ view settings filters ratingList seriesList =
              ]
                 ++ List.map viewRatingBar ratings
             )
-        , Statistics.SeriesList.view settings filters seriesList
+        , Statistics.SeriesList.view model filters seriesList
         ]
 
 
@@ -73,13 +77,13 @@ viewTotalAverageRating total list =
                 |> List.sum
                 |> divideIt
     in
-    div [ id "total-average-rating", css [ position absolute, top (px 0), right (px 0) ] ]
+    div [ id "total-average-rating", css [ position absolute, top (px 0), right (px 10) ] ]
         [ text ("Average rating: " ++ totalAverage)
         ]
 
 
-viewSingleRating : List Int -> Int -> CountData -> Html Msg
-viewSingleRating selectedRatings total rating =
+viewSingleRating : Theme -> List Int -> Int -> CountData -> Html Msg
+viewSingleRating theme selectedRatings total rating =
     let
         getRatingText obj =
             if obj.key == "0" then
@@ -110,21 +114,33 @@ viewSingleRating selectedRatings total rating =
 
         updatedRating =
             List.map (\x -> { x | key = setRatingKey x }) rating
+
+        selectedStyle =
+            if isSelected then
+                [ backgroundColor (hex theme.primaryBackground) --colour?
+                , color (hex theme.primaryColour) -- contrast ?
+                , hover [ backgroundColor (hex theme.primaryBackgroundHover) ]
+                ]
+
+            else
+                []
     in
     div []
-        [ button
-            [ class "button ripple rating-label"
+        [ Button.view { isPrimary = False, theme = theme }
+            [ class "rating-label"
             , classList [ ( "selected", isSelected ) ]
             , css
-                [ displayFlex
-                , alignItems center
-                , justifyContent center
-                , width (px 25)
-                ]
+                ([ displayFlex
+                 , alignItems center
+                 , justifyContent center
+                 , width (px 25)
+                 ]
+                    ++ selectedStyle
+                )
             , onClick (Msgs.ToggleRatingFilter number)
             ]
             [ text numberString ]
-        , General.ProgressBar.viewProgressBar total updatedRating
+        , Components.ProgressBar.viewProgressBar total updatedRating
         ]
 
 

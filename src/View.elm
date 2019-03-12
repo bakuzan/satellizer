@@ -1,8 +1,8 @@
 module View exposing (view)
 
+import Components.ProgressBar
+import Components.Tabs exposing (..)
 import Css exposing (..)
-import General.ProgressBar
-import General.Tabs exposing (..)
 import Html.Styled exposing (Html, div)
 import Html.Styled.Attributes exposing (css, id)
 import Models exposing (CountData, Model)
@@ -54,6 +54,13 @@ view model =
 
         seriesList =
             model.seriesList
+
+        disabledTabs =
+            if model.settings.isAdult || model.settings.contentType /= "anime" then
+                [ "Airing" ]
+
+            else
+                []
     in
     div
         [ css
@@ -63,11 +70,13 @@ view model =
             ]
         ]
         [ viewRender status |> viewStatus
-        , viewTabContainer activeTab
-            [ ( "Airing", [ Statistics.Airing.view model.settings model.airingList ] )
-            , ( "History", [ Statistics.HistoryTable.view model.settings history detail yearDetail ] )
-            , ( "Ratings", [ Statistics.Ratings.view model.settings model.ratingsFilters ratings seriesList ] )
-            , ( "Repeated", [ Statistics.Repeated.view model.settings model.repeatedFilters model.repeatedList ] )
+        , viewTabContainer model.theme
+            activeTab
+            disabledTabs
+            [ ( "Airing", [ Statistics.Airing.view model model.airingList ] )
+            , ( "History", [ Statistics.HistoryTable.view model history detail yearDetail ] )
+            , ( "Ratings", [ Statistics.Ratings.view model model.ratingsFilters ratings seriesList ] )
+            , ( "Repeated", [ Statistics.Repeated.view model model.repeatedFilters model.repeatedList ] )
             ]
         ]
 
@@ -79,5 +88,5 @@ viewStatus list =
             Common.calculateTotalOfValues list
     in
     div [ id "status-container", css [ margin (px 15) ] ]
-        [ General.ProgressBar.viewProgressBar total list
+        [ Components.ProgressBar.viewProgressBar total list
         ]
