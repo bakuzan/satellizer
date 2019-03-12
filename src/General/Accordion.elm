@@ -1,21 +1,108 @@
 module General.Accordion exposing (view)
 
-import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (class, type_, id, name, for)
-import Msgs exposing(Msg)
-
+import Css exposing (..)
+import Css.Global exposing (children, global, typeSelector)
+import Html.Styled exposing (Html, div, input, label, text)
+import Html.Styled.Attributes exposing (class, css, for, id, name, type_)
+import Msgs exposing (Msg)
 
 
 view : String -> List (Html Msg) -> Html Msg
 view title children =
-  let
-    idLink = 
-      title ++ "-accordion"
+    let
+        idLink =
+            title ++ "-accordion"
 
-  in
-  div [class "accordion"]
-      [ input [type_ "checkbox", class "accordion-toggler", id idLink, name "accordion" ] []
-      , label [for idLink] [text title]
-      , div [class "accordion-content"]
-           ([] ++ children)
-      ]
+        labelPseudoStyle =
+            [ position absolute
+            , backgroundColor (hex "000")
+            , property "content" ""
+            , transform (rotate (deg 0))
+            , property "transition" "0.5s"
+            , top (pct 50)
+            ]
+    in
+    div
+        [ class "accordion"
+        , css
+            [ width (pct 25)
+            , minWidth (px 500)
+            , margin4 (px 0) auto (px 0) (px 10)
+            , borderBottom3 (px 2) solid (hex "888")
+            ]
+        ]
+        [ global
+            [ typeSelector ".accordion-toggler:checked + label:before"
+                [ transform (rotate (deg 360))
+                , property "transition" "0.5s"
+                ]
+            , typeSelector ".accordion-toggler:checked + label:after"
+                [ transform (rotate (deg 450))
+                , property "transition" "0.5s"
+                ]
+            , typeSelector ".accordion-toggler:checked ~ .accordion-content"
+                [ height auto
+                , margin3 (px 0) (px 0) (rem 1.6)
+                , Css.Global.children
+                    [ typeSelector "*"
+                        [ opacity (int 1)
+                        , property "transition" "0.5s"
+                        , property "transition-delay" "0.25s"
+                        ]
+                    ]
+                ]
+            ]
+        , input
+            [ type_ "checkbox"
+            , class "accordion-toggler"
+            , id idLink
+            , name "accordion"
+            , css
+                [ display none
+                ]
+            ]
+            []
+        , label
+            [ for idLink
+            , css
+                [ display block
+                , position relative
+                , padding (px 5)
+                , fontWeight (int 700)
+                , marginRight (px 10)
+                , cursor pointer
+                , before
+                    (labelPseudoStyle
+                        ++ [ right (px 0)
+                           , width (px 10)
+                           , height (px 2)
+                           , marginTop (px -1)
+                           ]
+                    )
+                , after
+                    (labelPseudoStyle
+                        ++ [ right (px 4)
+                           , height (px 10)
+                           , width (px 2)
+                           , marginTop (px -5)
+                           ]
+                    )
+                ]
+            ]
+            [ text title ]
+        , div
+            [ class "accordion-content"
+            , css
+                [ height (px 1)
+                , overflow hidden
+                , Css.Global.children
+                    [ typeSelector "*"
+                        [ opacity (int 0)
+                        , property "transition" "0.5s"
+                        , lineHeight (em 1.75)
+                        ]
+                    ]
+                ]
+            ]
+            ([] ++ children)
+        ]

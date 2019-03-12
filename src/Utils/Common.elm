@@ -1,9 +1,14 @@
-module Utils.Common exposing (calculateAverageOfRatings, calculateTotalOfValues, calculateTotalOfValuesTemp, divide, divideTotalByCount, getListFirst, getMonth, getYear, maxOfField, minOfField, replace, setIcon, setRole, splitList)
+module Utils.Common exposing (calculateAverageOfRatings, calculateTotalOfValues, calculateTotalOfValuesTemp, divide, divideTotalByCount, getListFirst, getMonth, getYear, maxOfField, minOfField, replace, setCustomAttr, setIcon, setRole, splitList)
 
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes exposing (attribute)
 import Models exposing (Count, CountData, HistoryDetail, HistoryDetailData, HistoryYearData)
 import Round
+
+
+setCustomAttr : String -> String -> Attribute msg
+setCustomAttr attr val =
+    attribute attr val
 
 
 replace : String -> String -> String -> String

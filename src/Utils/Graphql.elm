@@ -98,7 +98,7 @@ airingItemQuery =
     let
         item =
             object HistoryDetail
-                |> with (field "id" [] id)
+                |> with (aliasAs "id" (field "_id" [] id))
                 |> with (field "title" [] string)
                 |> with (field "episodeStatistics" [] mapEpisodeStatistics)
                 |> with (field "rating" [] int)
