@@ -215,9 +215,12 @@ viewCell theme breakdown total obj =
 
         isDisabled =
             obj.value == 0
+
+        info =
+            String.fromInt obj.value ++ " in " ++ viewDate obj.key
     in
     td
-        [ attribute "hover-data" (String.fromInt obj.value ++ " in " ++ viewDate obj.key)
+        [ attribute "hover-data" info
         , class "history-breakdown-body__data-cell tooltip"
         , classList [ ( "disabled", isDisabled ) ]
         , css
@@ -228,7 +231,8 @@ viewCell theme breakdown total obj =
             ]
         ]
         [ button
-            [ onClick (Msgs.DisplayHistoryDetail obj.key)
+            [ attribute "aria-label" info
+            , onClick (Msgs.DisplayHistoryDetail obj.key)
             , Html.Styled.Attributes.disabled isDisabled
             , css
                 [ position absolute

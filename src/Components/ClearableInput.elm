@@ -3,7 +3,7 @@ module Components.ClearableInput exposing (view)
 import Components.Button as Button
 import Css exposing (..)
 import Html.Styled exposing (Html, button, div, input, label, span, text)
-import Html.Styled.Attributes exposing (autocomplete, class, css, maxlength, name, placeholder, property, title, type_, value)
+import Html.Styled.Attributes exposing (autocomplete, class, css, for, id, maxlength, name, placeholder, property, title, type_, value)
 import Html.Styled.Events exposing (onClick, onInput)
 import Models exposing (Theme)
 import Msgs exposing (Msg)
@@ -30,6 +30,7 @@ view theme fieldName fieldLabel fieldValue attrs =
         ]
         [ input
             ([ type_ "text"
+             , id fieldName
              , name fieldName
              , placeholder " "
              , maxlength 100
@@ -51,7 +52,7 @@ view theme fieldName fieldLabel fieldValue attrs =
                 ++ attrs
             )
             []
-        , label [ css [ opacity (int 0) ] ] [ text fieldLabel ]
+        , label [ for fieldName, css [ opacity (int 0) ] ] [ text fieldLabel ]
         , viewClearButton theme fieldName fieldValue
         , if isText then
             span

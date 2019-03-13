@@ -31,6 +31,7 @@ viewTabControls theme activeTab disabledTabs tabList =
     let
         hoverActiveStyles =
             [ backgroundColor inherit
+            , color inherit
             , borderColor (hex theme.primaryBackground)
             , borderBottomColor (hex theme.baseBackground)
             ]
