@@ -1,6 +1,6 @@
 {
   "name": "satellizer",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "statistics ui",
   "proxy": "http://localhost:9003",
   "main": "index.js",
