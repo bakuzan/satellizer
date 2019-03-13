@@ -68,7 +68,13 @@ radioOption theme groupName groupValue option =
         , css
             [ display inlineFlex
             , alignItems center
-            , cursor pointer
+            , cursor
+                (if option.disabled then
+                    default
+
+                 else
+                    pointer
+                )
             ]
         ]
         [ input

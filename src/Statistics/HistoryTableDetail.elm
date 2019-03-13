@@ -175,7 +175,7 @@ viewHeaderCell sorting theme props =
                 [ Common.setIcon icon
                 , css
                     [ lineHeight (int 1)
-                    , Styles.icon
+                    , Styles.iconAfter
                     ]
                 ]
                 [ text props.title ]
@@ -324,7 +324,7 @@ viewDetailBreakdowns theme list =
                     []
                 |> getHead
     in
-    div [ class "history-detail-breakdown", css [ margin (px 10), marginLeft auto ] ]
+    div [ class "history-detail-breakdown", css [ margin2 (px 10) (px 0) ] ]
         [ Components.Accordion.view theme
             "Overall"
             "Overall"
@@ -341,7 +341,7 @@ viewDetailBreakdowns theme list =
 
 viewBreakdownPair : String -> String -> List (Html Msg)
 viewBreakdownPair name statistic =
-    [ li [ class "label", css [ displayFlex, justifyContent spaceBetween, margin (px 2) ] ]
+    [ li [ class "label", css [ displayFlex, justifyContent spaceBetween ] ]
         [ text name
         ]
     , li [ class "value", css [ displayFlex, justifyContent spaceBetween ] ]

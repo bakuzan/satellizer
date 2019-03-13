@@ -1,4 +1,3 @@
-import './styles/hover-data.css';
 import { Elm } from './Main.elm';
 
 const themeOne = {

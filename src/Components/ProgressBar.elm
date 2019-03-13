@@ -57,9 +57,21 @@ viewProgressSegment total pair =
 
         dataMessage =
             String.fromInt pair.value ++ " series " ++ pair.key
+
+        isComplete =
+            pair.key == "completed"
+
+        isInProgress =
+            pair.key == "ongoing"
     in
     div
-        [ classList [ ( pair.key, True ), ( "tooltip-bottom", True ) ]
+        [ class "tooltip"
+        , classList
+            [ ( pair.key, True )
+            , ( "tooltip-left", not isComplete && not isInProgress )
+            , ( "tooltip-bottom", isComplete )
+            , ( "tooltip-right", isInProgress )
+            ]
         , style "width" percentageString
         , attribute "hover-data" dataMessage
         , attribute "aria-label" dataMessage

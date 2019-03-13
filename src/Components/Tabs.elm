@@ -56,7 +56,13 @@ viewTabControls theme activeTab disabledTabs tabList =
                      , zIndex (int 10)
                      , backgroundColor (hex "ccc")
                      , color (hex "555")
-                     , hover hoverActiveStyles
+                     , hover
+                        (if isDisabled then
+                            []
+
+                         else
+                            hoverActiveStyles
+                        )
                      ]
                         ++ (if isActive then
                                 hoverActiveStyles ++ [ marginBottom (px -1) ]
@@ -71,6 +77,14 @@ viewTabControls theme activeTab disabledTabs tabList =
                     [ css
                         [ important (backgroundColor inherit)
                         , important (color inherit)
+                        , disabled
+                            [ backgroundColor (hex "ccc")
+                            , color (hex "555")
+                            , hover
+                                [ backgroundColor (hex "ccc")
+                                , color (hex "555")
+                                ]
+                            ]
                         ]
                     , onClick (Msgs.UpdateActiveTab (getTabName tab))
                     , Html.Styled.Attributes.disabled isDisabled

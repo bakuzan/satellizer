@@ -78,7 +78,7 @@ viewHeaderCell sorting theme title styles =
                 [ Common.setIcon icon
                 , css
                     [ lineHeight (int 1)
-                    , Styles.icon
+                    , Styles.iconAfter
                     ]
                 ]
                 [ text title ]
@@ -196,7 +196,7 @@ viewDetailBreakdowns theme list =
                     []
                 |> getHead
     in
-    div [ class "history-detail-breakdown" ]
+    div [ class "history-detail-breakdown", css [ margin2 (px 10) (px 0) ] ]
         [ Components.Accordion.view theme
             "AiringOverall"
             "Overall"

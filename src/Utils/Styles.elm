@@ -1,4 +1,4 @@
-module Utils.Styles exposing (appearance, breakdownBodyRow, containerStyles, containers, content, icon, list, listTabStyles)
+module Utils.Styles exposing (appearance, breakdownBodyRow, containerStyles, containers, content, icon, iconAfter, list, listTabStyles)
 
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
@@ -43,6 +43,13 @@ containerStyles =
 icon : Css.Style
 icon =
     before
+        [ property "content" "attr(icon)"
+        ]
+
+
+iconAfter : Css.Style
+iconAfter =
+    after
         [ property "content" "attr(icon)"
         ]
 
@@ -146,7 +153,7 @@ list theme isColumn columns =
                 []
 
             else
-                [ typeSelector "li" [ flexBasis colVal, width colVal ] ]
+                [ typeSelector "li" [ flexBasis colVal, width colVal, boxSizing borderBox ] ]
     in
     [ displayFlex
     , flexDirection row

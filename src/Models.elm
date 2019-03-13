@@ -91,7 +91,7 @@ initialModel flags =
     , repeatedList = []
     , airingList = []
     , settings =
-        { activeTab = flags.activeTab
+        { activeTab = resolveTab flags
         , breakdownType = flags.breakdownType
         , detailGroup = flags.detailGroup
         , sorting =
@@ -111,6 +111,19 @@ initialModel flags =
         }
     , theme = flags.theme
     }
+
+
+resolveTab : Flags -> String
+resolveTab flags =
+    let
+        isAiringTab =
+            flags.activeTab == "Airing"
+    in
+    if (flags.isAdult || flags.contentType == "manga") && isAiringTab then
+        "History"
+
+    else
+        flags.activeTab
 
 
 type alias CountData =

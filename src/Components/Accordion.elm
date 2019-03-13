@@ -16,8 +16,8 @@ view theme htmlId title children =
 
         labelPseudoStyle =
             [ position absolute
-            , backgroundColor (hex theme.baseBackground)
-            , property "content" " "
+            , backgroundColor (hex theme.baseColour)
+            , property "content" "''"
             , transform (rotate (deg 0))
             , property "transition" "0.5s"
             , top (pct 50)

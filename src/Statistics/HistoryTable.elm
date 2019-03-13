@@ -218,7 +218,7 @@ viewCell theme breakdown total obj =
     in
     td
         [ attribute "hover-data" (String.fromInt obj.value ++ " in " ++ viewDate obj.key)
-        , class "history-breakdown-body__data-cell"
+        , class "history-breakdown-body__data-cell tooltip"
         , classList [ ( "disabled", isDisabled ) ]
         , css
             [ width (pct 8.3334) -- 100/12
