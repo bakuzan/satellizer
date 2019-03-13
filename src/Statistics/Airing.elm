@@ -36,14 +36,12 @@ view model seriesList =
     in
     div
         [ id "airing-tab" ]
-        [ viewDetailBreakdowns model.theme seriesList
-        , div [ class "history-detail" ]
+        [ div [ class "history-detail" ]
             [ h2 [ css [ fontSize (em 1.25) ] ] [ text detailSummary ]
             , div [ class "flex-column" ]
                 [ table [ class "history-breakdown__table", css [ width (pct 100) ] ]
                     [ thead []
                         [ renderHeaderCell "Title" [ paddingLeft (px 5), textAlign left ]
-                        , renderHeaderCell "Rating" []
                         , renderHeaderCell "Average" []
                         , renderHeaderCell "Highest" []
                         , renderHeaderCell "Lowest" []
@@ -115,7 +113,6 @@ viewTableRow theme item =
                 [ href ("http://localhost:9003/erza/anime-view/" ++ item.id) ]
                 [ text setTitleIndication ]
             ]
-         , renderCell (String.fromInt item.rating)
          ]
             ++ renderEpisodeStatistics es
         )
@@ -143,80 +140,3 @@ renderCell str =
     td [ css [ textAlign center ] ]
         [ text str
         ]
-
-
-viewDetailBreakdowns : Theme -> HistoryDetailData -> Html Msg
-viewDetailBreakdowns theme list =
-    let
-        listNoZeroes =
-            List.filter (\x -> x.rating /= 0) list
-
-        average =
-            Common.calculateAverageOfRatings list
-
-        highest =
-            Common.maxOfField .rating list
-                |> Maybe.withDefault emptyHistoryDetail
-                |> .rating
-
-        lowest =
-            Common.minOfField .rating listNoZeroes
-                |> Maybe.withDefault emptyHistoryDetail
-                |> .rating
-
-        getHead arr =
-            List.head arr
-                |> Maybe.withDefault emptyHistoryDetail
-                |> .rating
-
-        notMatchHead num obj =
-            obj.rating /= num
-
-        matchHead num obj =
-            obj.rating == num
-
-        buildNest arr =
-            case getHead arr of
-                0 ->
-                    []
-
-                rating ->
-                    List.filter (matchHead rating) arr :: buildNest (List.filter (notMatchHead rating) arr)
-
-        mode =
-            buildNest listNoZeroes
-                |> List.foldr
-                    (\x y ->
-                        if List.length x > List.length y then
-                            x
-
-                        else
-                            y
-                    )
-                    []
-                |> getHead
-    in
-    div [ class "history-detail-breakdown", css [ margin2 (px 10) (px 0) ] ]
-        [ Components.Accordion.view theme
-            "AiringOverall"
-            "Overall"
-            [ ul [ css (Styles.list theme True 2) ]
-                ([]
-                    ++ viewBreakdownPair "Average" (String.fromFloat average)
-                    ++ viewBreakdownPair "Highest" (String.fromInt highest)
-                    ++ viewBreakdownPair "Lowest" (String.fromInt lowest)
-                    ++ viewBreakdownPair "Mode" (String.fromInt mode)
-                )
-            ]
-        ]
-
-
-viewBreakdownPair : String -> String -> List (Html Msg)
-viewBreakdownPair name statistic =
-    [ li [ class "label" ]
-        [ text name
-        ]
-    , li [ class "value" ]
-        [ text statistic
-        ]
-    ]
