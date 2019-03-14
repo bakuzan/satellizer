@@ -81,6 +81,17 @@ type alias RepeatedFilters =
 
 initialModel : Flags -> Model
 initialModel flags =
+    let
+        activeTab =
+            resolveTab flags
+
+        sortField =
+            if activeTab == "Airing" then
+                "AVERAGE"
+
+            else
+                "RATING"
+    in
     { debounce = Debounce.init
     , status = RemoteData.Loading
     , history = RemoteData.Loading
@@ -91,11 +102,11 @@ initialModel flags =
     , repeatedList = []
     , airingList = []
     , settings =
-        { activeTab = resolveTab flags
+        { activeTab = activeTab
         , breakdownType = flags.breakdownType
         , detailGroup = flags.detailGroup
         , sorting =
-            { field = "RATING"
+            { field = sortField
             , isDesc = True
             }
         , contentType = flags.contentType

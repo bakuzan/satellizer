@@ -117,8 +117,8 @@ viewSingleRating theme selectedRatings total rating =
 
         selectedStyle =
             if isSelected then
-                [ backgroundColor (hex theme.primaryBackground) --colour?
-                , color (hex theme.primaryColour) -- contrast ?
+                [ important (backgroundColor (hex theme.primaryBackground))
+                , important (color (hex theme.primaryColour))
                 , hover [ backgroundColor (hex theme.primaryBackgroundHover) ]
                 ]
 

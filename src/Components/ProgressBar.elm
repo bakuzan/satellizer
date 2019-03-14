@@ -58,18 +58,18 @@ viewProgressSegment total pair =
         dataMessage =
             String.fromInt pair.value ++ " series " ++ pair.key
 
-        isComplete =
-            pair.key == "completed"
-
         isInProgress =
             pair.key == "ongoing"
+
+        isOtherStatus =
+            List.any (\x -> x == pair.key) [ "onhold", "planned", "dropped" ]
     in
     div
         [ class "tooltip"
         , classList
             [ ( pair.key, True )
-            , ( "tooltip-left", not isComplete && not isInProgress )
-            , ( "tooltip-bottom", isComplete )
+            , ( "tooltip-left", isOtherStatus )
+            , ( "tooltip-bottom", not isInProgress && not isOtherStatus )
             , ( "tooltip-right", isInProgress )
             ]
         , style "width" percentageString

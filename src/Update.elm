@@ -30,8 +30,11 @@ update msg model =
             else
                 "MONTHS"
 
-        ensureValidSortField breakdown =
-            if breakdown == "SEASON" || sorting.field == "RATING" || sorting.field == "RATING" then
+        ensureValidSortField breakdown activeTab =
+            if activeTab == "Airing" then
+                "AVERAGE"
+
+            else if breakdown == "SEASON" || sorting.field == "RATING" then
                 sorting.field
 
             else
@@ -145,10 +148,29 @@ update msg model =
 
         Msgs.UpdateActiveTab name ->
             let
+                sortField =
+                    case name of
+                        "Airing" ->
+                            "AVERAGE"
+
+                        "History" ->
+                            if settings.breakdownType == "SEASON" then
+                                "AVERAGE"
+
+                            else
+                                "RATING"
+
+                        _ ->
+                            "RATING"
+
                 updatedSettings =
                     { settings
                         | activeTab = name
                         , detailGroup = ""
+                        , sorting =
+                            { field = sortField
+                            , isDesc = True
+                            }
                     }
             in
             ( { model
@@ -167,7 +189,7 @@ update msg model =
                         , detailGroup = ""
                         , sorting =
                             { sorting
-                                | field = ensureValidSortField breakdown
+                                | field = ensureValidSortField breakdown model.settings.activeTab
                             }
                     }
             in
@@ -258,7 +280,7 @@ update msg model =
                         , detailGroup = ""
                         , sorting =
                             { sorting
-                                | field = ensureValidSortField breakdownType
+                                | field = ensureValidSortField breakdownType activeTab
                             }
                         , activeTab = activeTab
                     }
@@ -288,7 +310,7 @@ update msg model =
                         , detailGroup = ""
                         , sorting =
                             { sorting
-                                | field = ensureValidSortField breakdownType
+                                | field = ensureValidSortField breakdownType activeTab
                             }
                         , activeTab = activeTab
                     }
