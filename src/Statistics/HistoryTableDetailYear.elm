@@ -6,6 +6,7 @@ import Html.Styled.Attributes exposing (class, classList, css, href, id, style)
 import Models exposing (HistoryYear, HistoryYearData, Model, Settings, Theme, emptyHistoryYear)
 import Msgs exposing (Msg)
 import Round
+import Utils.Colours exposing (getSeasonColour)
 import Utils.Common as Common
 import Utils.Constants as Constants
 import Utils.Styles as Styles
@@ -45,27 +46,45 @@ viewHistoryYearDetail model data =
                     ]
                 , css [ width (pct 100) ]
                 ]
-                [ viewTableHead breakdown
+                [ viewTableHead settings
                 , viewTableBody model.theme breakdown data
                 ]
             ]
         ]
 
 
-viewTableHead : String -> Html Msg
-viewTableHead breakdown =
+viewTableHead : Settings -> Html Msg
+viewTableHead settings =
     let
+        isSeason =
+            settings.breakdownType /= "MONTHS"
+
+        isYear =
+            not (String.contains "-" settings.detailGroup) && settings.detailGroup /= ""
+
+        colourised season =
+            if isSeason && isYear then
+                [ backgroundColor (hex (getSeasonColour season))
+                , color (hex "fff")
+                ]
+
+            else
+                []
+
         viewHeader obj =
-            th [ class (String.toLower obj.name) ]
+            th
+                [ class (String.toLower obj.name)
+                , css (colourised (String.toLower obj.name))
+                ]
                 [ text obj.name
                 ]
 
         getHeaderList =
-            if breakdown == "MONTHS" then
-                Constants.months
+            if isSeason then
+                Constants.seasons
 
             else
-                Constants.seasons
+                Constants.months
     in
     thead [ class "history-breakdown-header" ]
         ([ th [] []

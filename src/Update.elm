@@ -31,11 +31,8 @@ update msg model =
                 "MONTHS"
 
         ensureValidSortField breakdown activeTab =
-            if activeTab == "Airing" then
+            if activeTab == "Airing" || breakdown == "SEASON" then
                 "AVERAGE"
-
-            else if breakdown == "SEASON" || sorting.field == "RATING" then
-                sorting.field
 
             else
                 "RATING"
