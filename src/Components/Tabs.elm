@@ -132,7 +132,7 @@ viewTabBodys theme activeTab tabList =
                      , top (px 0)
                      , left (px 0)
                      , displayFlex
-                     , width (pct 100)
+                     , width (calc (pct 100) minus (px 10))
                      , height (pct 100)
                      , padding (px 5)
                      , margin (px 0)

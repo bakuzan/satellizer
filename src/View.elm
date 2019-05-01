@@ -50,9 +50,6 @@ view model =
         yearDetail =
             viewRender model.historyYear
 
-        ratings =
-            viewRender model.rating
-
         seriesList =
             model.seriesList
 
@@ -77,7 +74,7 @@ view model =
             disabledTabs
             [ ( "Airing", [ Statistics.Airing.view model model.airingList ] )
             , ( "History", [ Statistics.HistoryTable.view model history detail yearDetail ] )
-            , ( "Ratings", [ Statistics.Ratings.view model model.ratingsFilters ratings seriesList ] )
+            , ( "Ratings", [ Statistics.Ratings.view model model.ratingsFilters model.rating seriesList ] )
             , ( "Repeated", [ Statistics.Repeated.view model model.repeatedFilters model.repeatedList ] )
             ]
         ]

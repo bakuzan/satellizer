@@ -1,4 +1,23 @@
-module Commands exposing (constructHistoryBreakdownUrl, constructUrl, fetchHistoryData, fetchHistoryDetailData, fetchHistoryDetailUrl, fetchHistoryUrl, fetchHistoryYearData, fetchHistoryYearUrl, fetchRatingData, fetchRatingUrl, repeatedSeriesQueryRequest, sendAiringSeriesQuery, sendGraphqlQueryRequest, sendRepeatedSeriesQuery, sendSeriesRatingsQuery, sendStatusCountsRequest, seriesQueryRequest)
+module Commands exposing
+    ( constructHistoryBreakdownUrl
+    , constructUrl
+    , fetchHistoryData
+    , fetchHistoryDetailData
+    , fetchHistoryDetailUrl
+    , fetchHistoryUrl
+    , fetchHistoryYearData
+    , fetchHistoryYearUrl
+    , fetchRatingData
+    , fetchRatingUrl
+    , repeatedSeriesQueryRequest
+    , sendAiringSeriesQuery
+    , sendGraphqlQueryRequest
+    , sendRatingCountsRequest
+    , sendRepeatedSeriesQuery
+    , sendSeriesRatingsQuery
+    , sendStatusCountsRequest
+    , seriesQueryRequest
+    )
 
 import GraphQL.Client.Http as GraphQLClient
 import GraphQL.Request.Builder as GraphQLBuilder
@@ -123,17 +142,29 @@ sendStatusCountsRequest contentType isAdult =
 
 
 
+-- Rating Counts
+
+
+ratingCountsRequest : String -> Bool -> GraphQLBuilder.Request GraphQLBuilder.Query CountData
+ratingCountsRequest contentType isAdult =
+    Graphql.ratingCountQuery
+        |> GraphQLBuilder.request { contentType = contentType, isAdult = isAdult }
+
+
+sendRatingCountsRequest : String -> Bool -> Cmd Msg
+sendRatingCountsRequest contentType isAdult =
+    sendGraphqlQueryRequest (ratingCountsRequest contentType isAdult)
+        |> Task.attempt Msgs.ReceiveRatingCountsResponse
+
+
+
 -- Ratings Series
 
 
 seriesQueryRequest : String -> Bool -> String -> List Int -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesData
 seriesQueryRequest contentType isAdult searchText selectedRatings =
-    let
-        ratingsList =
-            List.map toFloat selectedRatings
-    in
-    Graphql.itemQuery contentType
-        |> GraphQLBuilder.request { isAdult = isAdult, search = searchText, ratings = ratingsList }
+    Graphql.ratingItemQuery contentType
+        |> GraphQLBuilder.request { isAdult = isAdult, search = searchText, ratings = selectedRatings }
 
 
 sendSeriesRatingsQuery : String -> Bool -> String -> List Int -> Cmd Msg

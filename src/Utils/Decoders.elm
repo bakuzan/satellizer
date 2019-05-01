@@ -42,7 +42,6 @@ historyDetailDecoder =
 episodeStatisticsDecoder : Decode.Decoder EpisodeStatistic
 episodeStatisticsDecoder =
     Decode.succeed EpisodeStatistic
-        |> required "_id" Decode.string
         |> required "average" Decode.float
         |> required "highest" Decode.int
         |> required "lowest" Decode.int

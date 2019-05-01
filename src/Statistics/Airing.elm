@@ -87,9 +87,8 @@ viewHeaderCell sorting theme title styles =
 viewTableRow : Theme -> HistoryDetail -> Html Msg
 viewTableRow theme item =
     let
-        -- TODO address this hacky thing
         es =
-            EpisodeStatistic "" item.average item.highest item.lowest item.mode
+            EpisodeStatistic item.average item.highest item.lowest item.mode
 
         indicate =
             if es.lowest == 0 then

@@ -40,7 +40,7 @@ type alias Model =
     , history : WebData CountData
     , historyDetail : WebData HistoryDetailData
     , historyYear : WebData HistoryYearData
-    , rating : WebData CountData
+    , rating : CountData
     , seriesList : SeriesData
     , repeatedList : RepeatedSeriesData
     , settings : Settings
@@ -97,7 +97,7 @@ initialModel flags =
     , history = RemoteData.Loading
     , historyDetail = RemoteData.Loading
     , historyYear = RemoteData.Loading
-    , rating = RemoteData.Loading
+    , rating = []
     , seriesList = []
     , repeatedList = []
     , airingList = []
@@ -169,8 +169,7 @@ type alias HistoryDetail =
 
 
 type alias EpisodeStatistic =
-    { id : String
-    , average : Float
+    { average : Float
     , highest : Int
     , lowest : Int
     , mode : Int
@@ -179,7 +178,7 @@ type alias EpisodeStatistic =
 
 emptyEpisodeStatistic : EpisodeStatistic
 emptyEpisodeStatistic =
-    EpisodeStatistic "" 0.0 0 0 0
+    EpisodeStatistic 0.0 0 0 0
 
 
 emptyHistoryDetail : HistoryDetail
@@ -223,7 +222,7 @@ type ObjectsWithValue
 
 
 type alias Series =
-    { id : String
+    { id : Int
     , name : String
     , rating : Int
     }

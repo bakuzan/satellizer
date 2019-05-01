@@ -1,4 +1,10 @@
-module Utils.Graphql exposing (airingItemQuery, itemQuery, repeatedItemQuery, statusCountQuery)
+module Utils.Graphql exposing
+    ( airingItemQuery
+    , ratingCountQuery
+    , ratingItemQuery
+    , repeatedItemQuery
+    , statusCountQuery
+    )
 
 import GraphQL.Request.Builder exposing (..)
 import GraphQL.Request.Builder.Arg as Arg
@@ -14,14 +20,6 @@ import Utils.Common exposing (toCapital)
 statusCountQuery : Document Query CountData { vars | contentType : String, isAdult : Bool }
 statusCountQuery =
     let
-        item =
-            object Count
-                |> with (field "key" [] string)
-                |> with (field "value" [] int)
-
-        items =
-            list item
-
         queryRoot =
             extract
                 (aliasAs "counts"
@@ -29,7 +27,24 @@ statusCountQuery =
                         [ ( "type", Arg.variable typeVar )
                         , ( "isAdult", Arg.variable isAdultVar )
                         ]
-                        items
+                        countItems
+                    )
+                )
+    in
+    queryDocument queryRoot
+
+
+ratingCountQuery : Document Query CountData { vars | contentType : String, isAdult : Bool }
+ratingCountQuery =
+    let
+        queryRoot =
+            extract
+                (aliasAs "counts"
+                    (field "statsRatingCounts"
+                        [ ( "type", Arg.variable typeVar )
+                        , ( "isAdult", Arg.variable isAdultVar )
+                        ]
+                        countItems
                     )
                 )
     in
@@ -40,37 +55,35 @@ statusCountQuery =
 -- item queries
 
 
-itemQuery : String -> Document Query SeriesData { vars | isAdult : Bool, search : String, ratings : List Float }
-itemQuery contentType =
+ratingItemQuery : String -> Document Query SeriesData { vars | isAdult : Bool, search : String, ratings : List Int }
+ratingItemQuery contentType =
     let
         searchVar =
             Var.required "search" .search Var.string
 
         ratingsVar =
-            Var.required "ratings" .ratings (Var.list Var.float)
+            Var.required "ratings" .ratings (Var.list Var.int)
 
-        filters =
-            [ ( "isAdult", Arg.variable isAdultVar )
-            , ( "search", Arg.variable searchVar )
-            , ( "ratingIn", Arg.variable ratingsVar )
-            ]
-
-        item =
-            object Series
-                |> with (field "id" [] id)
-                |> with (field "title" [] string)
-                |> with (field "rating" [] int)
-
-        items =
-            list item
+        pagingVar =
+            Var.required "paging"
+                (\x -> { size = 1000, page = 0 })
+                (Var.object
+                    "Paging"
+                    [ Var.field "size" .size Var.int
+                    , Var.field "page" .page Var.int
+                    ]
+                )
 
         queryRoot =
             extract
                 (aliasAs "seriesList"
-                    (field (contentType ++ "Many")
-                        [ ( "filter", Arg.object filters )
+                    (field (contentType ++ "Paged")
+                        [ ( "isAdult", Arg.variable isAdultVar )
+                        , ( "search", Arg.variable searchVar )
+                        , ( "ratings", Arg.variable ratingsVar )
+                        , ( "paging", Arg.variable pagingVar )
                         ]
-                        items
+                        seriesItems
                     )
                 )
     in
@@ -162,3 +175,27 @@ isAdultVar =
 typeVar : Var.Variable { vars | contentType : String }
 typeVar =
     Var.required "type" .contentType (Var.enum "StatType" (\x -> toCapital x))
+
+
+countItems : ValueSpec NonNull (ListType NonNull ObjectType) (List Count) vars
+countItems =
+    list
+        (object Count
+            |> with (field "key" [] string)
+            |> with (field "value" [] int)
+        )
+
+
+seriesItems : ValueSpec NonNull ObjectType (List Series) vars
+seriesItems =
+    extract
+        (field "nodes"
+            []
+            (list
+                (object Series
+                    |> with (field "id" [] int)
+                    |> with (field "title" [] string)
+                    |> with (field "rating" [] int)
+                )
+            )
+        )

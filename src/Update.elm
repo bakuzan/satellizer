@@ -105,9 +105,6 @@ update msg model =
             , Cmd.none
             )
 
-        Msgs.OnFetchRating response ->
-            ( { model | rating = response }, Cmd.none )
-
         Msgs.UpdateActiveTab name ->
             let
                 sortField =
@@ -416,7 +413,7 @@ update msg model =
                         Commands.fetchHistoryData settings
 
                     else if name == "Ratings" then
-                        Commands.fetchRatingData settings
+                        Commands.sendRatingCountsRequest settings.contentType settings.isAdult
 
                     else if name == "Repeated" then
                         Commands.sendRepeatedSeriesQuery settings.contentType settings.isAdult ""
@@ -438,8 +435,22 @@ update msg model =
             , callApi
             )
 
+        Msgs.ReceiveRatingCountsResponse ratings ->
+            let
+                extractedCounts =
+                    Result.withDefault [] ratings
+            in
+            ( { model
+                | rating = extractedCounts
+              }
+            , Cmd.none
+            )
+
         Msgs.ReceiveSeriesRatingsResponse seriesList ->
             let
+                logger =
+                    Debug.log "LOGGG" seriesList
+
                 extractedSeriesList =
                     Result.withDefault [] seriesList
             in

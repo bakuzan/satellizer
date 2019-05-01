@@ -192,12 +192,11 @@ viewTableBody props list =
 viewTableRow : DetailTableProps -> HistoryDetail -> Html Msg
 viewTableRow props item =
     let
-        -- TODO address this hacky thing
         es =
-            EpisodeStatistic "" item.average item.highest item.lowest item.mode
+            EpisodeStatistic item.average item.highest item.lowest item.mode
 
         indicate =
-            if es.id /= "" && es.lowest == 0 then
+            if es.lowest == 0 then
                 "* "
 
             else
@@ -256,7 +255,7 @@ renderEpisodeStatistics es =
         processFloat avg =
             Round.round 2 avg
     in
-    if es.id /= "" then
+    if es.lowest /= -1 then
         [ renderCell (processFloat es.average)
         , renderCell (String.fromInt es.highest)
         , renderCell (String.fromInt es.lowest)
