@@ -1,4 +1,4 @@
-module Commands exposing (constructHistoryBreakdownUrl, constructUrl, fetchHistoryData, fetchHistoryDetailData, fetchHistoryDetailUrl, fetchHistoryUrl, fetchHistoryYearData, fetchHistoryYearUrl, fetchRatingData, fetchRatingUrl, fetchStatusData, fetchStatusUrl, repeatedSeriesQueryRequest, sendAiringSeriesQuery, sendGraphqlQueryRequest, sendRepeatedSeriesQuery, sendSeriesRatingsQuery, seriesQueryRequest)
+module Commands exposing (constructHistoryBreakdownUrl, constructUrl, fetchHistoryData, fetchHistoryDetailData, fetchHistoryDetailUrl, fetchHistoryUrl, fetchHistoryYearData, fetchHistoryYearUrl, fetchRatingData, fetchRatingUrl, repeatedSeriesQueryRequest, sendAiringSeriesQuery, sendGraphqlQueryRequest, sendRepeatedSeriesQuery, sendSeriesRatingsQuery, sendStatusCountsRequest, seriesQueryRequest)
 
 import GraphQL.Client.Http as GraphQLClient
 import GraphQL.Request.Builder as GraphQLBuilder
@@ -10,22 +10,6 @@ import Task exposing (Task)
 import Utils.Common as Common
 import Utils.Decoders as Decoders
 import Utils.Graphql as Graphql
-
-
-
--- Status counts
-
-
-fetchStatusData : Settings -> Cmd Msg
-fetchStatusData settings =
-    Http.get (fetchStatusUrl settings) Decoders.countDataDecoder
-        |> RemoteData.sendRequest
-        |> Cmd.map Msgs.OnFetchStatus
-
-
-fetchStatusUrl : Settings -> String
-fetchStatusUrl settings =
-    constructUrl "status-counts" settings
 
 
 
@@ -123,6 +107,22 @@ sendGraphqlQueryRequest request =
 
 
 
+-- Status Counts
+
+
+statusCountsRequest : String -> Bool -> GraphQLBuilder.Request GraphQLBuilder.Query CountData
+statusCountsRequest contentType isAdult =
+    Graphql.statusCountQuery
+        |> GraphQLBuilder.request { contentType = contentType, isAdult = isAdult }
+
+
+sendStatusCountsRequest : String -> Bool -> Cmd Msg
+sendStatusCountsRequest contentType isAdult =
+    sendGraphqlQueryRequest (statusCountsRequest contentType isAdult)
+        |> Task.attempt Msgs.ReceiveStatusCountsResponse
+
+
+
 -- Ratings Series
 
 
@@ -165,7 +165,7 @@ sendRepeatedSeriesQuery contentType isAdult searchText =
 airingSeriesQueryRequest : GraphQLBuilder.Request GraphQLBuilder.Query HistoryDetailData
 airingSeriesQueryRequest =
     Graphql.airingItemQuery
-        |> GraphQLBuilder.request { key = "" }
+        |> GraphQLBuilder.request {}
 
 
 sendAiringSeriesQuery : Cmd Msg

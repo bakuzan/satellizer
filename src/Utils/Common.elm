@@ -1,4 +1,4 @@
-module Utils.Common exposing (calculateAverageOfRatings, calculateTotalOfValues, calculateTotalOfValuesTemp, divide, divideTotalByCount, getListFirst, getMonth, getYear, maxOfField, minOfField, replace, setCustomAttr, setIcon, setRole, splitList)
+module Utils.Common exposing (calculateAverageOfRatings, calculateTotalOfValues, calculateTotalOfValuesTemp, divide, divideTotalByCount, getListFirst, getMonth, getYear, maxOfField, minOfField, replace, setCustomAttr, setIcon, setRole, splitList, toCapital)
 
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes exposing (attribute)
@@ -123,3 +123,8 @@ getListFirst list =
     List.head list
         |> Maybe.withDefault { key = "", value = 0 }
         |> .key
+
+
+toCapital : String -> String
+toCapital str =
+    String.toUpper (String.left 1 str) ++ String.dropLeft 1 str

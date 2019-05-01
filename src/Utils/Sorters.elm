@@ -42,28 +42,28 @@ historyDetailOrderByRating isDesc =
 
 historyDetailOrderByAverage : Bool -> Ordering HistoryDetail
 historyDetailOrderByAverage isDesc =
-    Ordering.byField (\x -> x.episodeStatistics.average)
+    Ordering.byField .average
         |> historyDetailDirection isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByHighest : Bool -> Ordering HistoryDetail
 historyDetailOrderByHighest isDesc =
-    Ordering.byField (\x -> x.episodeStatistics.highest)
+    Ordering.byField .highest
         |> historyDetailDirection isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByLowest : Bool -> Ordering HistoryDetail
 historyDetailOrderByLowest isDesc =
-    Ordering.byField (\x -> x.episodeStatistics.lowest)
+    Ordering.byField .lowest
         |> historyDetailDirection isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByMode : Bool -> Ordering HistoryDetail
 historyDetailOrderByMode isDesc =
-    Ordering.byField (\x -> x.episodeStatistics.mode)
+    Ordering.byField .mode
         |> historyDetailDirection isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
 

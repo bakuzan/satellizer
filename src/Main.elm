@@ -1,7 +1,7 @@
 port module Main exposing (contentType, init, isAdult, main, requireKey, subscriptions)
 
 import Browser
-import Commands exposing (fetchStatusData)
+import Commands exposing (sendStatusCountsRequest)
 import Html.Styled exposing (toUnstyled)
 import Models exposing (Flags, Model, Theme, initialModel)
 import Msgs exposing (Msg)
@@ -14,8 +14,11 @@ init flags =
     let
         model =
             initialModel flags
+
+        settings =
+            model.settings
     in
-    ( model, fetchStatusData model.settings )
+    ( model, sendStatusCountsRequest settings.contentType settings.isAdult )
 
 
 port contentType : (String -> msg) -> Sub msg

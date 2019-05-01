@@ -71,7 +71,7 @@ view model =
             ]
         ]
         [ hoverDataStyles
-        , viewRender status |> viewStatus
+        , viewStatus status
         , viewTabContainer model.theme
             activeTab
             disabledTabs

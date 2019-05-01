@@ -87,11 +87,12 @@ viewHeaderCell sorting theme title styles =
 viewTableRow : Theme -> HistoryDetail -> Html Msg
 viewTableRow theme item =
     let
+        -- TODO address this hacky thing
         es =
-            item.episodeStatistics
+            EpisodeStatistic "" item.average item.highest item.lowest item.mode
 
         indicate =
-            if es.id /= "" && es.lowest == 0 then
+            if es.lowest == 0 then
                 "* "
 
             else
@@ -110,7 +111,7 @@ viewTableRow theme item =
             , css [ paddingLeft (px 5), textAlign left ]
             ]
             [ Components.NewTabLink.view theme
-                [ href ("http://localhost:9003/erza/anime-view/" ++ item.id) ]
+                [ href ("http://localhost:9003/erza/anime-view/" ++ String.fromInt item.id) ]
                 [ text setTitleIndication ]
             ]
          ]
@@ -124,15 +125,11 @@ renderEpisodeStatistics es =
         processFloat avg =
             Round.round 2 avg
     in
-    if es.id /= "" then
-        [ renderCell (processFloat es.average)
-        , renderCell (String.fromInt es.highest)
-        , renderCell (String.fromInt es.lowest)
-        , renderCell (String.fromInt es.mode)
-        ]
-
-    else
-        []
+    [ renderCell (processFloat es.average)
+    , renderCell (String.fromInt es.highest)
+    , renderCell (String.fromInt es.lowest)
+    , renderCell (String.fromInt es.mode)
+    ]
 
 
 renderCell : String -> Html Msg

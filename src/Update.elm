@@ -59,41 +59,6 @@ update msg model =
             in
             ( { model | debounce = debounce }, cmd )
 
-        Msgs.OnFetchStatus response ->
-            let
-                name =
-                    settings.activeTab
-
-                callApi =
-                    if name == "Airing" then
-                        Commands.sendAiringSeriesQuery
-
-                    else if name == "History" then
-                        Commands.fetchHistoryData settings
-
-                    else if name == "Ratings" then
-                        Commands.fetchRatingData settings
-
-                    else if name == "Repeated" then
-                        Commands.sendRepeatedSeriesQuery settings.contentType settings.isAdult ""
-
-                    else
-                        Cmd.none
-            in
-            ( { model
-                | status = response
-                , seriesList = []
-                , ratingsFilters =
-                    { searchText = ""
-                    , ratings = []
-                    }
-                , repeatedFilters =
-                    { searchText = ""
-                    }
-              }
-            , callApi
-            )
-
         Msgs.OnFetchHistory response ->
             let
                 datePart =
@@ -175,7 +140,7 @@ update msg model =
                 , historyYear = RemoteData.Loading
                 , settings = updatedSettings
               }
-            , Commands.fetchStatusData updatedSettings
+            , Commands.sendStatusCountsRequest updatedSettings.contentType updatedSettings.isAdult
             )
 
         Msgs.UpdateBreakdownType breakdown ->
@@ -285,7 +250,7 @@ update msg model =
             ( { model
                 | settings = updatedSettings
               }
-            , Commands.fetchStatusData updatedSettings
+            , Commands.sendStatusCountsRequest updatedSettings.contentType updatedSettings.isAdult
             )
 
         Msgs.UpdateContentType contentType ->
@@ -315,7 +280,7 @@ update msg model =
             ( { model
                 | settings = updatedSettings
               }
-            , Commands.fetchStatusData updatedSettings
+            , Commands.sendStatusCountsRequest updatedSettings.contentType updatedSettings.isAdult
             )
 
         Msgs.UpdateRequireKey required ->
@@ -433,6 +398,44 @@ update msg model =
                 | ratingsFilters = updatedFilters
               }
             , fetchSeriesRatings
+            )
+
+        Msgs.ReceiveStatusCountsResponse counts ->
+            let
+                extractedCounts =
+                    Result.withDefault [] counts
+
+                name =
+                    settings.activeTab
+
+                callApi =
+                    if name == "Airing" then
+                        Commands.sendAiringSeriesQuery
+
+                    else if name == "History" then
+                        Commands.fetchHistoryData settings
+
+                    else if name == "Ratings" then
+                        Commands.fetchRatingData settings
+
+                    else if name == "Repeated" then
+                        Commands.sendRepeatedSeriesQuery settings.contentType settings.isAdult ""
+
+                    else
+                        Cmd.none
+            in
+            ( { model
+                | status = extractedCounts
+                , seriesList = []
+                , ratingsFilters =
+                    { searchText = ""
+                    , ratings = []
+                    }
+                , repeatedFilters =
+                    { searchText = ""
+                    }
+              }
+            , callApi
             )
 
         Msgs.ReceiveSeriesRatingsResponse seriesList ->

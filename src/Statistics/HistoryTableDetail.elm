@@ -192,8 +192,9 @@ viewTableBody props list =
 viewTableRow : DetailTableProps -> HistoryDetail -> Html Msg
 viewTableRow props item =
     let
+        -- TODO address this hacky thing
         es =
-            item.episodeStatistics
+            EpisodeStatistic "" item.average item.highest item.lowest item.mode
 
         indicate =
             if es.id /= "" && es.lowest == 0 then
@@ -235,7 +236,7 @@ viewTableRow props item =
             , css [ paddingLeft (px 5), textAlign left ]
             ]
             [ Components.NewTabLink.view props.theme
-                [ href ("http://localhost:9003/erza/" ++ props.contentType ++ "-view/" ++ item.id)
+                [ href ("http://localhost:9003/erza/" ++ props.contentType ++ "-view/" ++ String.fromInt item.id)
                 , css
                     [ width (pct 75)
                     , textAlign left

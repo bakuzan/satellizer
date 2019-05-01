@@ -59,15 +59,15 @@ viewProgressSegment total pair =
             String.fromInt pair.value ++ " series " ++ pair.key
 
         isInProgress =
-            pair.key == "ongoing"
+            pair.key == "Ongoing"
 
         isOtherStatus =
-            List.any (\x -> x == pair.key) [ "onhold", "planned", "dropped" ]
+            List.any (\x -> x == pair.key) [ "Onhold", "Planned", "Dropped" ]
     in
     div
         [ class "tooltip"
         , classList
-            [ ( pair.key, True )
+            [ ( String.toLower pair.key, True )
             , ( "tooltip-left", isOtherStatus )
             , ( "tooltip-bottom", not isInProgress && not isOtherStatus )
             , ( "tooltip-right", isInProgress )

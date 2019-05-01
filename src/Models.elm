@@ -36,7 +36,7 @@ type alias InputField =
 
 type alias Model =
     { debounce : Debounce InputField
-    , status : WebData CountData
+    , status : CountData
     , history : WebData CountData
     , historyDetail : WebData HistoryDetailData
     , historyYear : WebData HistoryYearData
@@ -93,7 +93,7 @@ initialModel flags =
                 "RATING"
     in
     { debounce = Debounce.init
-    , status = RemoteData.Loading
+    , status = []
     , history = RemoteData.Loading
     , historyDetail = RemoteData.Loading
     , historyYear = RemoteData.Loading
@@ -157,11 +157,14 @@ type alias HistoryDetailData =
 
 
 type alias HistoryDetail =
-    { id : String
+    { id : Int
     , title : String
-    , episodeStatistics : EpisodeStatistic
     , rating : Int
     , season : String
+    , average : Float
+    , highest : Int
+    , lowest : Int
+    , mode : Int
     }
 
 
@@ -181,7 +184,7 @@ emptyEpisodeStatistic =
 
 emptyHistoryDetail : HistoryDetail
 emptyHistoryDetail =
-    HistoryDetail "" "" emptyEpisodeStatistic 0 ""
+    HistoryDetail 0 "" 0 "" 0.0 0 0 0
 
 
 type alias HistoryYearData =
