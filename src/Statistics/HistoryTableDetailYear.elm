@@ -57,7 +57,7 @@ viewTableHead : Settings -> Html Msg
 viewTableHead settings =
     let
         isSeason =
-            settings.breakdownType /= "MONTHS"
+            settings.breakdownType /= "MONTH"
 
         isYear =
             not (String.contains "-" settings.detailGroup) && settings.detailGroup /= ""
@@ -97,7 +97,7 @@ viewTableBody : Theme -> String -> HistoryYearData -> Html Msg
 viewTableBody theme breakdown data =
     let
         fixValue =
-            if breakdown == "MONTHS" then
+            if breakdown == "MONTH" then
                 1
 
             else
@@ -116,7 +116,7 @@ viewTableBody theme breakdown data =
                 |> List.append data
 
         headers =
-            if breakdown == "MONTHS" then
+            if breakdown == "MONTH" then
                 Constants.months
 
             else

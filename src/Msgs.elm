@@ -12,8 +12,6 @@ type Msg
     = NoOp
     | DebounceMsg Debounce.Msg
     | SaveTextInput String String
-    | OnFetchHistory (WebData CountData)
-    | OnFetchRating (WebData CountData)
     | UpdateActiveTab String
     | UpdateBreakdownType String
     | UpdateSortField String
@@ -30,6 +28,7 @@ type Msg
     | ToggleRatingFilter Int
     | ReceiveStatusCountsResponse (Result GraphQLClient.Error CountData)
     | ReceiveRatingCountsResponse (Result GraphQLClient.Error CountData)
+    | ReceiveHistoryCountsResponse (Result GraphQLClient.Error CountData)
     | ReceiveSeriesRatingsResponse (Result GraphQLClient.Error SeriesData)
     | ReceiveRepeatedSeriesResponse (Result GraphQLClient.Error RepeatedSeriesData)
     | ReceiveAiringSeriesResponse (Result GraphQLClient.Error HistoryDetailData)

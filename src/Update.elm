@@ -28,7 +28,7 @@ update msg model =
                 settings.breakdownType
 
             else
-                "MONTHS"
+                "MONTH"
 
         ensureValidSortField breakdown activeTab =
             if activeTab == "Airing" || breakdown == "SEASON" then
@@ -58,16 +58,6 @@ update msg model =
                         model.debounce
             in
             ( { model | debounce = debounce }, cmd )
-
-        Msgs.OnFetchHistory response ->
-            let
-                datePart =
-                    settings.detailGroup
-
-                maybeDetailCommand =
-                    getHistoryPartitionCommand datePart settings
-            in
-            ( { model | history = response }, maybeDetailCommand )
 
         Msgs.OnFetchHistoryDetail response ->
             ( { model | historyDetail = response }, Cmd.none )
@@ -157,7 +147,7 @@ update msg model =
                 , historyYear = RemoteData.Loading
                 , settings = updatedSettings
               }
-            , Commands.fetchHistoryData updatedSettings
+            , Commands.sendHistoryCountsRequest updatedSettings
             )
 
         Msgs.DisplayHistoryDetail datePart ->
@@ -216,7 +206,7 @@ update msg model =
             let
                 ensureValidDetailGroup breakdown =
                     if isAdult == True then
-                        "MONTHS"
+                        "MONTH"
 
                     else
                         breakdown
@@ -410,7 +400,7 @@ update msg model =
                         Commands.sendAiringSeriesQuery
 
                     else if name == "History" then
-                        Commands.fetchHistoryData settings
+                        Commands.sendHistoryCountsRequest settings
 
                     else if name == "Ratings" then
                         Commands.sendRatingCountsRequest settings.contentType settings.isAdult
@@ -446,11 +436,21 @@ update msg model =
             , Cmd.none
             )
 
+        Msgs.ReceiveHistoryCountsResponse historyCounts ->
+            let
+                datePart =
+                    settings.detailGroup
+
+                maybeDetailCommand =
+                    getHistoryPartitionCommand datePart settings
+
+                extractedCounts =
+                    Result.withDefault [] historyCounts
+            in
+            ( { model | history = extractedCounts }, maybeDetailCommand )
+
         Msgs.ReceiveSeriesRatingsResponse seriesList ->
             let
-                logger =
-                    Debug.log "LOGGG" seriesList
-
                 extractedSeriesList =
                     Result.withDefault [] seriesList
             in

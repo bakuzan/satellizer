@@ -125,7 +125,7 @@ viewSeriesEntry : Theme -> String -> Series -> Html Msg
 viewSeriesEntry theme contentType entry =
     let
         seriesLink =
-            "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ entry.id
+            "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ String.fromInt entry.id
     in
     li [ css [ displayFlex, justifyContent spaceBetween, padding2 (px 0) (px 10) ] ]
         [ Components.NewTabLink.view theme [ href seriesLink ] [ text entry.name ]

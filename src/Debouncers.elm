@@ -1,16 +1,15 @@
-module Debouncers exposing (..)
+module Debouncers exposing (debounceConfig, saveSearchString)
 
 import Debounce
-import Time
-import Task
-
-import Msgs exposing (Msg)
 import Models exposing (InputField)
+import Msgs exposing (Msg)
+import Task
+import Time
 
 
 debounceConfig : Debounce.Config Msg
 debounceConfig =
-    { strategy = Debounce.later 1
+    { strategy = Debounce.later 1000
     , transform = Msgs.DebounceMsg
     }
 

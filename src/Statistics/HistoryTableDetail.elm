@@ -132,7 +132,7 @@ viewTableHeader : DetailTableProps -> Html Msg
 viewTableHeader props =
     let
         hideHeader =
-            props.breakdown == "MONTHS"
+            props.breakdown == "MONTH"
 
         renderHeaderCell =
             viewHeaderCell props.sorting props.theme

@@ -1,5 +1,6 @@
 module Utils.Graphql exposing
     ( airingItemQuery
+    , historyCountQuery
     , ratingCountQuery
     , ratingItemQuery
     , repeatedItemQuery
@@ -51,6 +52,27 @@ ratingCountQuery =
     queryDocument queryRoot
 
 
+historyCountQuery : Document Query CountData { vars | contentType : String, isAdult : Bool, breakdown : String }
+historyCountQuery =
+    let
+        breakdownVar =
+            Var.required "breakdown" .breakdown (Var.enum "StatBreakdown" (\x -> toCapital x))
+
+        queryRoot =
+            extract
+                (aliasAs "counts"
+                    (field "statsHistoryCounts"
+                        [ ( "type", Arg.variable typeVar )
+                        , ( "isAdult", Arg.variable isAdultVar )
+                        , ( "breakdown", Arg.variable breakdownVar )
+                        ]
+                        countItems
+                    )
+                )
+    in
+    queryDocument queryRoot
+
+
 
 -- item queries
 
@@ -58,9 +80,6 @@ ratingCountQuery =
 ratingItemQuery : String -> Document Query SeriesData { vars | isAdult : Bool, search : String, ratings : List Int }
 ratingItemQuery contentType =
     let
-        searchVar =
-            Var.required "search" .search Var.string
-
         ratingsVar =
             Var.required "ratings" .ratings (Var.list Var.int)
 
@@ -93,39 +112,23 @@ ratingItemQuery contentType =
 repeatedItemQuery : String -> Document Query RepeatedSeriesData { vars | isAdult : Bool, search : String }
 repeatedItemQuery contentType =
     let
-        searchVar =
-            Var.required "search" .search Var.string
-
-        filters =
-            [ ( "isAdult", Arg.variable isAdultVar )
-            , ( "search", Arg.variable searchVar )
-            ]
-
-        item =
-            object RepeatedSeries
-                |> with (aliasAs "id" (field "_id" [] id))
-                |> with (field "title" [] string)
-                |> with (field "timesCompleted" [] int)
-                |> with (field "rating" [] int)
-                |> with (aliasAs "isOwned" (field "owned" [] bool))
-                |> with
-                    (aliasAs "lastRepeatDate"
-                        (field "historyList"
-                            [ ( "limit", Arg.int 1 )
-                            , ( "sort", Arg.enum "DATE_DESC" )
-                            ]
-                            (list (extract (field "dateStr" [] string)))
-                        )
-                    )
-
         items =
-            list item
+            list
+                (object RepeatedSeries
+                    |> with (field "id" [] int)
+                    |> with (field "title" [] string)
+                    |> with (field "rating" [] int)
+                    |> with (field "timesCompleted" [] int)
+                    |> with (aliasAs "isOwned" (field "owned" [] bool))
+                    |> with (field "lastRepeatDate" [] string)
+                )
 
         queryRoot =
             extract
                 (aliasAs "seriesList"
-                    (field (contentType ++ "ManyRepeated")
-                        [ ( "filter", Arg.object filters )
+                    (field (contentType ++ "Repeated")
+                        [ ( "isAdult", Arg.variable isAdultVar )
+                        , ( "search", Arg.variable searchVar )
                         ]
                         items
                     )
@@ -137,19 +140,18 @@ repeatedItemQuery contentType =
 airingItemQuery : Document Query HistoryDetailData {}
 airingItemQuery =
     let
-        item =
-            object HistoryDetail
-                |> with (field "id" [] int)
-                |> with (field "title" [] string)
-                |> with (field "rating" [] int)
-                |> with (field "season" [] string)
-                |> with (field "average" [] float)
-                |> with (field "highest" [] int)
-                |> with (field "lowest" [] int)
-                |> with (field "mode" [] int)
-
         items =
-            list item
+            list
+                (object HistoryDetail
+                    |> with (field "id" [] int)
+                    |> with (field "title" [] string)
+                    |> with (field "rating" [] int)
+                    |> with (field "season" [] string)
+                    |> with (field "average" [] float)
+                    |> with (field "highest" [] int)
+                    |> with (field "lowest" [] int)
+                    |> with (field "mode" [] int)
+                )
 
         queryRoot =
             extract
@@ -175,6 +177,11 @@ isAdultVar =
 typeVar : Var.Variable { vars | contentType : String }
 typeVar =
     Var.required "type" .contentType (Var.enum "StatType" (\x -> toCapital x))
+
+
+searchVar : Var.Variable { vars | search : String }
+searchVar =
+    Var.required "search" .search Var.string
 
 
 countItems : ValueSpec NonNull (ListType NonNull ObjectType) (List Count) vars

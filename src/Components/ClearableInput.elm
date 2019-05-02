@@ -15,7 +15,7 @@ view : Theme -> String -> String -> String -> List (Html.Styled.Attribute Msg) -
 view theme fieldName fieldLabel fieldValue attrs =
     let
         isText =
-            fieldName == "name"
+            True
 
         fixRightPadding =
             if isText then
@@ -53,7 +53,7 @@ view theme fieldName fieldLabel fieldValue attrs =
             )
             []
         , label [ for fieldName, css [ opacity (int 0) ] ] [ text fieldLabel ]
-        , viewClearButton theme fieldName fieldValue
+        , viewClearButton theme isText fieldName fieldValue
         , if isText then
             span
                 [ css
@@ -74,9 +74,9 @@ view theme fieldName fieldLabel fieldValue attrs =
         ]
 
 
-viewClearButton : Theme -> String -> String -> Html Msg
-viewClearButton theme fieldName str =
-    if String.length str == 0 || fieldName /= "name" then
+viewClearButton : Theme -> Bool -> String -> String -> Html Msg
+viewClearButton theme show fieldName str =
+    if String.length str == 0 || not show then
         text ""
 
     else

@@ -92,11 +92,14 @@ viewSeriesEntry : Theme -> String -> RepeatedSeries -> Html Msg
 viewSeriesEntry theme contentType entry =
     let
         seriesLink =
-            "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ entry.id
+            "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ String.fromInt entry.id
 
         lastRepeatDate =
-            List.head entry.lastRepeatDate
-                |> Maybe.withDefault "Unknown"
+            if entry.lastRepeatDate == "" then
+                "Unknown"
+
+            else
+                entry.lastRepeatDate
 
         isOwnedTitle =
             if entry.isOwned then
@@ -112,7 +115,7 @@ viewSeriesEntry theme contentType entry =
             else
                 "❌︎"
     in
-    tr [ id entry.id, class "repeated-series-table-row" ]
+    tr [ id (String.fromInt entry.id), class "repeated-series-table-row" ]
         [ td [ class "left-align", css leftAlign ]
             [ div
                 [ class "is-owned"
@@ -134,8 +137,8 @@ viewSeriesEntry theme contentType entry =
                 ]
                 []
             , Components.NewTabLink.view theme
-                [ href seriesLink, title ("View " ++ entry.name ++ " details") ]
-                [ text entry.name ]
+                [ href seriesLink, title ("View " ++ entry.title ++ " details") ]
+                [ text entry.title ]
             ]
         , td [ class "right-align", css rightAlign ]
             [ span [] [ text (String.fromInt entry.rating) ]

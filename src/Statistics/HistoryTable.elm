@@ -51,7 +51,7 @@ view model data detail yearDetail =
             }
             data
         , viewTableDetail model detail yearDetail
-        , SeasonKey.view model.theme (isYearBreakdown && breakdownType /= "MONTHS" && settings.requireKey)
+        , SeasonKey.view model.theme (isYearBreakdown && breakdownType /= "MONTH" && settings.requireKey)
         ]
 
 
@@ -96,7 +96,7 @@ viewTable props countData =
                 |> List.reverse
 
         isMonths =
-            props.breakdown == "MONTHS"
+            props.breakdown == "MONTH"
 
         headers =
             if isMonths then
@@ -164,7 +164,7 @@ viewRow : Theme -> String -> Int -> List Count -> Html Msg
 viewRow theme breakdown total data =
     let
         fixValue =
-            if breakdown == "MONTHS" then
+            if breakdown == "MONTH" then
                 1
 
             else
@@ -183,7 +183,7 @@ viewRow theme breakdown total data =
                 |> List.append data
 
         headers =
-            if breakdown == "MONTHS" then
+            if breakdown == "MONTH" then
                 Constants.months
 
             else

@@ -42,7 +42,7 @@ view model =
             model.status
 
         history =
-            viewRender model.history
+            model.history
 
         detail =
             viewRender model.historyDetail

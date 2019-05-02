@@ -127,4 +127,4 @@ getListFirst list =
 
 toCapital : String -> String
 toCapital str =
-    String.toUpper (String.left 1 str) ++ String.dropLeft 1 str
+    String.toUpper (String.left 1 str) ++ String.toLower (String.dropLeft 1 str)

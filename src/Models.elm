@@ -37,7 +37,7 @@ type alias InputField =
 type alias Model =
     { debounce : Debounce InputField
     , status : CountData
-    , history : WebData CountData
+    , history : CountData
     , historyDetail : WebData HistoryDetailData
     , historyYear : WebData HistoryYearData
     , rating : CountData
@@ -94,7 +94,7 @@ initialModel flags =
     in
     { debounce = Debounce.init
     , status = []
-    , history = RemoteData.Loading
+    , history = []
     , historyDetail = RemoteData.Loading
     , historyYear = RemoteData.Loading
     , rating = []
@@ -233,12 +233,12 @@ type alias SeriesData =
 
 
 type alias RepeatedSeries =
-    { id : String
-    , name : String
-    , timesCompleted : Int
+    { id : Int
+    , title : String
     , rating : Int
+    , timesCompleted : Int
     , isOwned : Bool
-    , lastRepeatDate : List String
+    , lastRepeatDate : String
     }
 
 

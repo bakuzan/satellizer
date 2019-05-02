@@ -1,22 +1,17 @@
 module Commands exposing
     ( constructHistoryBreakdownUrl
     , constructUrl
-    , fetchHistoryData
     , fetchHistoryDetailData
     , fetchHistoryDetailUrl
-    , fetchHistoryUrl
     , fetchHistoryYearData
     , fetchHistoryYearUrl
-    , fetchRatingData
-    , fetchRatingUrl
-    , repeatedSeriesQueryRequest
     , sendAiringSeriesQuery
     , sendGraphqlQueryRequest
+    , sendHistoryCountsRequest
     , sendRatingCountsRequest
     , sendRepeatedSeriesQuery
     , sendSeriesRatingsQuery
     , sendStatusCountsRequest
-    , seriesQueryRequest
     )
 
 import GraphQL.Client.Http as GraphQLClient
@@ -29,38 +24,6 @@ import Task exposing (Task)
 import Utils.Common as Common
 import Utils.Decoders as Decoders
 import Utils.Graphql as Graphql
-
-
-
--- Rating counts
-
-
-fetchRatingData : Settings -> Cmd Msg
-fetchRatingData settings =
-    Http.get (fetchRatingUrl settings) Decoders.countDataDecoder
-        |> RemoteData.sendRequest
-        |> Cmd.map Msgs.OnFetchRating
-
-
-fetchRatingUrl : Settings -> String
-fetchRatingUrl settings =
-    constructUrl "rating-counts" settings
-
-
-
--- History table counts
-
-
-fetchHistoryData : Settings -> Cmd Msg
-fetchHistoryData settings =
-    Http.get (fetchHistoryUrl settings) Decoders.countDataDecoder
-        |> RemoteData.sendRequest
-        |> Cmd.map Msgs.OnFetchHistory
-
-
-fetchHistoryUrl : Settings -> String
-fetchHistoryUrl settings =
-    constructUrl "history-counts" settings ++ "/" ++ String.toLower settings.breakdownType
 
 
 
@@ -155,6 +118,26 @@ sendRatingCountsRequest : String -> Bool -> Cmd Msg
 sendRatingCountsRequest contentType isAdult =
     sendGraphqlQueryRequest (ratingCountsRequest contentType isAdult)
         |> Task.attempt Msgs.ReceiveRatingCountsResponse
+
+
+
+-- History Counts
+
+
+historyCountsRequest : Settings -> GraphQLBuilder.Request GraphQLBuilder.Query CountData
+historyCountsRequest props =
+    Graphql.historyCountQuery
+        |> GraphQLBuilder.request
+            { contentType = props.contentType
+            , isAdult = props.isAdult
+            , breakdown = props.breakdownType
+            }
+
+
+sendHistoryCountsRequest : Settings -> Cmd Msg
+sendHistoryCountsRequest props =
+    sendGraphqlQueryRequest (historyCountsRequest props)
+        |> Task.attempt Msgs.ReceiveHistoryCountsResponse
 
 
 
