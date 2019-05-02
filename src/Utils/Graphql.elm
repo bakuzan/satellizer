@@ -1,6 +1,8 @@
 module Utils.Graphql exposing
     ( airingItemQuery
     , historyCountQuery
+    , historyItemQuery
+    , historyYearItemQuery
     , ratingCountQuery
     , ratingItemQuery
     , repeatedItemQuery
@@ -10,7 +12,20 @@ module Utils.Graphql exposing
 import GraphQL.Request.Builder exposing (..)
 import GraphQL.Request.Builder.Arg as Arg
 import GraphQL.Request.Builder.Variable as Var
-import Models exposing (Count, CountData, EpisodeStatistic, HistoryDetail, HistoryDetailData, RepeatedSeries, RepeatedSeriesData, Series, SeriesData)
+import Models
+    exposing
+        ( Count
+        , CountData
+        , EpisodeStatistic
+        , HistoryDetail
+        , HistoryDetailData
+        , HistoryYear
+        , HistoryYearDetail
+        , RepeatedSeries
+        , RepeatedSeriesData
+        , Series
+        , SeriesData
+        )
 import Utils.Common exposing (toCapital)
 
 
@@ -55,9 +70,6 @@ ratingCountQuery =
 historyCountQuery : Document Query CountData { vars | contentType : String, isAdult : Bool, breakdown : String }
 historyCountQuery =
     let
-        breakdownVar =
-            Var.required "breakdown" .breakdown (Var.enum "StatBreakdown" (\x -> toCapital x))
-
         queryRoot =
             extract
                 (aliasAs "counts"
@@ -75,6 +87,83 @@ historyCountQuery =
 
 
 -- item queries
+
+
+historyItemQuery :
+    String
+    ->
+        Document Query
+            HistoryDetailData
+            { vars
+                | contentType : String
+                , isAdult : Bool
+                , breakdown : String
+                , partition : String
+            }
+historyItemQuery partition =
+    let
+        queryRoot =
+            extract
+                (aliasAs "seriesList"
+                    (field "statsHistoryDetail"
+                        [ ( "type", Arg.variable typeVar )
+                        , ( "isAdult", Arg.variable isAdultVar )
+                        , ( "breakdown", Arg.variable breakdownVar )
+                        , ( "partition", Arg.variable partitionVar )
+                        ]
+                        historyItems
+                    )
+                )
+    in
+    queryDocument queryRoot
+
+
+historyYearItemQuery :
+    String
+    ->
+        Document Query
+            HistoryYearDetail
+            { vars
+                | contentType : String
+                , isAdult : Bool
+                , breakdown : String
+                , partition : String
+            }
+historyYearItemQuery partition =
+    let
+        yearResponse =
+            object HistoryYearDetail
+                |> with
+                    (aliasAs "counts"
+                        (field "summary"
+                            []
+                            (list
+                                (object HistoryYear
+                                    |> with (field "key" [] string)
+                                    |> with (field "average" [] float)
+                                    |> with (field "highest" [] int)
+                                    |> with (field "lowest" [] int)
+                                    |> with (field "mode" [] int)
+                                )
+                            )
+                        )
+                    )
+                |> with (aliasAs "detail" (field "series" [] historyItems))
+
+        queryRoot =
+            extract
+                (aliasAs "historyYear"
+                    (field "statsHistoryDetailYear"
+                        [ ( "type", Arg.variable typeVar )
+                        , ( "isAdult", Arg.variable isAdultVar )
+                        , ( "breakdown", Arg.variable breakdownVar )
+                        , ( "partition", Arg.variable partitionVar )
+                        ]
+                        yearResponse
+                    )
+                )
+    in
+    queryDocument queryRoot
 
 
 ratingItemQuery : String -> Document Query SeriesData { vars | isAdult : Bool, search : String, ratings : List Int }
@@ -140,25 +229,12 @@ repeatedItemQuery contentType =
 airingItemQuery : Document Query HistoryDetailData {}
 airingItemQuery =
     let
-        items =
-            list
-                (object HistoryDetail
-                    |> with (field "id" [] int)
-                    |> with (field "title" [] string)
-                    |> with (field "rating" [] int)
-                    |> with (field "season" [] string)
-                    |> with (field "average" [] float)
-                    |> with (field "highest" [] int)
-                    |> with (field "lowest" [] int)
-                    |> with (field "mode" [] int)
-                )
-
         queryRoot =
             extract
                 (aliasAs "airingList"
                     (field "currentSeason"
                         []
-                        items
+                        historyItems
                     )
                 )
     in
@@ -184,12 +260,37 @@ searchVar =
     Var.required "search" .search Var.string
 
 
+breakdownVar : Var.Variable { vars | breakdown : String }
+breakdownVar =
+    Var.required "breakdown" .breakdown (Var.enum "StatBreakdown" (\x -> toCapital x))
+
+
+partitionVar : Var.Variable { vars | partition : String }
+partitionVar =
+    Var.required "partition" .partition (Var.enum "HistoryPartition" (\x -> x))
+
+
 countItems : ValueSpec NonNull (ListType NonNull ObjectType) (List Count) vars
 countItems =
     list
         (object Count
             |> with (field "key" [] string)
             |> with (field "value" [] int)
+        )
+
+
+historyItems : ValueSpec NonNull (ListType NonNull ObjectType) HistoryDetailData vars
+historyItems =
+    list
+        (object HistoryDetail
+            |> with (field "id" [] int)
+            |> with (field "title" [] string)
+            |> with (field "rating" [] int)
+            |> with (field "season" [] string)
+            |> with (field "average" [] float)
+            |> with (field "highest" [] int)
+            |> with (field "lowest" [] int)
+            |> with (field "mode" [] int)
         )
 
 

@@ -1,4 +1,20 @@
-module Utils.Common exposing (calculateAverageOfRatings, calculateTotalOfValues, calculateTotalOfValuesTemp, divide, divideTotalByCount, getListFirst, getMonth, getYear, maxOfField, minOfField, replace, setCustomAttr, setIcon, setRole, splitList, toCapital)
+module Utils.Common exposing
+    ( calculateAverageOfRatings
+    , calculateTotalOfValues
+    , divide
+    , divideTotalByCount
+    , getListFirst
+    , getMonth
+    , getYear
+    , maxOfField
+    , minOfField
+    , replace
+    , setCustomAttr
+    , setIcon
+    , setRole
+    , splitList
+    , toCapital
+    )
 
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes exposing (attribute)
@@ -80,12 +96,6 @@ setIcon str =
 
 calculateTotalOfValues : CountData -> Int
 calculateTotalOfValues list =
-    List.map .value list
-        |> List.foldr (+) 0
-
-
-calculateTotalOfValuesTemp : HistoryYearData -> Int
-calculateTotalOfValuesTemp list =
     List.map .value list
         |> List.foldr (+) 0
 

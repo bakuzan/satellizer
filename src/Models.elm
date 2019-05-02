@@ -1,7 +1,34 @@
-module Models exposing (Count, CountData, EpisodeStatistic, Flags, Header, HistoryDetail, HistoryDetailData, HistoryYear, HistoryYearData, HistoryYearDetail, InputField, Model, ObjectsWithValue(..), RatingFilters, RepeatedFilters, RepeatedSeries, RepeatedSeriesData, Series, SeriesData, Settings, Sort, Theme, emptyCount, emptyEpisodeStatistic, emptyHistoryDetail, emptyHistoryYear, emptyHistoryYearDetail, initialModel)
+module Models exposing
+    ( Count
+    , CountData
+    , EpisodeStatistic
+    , Flags
+    , Header
+    , HistoryDetail
+    , HistoryDetailData
+    , HistoryYear
+    , HistoryYearData
+    , HistoryYearDetail
+    , InputField
+    , Model
+    , RatingFilters
+    , RepeatedFilters
+    , RepeatedSeries
+    , RepeatedSeriesData
+    , Series
+    , SeriesData
+    , Settings
+    , Sort
+    , Theme
+    , emptyCount
+    , emptyEpisodeStatistic
+    , emptyHistoryDetail
+    , emptyHistoryYear
+    , emptyHistoryYearDetail
+    , initialModel
+    )
 
 import Debounce exposing (Debounce)
-import RemoteData exposing (WebData)
 
 
 type alias Flags =
@@ -38,8 +65,8 @@ type alias Model =
     { debounce : Debounce InputField
     , status : CountData
     , history : CountData
-    , historyDetail : WebData HistoryDetailData
-    , historyYear : WebData HistoryYearData
+    , historyDetail : HistoryDetailData
+    , historyYear : HistoryYearData
     , rating : CountData
     , seriesList : SeriesData
     , repeatedList : RepeatedSeriesData
@@ -95,8 +122,8 @@ initialModel flags =
     { debounce = Debounce.init
     , status = []
     , history = []
-    , historyDetail = RemoteData.Loading
-    , historyYear = RemoteData.Loading
+    , historyDetail = []
+    , historyYear = []
     , rating = []
     , seriesList = []
     , repeatedList = []
@@ -178,12 +205,12 @@ type alias EpisodeStatistic =
 
 emptyEpisodeStatistic : EpisodeStatistic
 emptyEpisodeStatistic =
-    EpisodeStatistic 0.0 0 0 0
+    EpisodeStatistic -1.0 -1 -1 -1
 
 
 emptyHistoryDetail : HistoryDetail
 emptyHistoryDetail =
-    HistoryDetail 0 "" 0 "" 0.0 0 0 0
+    HistoryDetail -1 "" -1 "" -1.0 -1 -1 -1
 
 
 type alias HistoryYearData =
@@ -191,8 +218,7 @@ type alias HistoryYearData =
 
 
 type alias HistoryYear =
-    { id : String
-    , value : Int
+    { key : String
     , average : Float
     , highest : Int
     , lowest : Int
@@ -202,7 +228,7 @@ type alias HistoryYear =
 
 emptyHistoryYear : HistoryYear
 emptyHistoryYear =
-    HistoryYear "" 0 0.0 0 0 0
+    HistoryYear "" -1.0 -1 -1 -1
 
 
 type alias HistoryYearDetail =
@@ -214,11 +240,6 @@ type alias HistoryYearDetail =
 emptyHistoryYearDetail : HistoryYearDetail
 emptyHistoryYearDetail =
     HistoryYearDetail [] []
-
-
-type ObjectsWithValue
-    = HistoryYearData
-    | CountData
 
 
 type alias Series =

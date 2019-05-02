@@ -8,28 +8,11 @@ import Html.Styled exposing (Html, div)
 import Html.Styled.Attributes exposing (css, id)
 import Models exposing (CountData, Model)
 import Msgs exposing (Msg)
-import RemoteData exposing (WebData)
 import Statistics.Airing
 import Statistics.HistoryTable
 import Statistics.Ratings
 import Statistics.Repeated
 import Utils.Common as Common
-
-
-viewRender : WebData (List a) -> List a
-viewRender model =
-    case model of
-        RemoteData.NotAsked ->
-            []
-
-        RemoteData.Loading ->
-            []
-
-        RemoteData.Failure err ->
-            []
-
-        RemoteData.Success m ->
-            m
 
 
 view : Model -> Html Msg
@@ -45,10 +28,10 @@ view model =
             model.history
 
         detail =
-            viewRender model.historyDetail
+            model.historyDetail
 
         yearDetail =
-            viewRender model.historyYear
+            model.historyYear
 
         seriesList =
             model.seriesList

@@ -34,7 +34,7 @@ viewHistoryYearDetail model data =
             settings.detailGroup
 
         getYearCount =
-            Common.calculateTotalOfValuesTemp data
+            List.length model.historyDetail
     in
     div [ class "history-detail" ]
         [ div [ class "flex-row" ]
@@ -96,12 +96,22 @@ viewTableHead settings =
 viewTableBody : Theme -> String -> HistoryYearData -> Html Msg
 viewTableBody theme breakdown data =
     let
+        isMonth =
+            breakdown == "MONTH"
+
         fixValue =
-            if breakdown == "MONTH" then
+            if isMonth then
                 1
 
             else
                 -2
+
+        headers =
+            if isMonth then
+                Constants.months
+
+            else
+                Constants.seasons
 
         getKey x =
             String.right 2 ("0" ++ String.fromInt (x.number + fixValue))
@@ -109,21 +119,14 @@ viewTableBody theme breakdown data =
         fixedData =
             let
                 values =
-                    List.map .id data
+                    List.map .key data
             in
             List.filter (\x -> not (List.member (getKey x) values)) headers
-                |> List.map (\x -> { emptyHistoryYear | id = getKey x })
+                |> List.map (\x -> { emptyHistoryYear | key = getKey x })
                 |> List.append data
 
-        headers =
-            if breakdown == "MONTH" then
-                Constants.months
-
-            else
-                Constants.seasons
-
         cells =
-            List.sortBy .id fixedData
+            List.sortBy .key fixedData
 
         renderRow =
             viewTableRow theme

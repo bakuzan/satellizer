@@ -44,8 +44,16 @@ seasons =
 
 breakdownOptions : List RadioOption
 breakdownOptions =
-    [ { label = "Months", optionValue = "MONTH", action = Msgs.UpdateBreakdownType "MONTH", disabled = False }
-    , { label = "Season", optionValue = "SEASON", action = Msgs.UpdateBreakdownType "SEASON", disabled = False }
+    [ { label = "Months"
+      , optionValue = "MONTH"
+      , action = Msgs.UpdateBreakdownType "MONTH"
+      , disabled = False
+      }
+    , { label = "Season"
+      , optionValue = "SEASON"
+      , action = Msgs.UpdateBreakdownType "SEASON"
+      , disabled = False
+      }
     ]
 
 

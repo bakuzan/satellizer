@@ -1,11 +1,8 @@
 module Msgs exposing (Msg(..))
 
--- import Navigation exposing (Location)
-
 import Debounce
 import GraphQL.Client.Http as GraphQLClient
 import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Theme)
-import RemoteData exposing (WebData)
 
 
 type Msg
@@ -17,8 +14,6 @@ type Msg
     | UpdateSortField String
     | UpdateSortDirection Bool
     | DisplayHistoryDetail String
-    | OnFetchHistoryDetail (WebData HistoryDetailData)
-    | OnFetchHistoryYear (WebData HistoryYearDetail)
     | UpdateIsAdult Bool
     | UpdateContentType String
     | UpdateRequireKey Bool
@@ -29,6 +24,8 @@ type Msg
     | ReceiveStatusCountsResponse (Result GraphQLClient.Error CountData)
     | ReceiveRatingCountsResponse (Result GraphQLClient.Error CountData)
     | ReceiveHistoryCountsResponse (Result GraphQLClient.Error CountData)
-    | ReceiveSeriesRatingsResponse (Result GraphQLClient.Error SeriesData)
+    | ReceiveHistorySeriesResponse (Result GraphQLClient.Error HistoryDetailData)
+    | ReceiveHistoryYearSeriesResponse (Result GraphQLClient.Error HistoryYearDetail)
+    | ReceiveRatingsSeriesResponse (Result GraphQLClient.Error SeriesData)
     | ReceiveRepeatedSeriesResponse (Result GraphQLClient.Error RepeatedSeriesData)
     | ReceiveAiringSeriesResponse (Result GraphQLClient.Error HistoryDetailData)

@@ -73,8 +73,6 @@ containers theme =
         ++ [ position relative
            , displayFlex
            , alignItems center
-
-           --    , flex (int 1)
            , padding (px 5)
            , minHeight (px 35)
            , boxSizing contentBox

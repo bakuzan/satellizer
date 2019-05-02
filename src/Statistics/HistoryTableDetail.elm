@@ -95,256 +95,227 @@ viewHistoryDetail model data =
                     , flexDirection column
                     ]
                 ]
-                [ viewDetailTable
-                    { contentType = contentType
-                    , breakdown = breakdown
-                    , sorting = settings.sorting
-                    , isYearBreakdown = isYearBreakdown
-                    , theme = model.theme
-                    }
-                    data
+                [-- viewDetailTable
+                 -- { contentType = contentType
+                 -- , breakdown = breakdown
+                 -- , sorting = settings.sorting
+                 -- , isYearBreakdown = isYearBreakdown
+                 -- , theme = model.theme
+                 -- }
+                 -- data
                 ]
             ]
         ]
 
 
-viewDetailTable : DetailTableProps -> HistoryDetailData -> Html Msg
-viewDetailTable props list =
-    let
-        sorting =
-            props.sorting
 
-        sortedList =
-            Sorters.sortHistoryDetailList sorting.field sorting.isDesc list
-    in
-    table
-        [ class "history-breakdown__table"
-        , css
-            [ width (pct 100)
-            ]
-        ]
-        [ viewTableHeader props
-        , viewTableBody props sortedList
-        ]
-
-
-viewTableHeader : DetailTableProps -> Html Msg
-viewTableHeader props =
-    let
-        hideHeader =
-            props.breakdown == "MONTH"
-
-        renderHeaderCell =
-            viewHeaderCell props.sorting props.theme
-    in
-    thead []
-        [ renderHeaderCell { hide = False, title = "Title", style = [ paddingLeft (px 5), textAlign left ] }
-        , renderHeaderCell { hide = False, title = "Rating", style = [] }
-        , renderHeaderCell { hide = hideHeader, title = "Average", style = [] }
-        , renderHeaderCell { hide = hideHeader, title = "Highest", style = [] }
-        , renderHeaderCell { hide = hideHeader, title = "Lowest", style = [] }
-        , renderHeaderCell { hide = hideHeader, title = "Mode", style = [] }
-        ]
-
-
-viewHeaderCell : Sort -> Theme -> HeaderProps -> Html Msg
-viewHeaderCell sorting theme props =
-    let
-        icon =
-            if sorting.field /= String.toUpper props.title then
-                ""
-
-            else if sorting.isDesc == True then
-                "▼"
-
-            else
-                "▲"
-    in
-    th
-        [ css
-            (if props.hide then
-                [ display none ]
-
-             else
-                props.style
-            )
-        ]
-        [ Button.view { isPrimary = False, theme = theme }
-            [ onClick (Msgs.UpdateSortField (String.toUpper props.title)) ]
-            [ strong
-                [ Common.setIcon icon
-                , css
-                    [ lineHeight (int 1)
-                    , Styles.iconAfter
-                    ]
-                ]
-                [ text props.title ]
-            ]
-        ]
-
-
-viewTableBody : DetailTableProps -> HistoryDetailData -> Html Msg
-viewTableBody props list =
-    tbody [ class "history-breakdown-body" ]
-        ([] ++ List.map (viewTableRow props) list)
-
-
-viewTableRow : DetailTableProps -> HistoryDetail -> Html Msg
-viewTableRow props item =
-    let
-        es =
-            EpisodeStatistic item.average item.highest item.lowest item.mode
-
-        indicate =
-            if es.lowest == 0 then
-                "* "
-
-            else
-                ""
-
-        setTitleIndication =
-            indicate ++ item.title
-
-        seasonStr =
-            String.toLower item.season
-
-        additonalStyles =
-            if props.isYearBreakdown && item.season /= "" then
-                [ hover
-                    [ backgroundColor (hex (getSeasonColour seasonStr))
-                    , color (hex "fff")
-                    , children
-                        [ typeSelector "td > a"
-                            [ backgroundColor inherit
-                            , color inherit
-                            ]
-                        ]
-                    ]
-                ]
-
-            else
-                []
-    in
-    tr
-        [ class "history-breakdown-body__row month-breakdown"
-        , classList [ ( seasonStr, True ) ]
-        , css (Styles.breakdownBodyRow props.theme ++ additonalStyles)
-        ]
-        ([ td
-            [ class "history-breakdown-body__month-title"
-            , css [ paddingLeft (px 5), textAlign left ]
-            ]
-            [ Components.NewTabLink.view props.theme
-                [ href ("http://localhost:9003/erza/" ++ props.contentType ++ "-view/" ++ String.fromInt item.id)
-                , css
-                    [ width (pct 75)
-                    , textAlign left
-                    ]
-                ]
-                [ text setTitleIndication ]
-            ]
-         , renderCell (String.fromInt item.rating)
-         ]
-            ++ renderEpisodeStatistics es
-        )
-
-
-renderEpisodeStatistics : EpisodeStatistic -> List (Html Msg)
-renderEpisodeStatistics es =
-    let
-        processFloat avg =
-            Round.round 2 avg
-    in
-    if es.lowest /= -1 then
-        [ renderCell (processFloat es.average)
-        , renderCell (String.fromInt es.highest)
-        , renderCell (String.fromInt es.lowest)
-        , renderCell (String.fromInt es.mode)
-        ]
-
-    else
-        []
-
-
-renderCell : String -> Html Msg
-renderCell str =
-    td [ css [ textAlign center ] ]
-        [ text str
-        ]
+-- viewDetailTable : DetailTableProps -> HistoryDetailData -> Html Msg
+-- viewDetailTable props list =
+--     let
+--         sorting =
+--             props.sorting
+--         sortedList =
+--             Sorters.sortHistoryDetailList sorting.field sorting.isDesc list
+--     in
+--     table
+--         [ class "history-breakdown__table"
+--         , css
+--             [ width (pct 100)
+--             ]
+--         ]
+--         [ viewTableHeader props
+--         , viewTableBody props sortedList
+--         ]
+-- viewTableHeader : DetailTableProps -> Html Msg
+-- viewTableHeader props =
+--     let
+--         hideHeader =
+--             props.breakdown == "MONTH"
+--         renderHeaderCell =
+--             viewHeaderCell props.sorting props.theme
+--     in
+--     thead []
+--         [ renderHeaderCell { hide = False, title = "Title", style = [ paddingLeft (px 5), textAlign left ] }
+--         , renderHeaderCell { hide = False, title = "Rating", style = [] }
+--         , renderHeaderCell { hide = hideHeader, title = "Average", style = [] }
+--         , renderHeaderCell { hide = hideHeader, title = "Highest", style = [] }
+--         , renderHeaderCell { hide = hideHeader, title = "Lowest", style = [] }
+--         , renderHeaderCell { hide = hideHeader, title = "Mode", style = [] }
+--         ]
+-- viewHeaderCell : Sort -> Theme -> HeaderProps -> Html Msg
+-- viewHeaderCell sorting theme props =
+--     let
+--         icon =
+--             if sorting.field /= String.toUpper props.title then
+--                 ""
+--             else if sorting.isDesc == True then
+--                 "▼"
+--             else
+--                 "▲"
+--     in
+--     th
+--         [ css
+--             (if props.hide then
+--                 [ display none ]
+--              else
+--                 props.style
+--             )
+--         ]
+--         [ Button.view { isPrimary = False, theme = theme }
+--             [ onClick (Msgs.UpdateSortField (String.toUpper props.title)) ]
+--             [ strong
+--                 [ Common.setIcon icon
+--                 , css
+--                     [ lineHeight (int 1)
+--                     , Styles.iconAfter
+--                     ]
+--                 ]
+--                 [ text props.title ]
+--             ]
+--         ]
+-- viewTableBody : DetailTableProps -> HistoryDetailData -> Html Msg
+-- viewTableBody props list =
+--     tbody [ class "history-breakdown-body" ]
+--         ([] ++ List.map (viewTableRow props) list)
+-- viewTableRow : DetailTableProps -> HistoryDetail -> Html Msg
+-- viewTableRow props item =
+--     let
+--         es =
+--             EpisodeStatistic item.average item.highest item.lowest item.mode
+--         indicate =
+--             if es.lowest == 0 then
+--                 "* "
+--             else
+--                 ""
+--         setTitleIndication =
+--             indicate ++ item.title
+--         seasonStr =
+--             String.toLower item.season
+--         additonalStyles =
+--             if props.isYearBreakdown && item.season /= "" then
+--                 [ hover
+--                     [ backgroundColor (hex (getSeasonColour seasonStr))
+--                     , color (hex "fff")
+--                     , children
+--                         [ typeSelector "td > a"
+--                             [ backgroundColor inherit
+--                             , color inherit
+--                             ]
+--                         ]
+--                     ]
+--                 ]
+--             else
+--                 []
+--     in
+--     tr
+--         [ class "history-breakdown-body__row month-breakdown"
+--         , classList [ ( seasonStr, True ) ]
+--         , css (Styles.breakdownBodyRow props.theme ++ additonalStyles)
+--         ]
+--         ([ td
+--             [ class "history-breakdown-body__month-title"
+--             , css [ paddingLeft (px 5), textAlign left ]
+--             ]
+--             [ Components.NewTabLink.view props.theme
+--                 [ href ("http://localhost:9003/erza/" ++ props.contentType ++ "-view/" ++ String.fromInt item.id)
+--                 , css
+--                     [ width (pct 75)
+--                     , textAlign left
+--                     ]
+--                 ]
+--                 [ text setTitleIndication ]
+--             ]
+--          , renderCell (String.fromInt item.rating)
+--          ]
+--             ++ renderEpisodeStatistics es
+--         )
+-- renderEpisodeStatistics : EpisodeStatistic -> List (Html Msg)
+-- renderEpisodeStatistics es =
+--     let
+--         processFloat avg =
+--             Round.round 2 avg
+--     in
+--     if es.lowest /= -1 then
+--         [ renderCell (processFloat es.average)
+--         , renderCell (String.fromInt es.highest)
+--         , renderCell (String.fromInt es.lowest)
+--         , renderCell (String.fromInt es.mode)
+--         ]
+--     else
+--         []
+-- renderCell : String -> Html Msg
+-- renderCell str =
+--     td [ css [ textAlign center ] ]
+--         [ text str
+--         ]
 
 
 viewDetailBreakdowns : Theme -> HistoryDetailData -> Html Msg
 viewDetailBreakdowns theme list =
-    let
-        listNoZeroes =
-            List.filter (\x -> x.rating /= 0) list
-
-        average =
-            Common.calculateAverageOfRatings list
-
-        highest =
-            Common.maxOfField .rating list
-                |> Maybe.withDefault emptyHistoryDetail
-                |> .rating
-
-        lowest =
-            Common.minOfField .rating listNoZeroes
-                |> Maybe.withDefault emptyHistoryDetail
-                |> .rating
-
-        getHead arr =
-            List.head arr
-                |> Maybe.withDefault emptyHistoryDetail
-                |> .rating
-
-        notMatchHead num obj =
-            obj.rating /= num
-
-        matchHead num obj =
-            obj.rating == num
-
-        buildNest arr =
-            case getHead arr of
-                0 ->
-                    []
-
-                rating ->
-                    List.filter (matchHead rating) arr :: buildNest (List.filter (notMatchHead rating) arr)
-
-        mode =
-            buildNest listNoZeroes
-                |> List.foldr
-                    (\x y ->
-                        if List.length x > List.length y then
-                            x
-
-                        else
-                            y
-                    )
-                    []
-                |> getHead
-    in
-    div [ class "history-detail-breakdown", css [ margin2 (px 10) (px 0) ] ]
-        [ Components.Accordion.view theme
-            "Overall"
-            "Overall"
-            [ ul [ css (Styles.list theme True 2) ]
-                ([]
-                    ++ viewBreakdownPair "Average" (String.fromFloat average)
-                    ++ viewBreakdownPair "Highest" (String.fromInt highest)
-                    ++ viewBreakdownPair "Lowest" (String.fromInt lowest)
-                    ++ viewBreakdownPair "Mode" (String.fromInt mode)
-                )
-            ]
-        ]
+    div [] []
 
 
-viewBreakdownPair : String -> String -> List (Html Msg)
-viewBreakdownPair name statistic =
-    [ li [ class "label", css [ displayFlex, justifyContent spaceBetween ] ]
-        [ text name
-        ]
-    , li [ class "value", css [ displayFlex, justifyContent spaceBetween ] ]
-        [ text statistic
-        ]
-    ]
+
+-- viewDetailBreakdowns : Theme -> HistoryDetailData -> Html Msg
+-- viewDetailBreakdowns theme list =
+--     let
+--         listNoZeroes =
+--             List.filter (\x -> x.rating /= 0) list
+--         average =
+--             Common.calculateAverageOfRatings list
+--         highest =
+--             Common.maxOfField .rating list
+--                 |> Maybe.withDefault emptyHistoryDetail
+--                 |> .rating
+--         lowest =
+--             Common.minOfField .rating listNoZeroes
+--                 |> Maybe.withDefault emptyHistoryDetail
+--                 |> .rating
+--         getHead arr =
+--             List.head arr
+--                 |> Maybe.withDefault emptyHistoryDetail
+--                 |> .rating
+--         notMatchHead num obj =
+--             obj.rating /= num
+--         matchHead num obj =
+--             obj.rating == num
+--         buildNest arr =
+--             case getHead arr of
+--                 0 ->
+--                     []
+--                 rating ->
+--                     List.filter (matchHead rating) arr :: buildNest (List.filter (notMatchHead rating) arr)
+--         mode =
+--             buildNest listNoZeroes
+--                 |> List.foldr
+--                     (\x y ->
+--                         if List.length x > List.length y then
+--                             x
+--                         else
+--                             y
+--                     )
+--                     []
+--                 |> getHead
+--     in
+--     div [ class "history-detail-breakdown", css [ margin2 (px 10) (px 0) ] ]
+--         [ Components.Accordion.view theme
+--             "Overall"
+--             "Overall"
+--             [ ul [ css (Styles.list theme True 2) ]
+--                 ([]
+--                     ++ viewBreakdownPair "Average" (String.fromFloat average)
+--                     ++ viewBreakdownPair "Highest" (String.fromInt highest)
+--                     ++ viewBreakdownPair "Lowest" (String.fromInt lowest)
+--                     ++ viewBreakdownPair "Mode" (String.fromInt mode)
+--                 )
+--             ]
+--         ]
+-- viewBreakdownPair : String -> String -> List (Html Msg)
+-- viewBreakdownPair name statistic =
+--     [ li [ class "label", css [ displayFlex, justifyContent spaceBetween ] ]
+--         [ text name
+--         ]
+--     , li [ class "value", css [ displayFlex, justifyContent spaceBetween ] ]
+--         [ text statistic
+--         ]
+--     ]

@@ -5,7 +5,6 @@ import Debounce
 import Debouncers
 import Models exposing (Model, emptyHistoryYearDetail)
 import Msgs exposing (Msg)
-import RemoteData
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -42,10 +41,10 @@ update msg model =
                 Cmd.none
 
             else if String.contains "-" dateString == True then
-                Commands.fetchHistoryDetailData params
+                Commands.sendHistorySeriesQuery params
 
             else
-                Commands.fetchHistoryYearData params
+                Commands.sendHistoryYearSeriesQuery params
     in
     case msg of
         Msgs.DebounceMsg debmsg ->
@@ -58,42 +57,6 @@ update msg model =
                         model.debounce
             in
             ( { model | debounce = debounce }, cmd )
-
-        Msgs.OnFetchHistoryDetail response ->
-            ( { model | historyDetail = response }, Cmd.none )
-
-        Msgs.OnFetchHistoryYear response ->
-            let
-                extractData data =
-                    case data of
-                        RemoteData.NotAsked ->
-                            emptyHistoryYearDetail
-
-                        RemoteData.Loading ->
-                            emptyHistoryYearDetail
-
-                        RemoteData.Failure err ->
-                            emptyHistoryYearDetail
-
-                        RemoteData.Success val ->
-                            val
-
-                counts =
-                    extractData response
-                        |> .counts
-                        |> RemoteData.succeed
-
-                detail =
-                    extractData response
-                        |> .detail
-                        |> RemoteData.succeed
-            in
-            ( { model
-                | historyYear = counts
-                , historyDetail = detail
-              }
-            , Cmd.none
-            )
 
         Msgs.UpdateActiveTab name ->
             let
@@ -123,8 +86,8 @@ update msg model =
                     }
             in
             ( { model
-                | historyDetail = RemoteData.Loading
-                , historyYear = RemoteData.Loading
+                | historyDetail = []
+                , historyYear = []
                 , settings = updatedSettings
               }
             , Commands.sendStatusCountsRequest updatedSettings.contentType updatedSettings.isAdult
@@ -143,8 +106,8 @@ update msg model =
                     }
             in
             ( { model
-                | historyDetail = RemoteData.Loading
-                , historyYear = RemoteData.Loading
+                | historyDetail = []
+                , historyYear = []
                 , settings = updatedSettings
               }
             , Commands.sendHistoryCountsRequest updatedSettings
@@ -326,7 +289,7 @@ update msg model =
             let
                 cmd =
                     if fieldName == "search" then
-                        Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult fieldValue ratingsFilters.ratings
+                        Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult fieldValue ratingsFilters.ratings
 
                     else
                         Commands.sendRepeatedSeriesQuery model.settings.contentType model.settings.isAdult fieldValue
@@ -352,7 +315,7 @@ update msg model =
 
                 maybeFetchSeriesRatings =
                     if shouldFetch then
-                        Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText []
+                        Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText []
 
                     else
                         Cmd.none
@@ -379,7 +342,7 @@ update msg model =
                     }
 
                 fetchSeriesRatings =
-                    Commands.sendSeriesRatingsQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText updatedRatings
+                    Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText updatedRatings
             in
             ( { model
                 | ratingsFilters = updatedFilters
@@ -449,7 +412,35 @@ update msg model =
             in
             ( { model | history = extractedCounts }, maybeDetailCommand )
 
-        Msgs.ReceiveSeriesRatingsResponse seriesList ->
+        Msgs.ReceiveHistorySeriesResponse seriesList ->
+            let
+                extractedSeriesList =
+                    Result.withDefault [] seriesList
+            in
+            ( { model | historyDetail = extractedSeriesList }, Cmd.none )
+
+        Msgs.ReceiveHistoryYearSeriesResponse response ->
+            let
+                logger =
+                    Debug.log "LOG" response
+
+                -- extractData =
+                --     Result.withDefault { counts = [], detail = [] } response
+                -- counts =
+                --     extractData
+                --         |> .counts
+                -- detail =
+                --     extractData
+                --         |> .detail
+            in
+            ( { model
+                | historyYear = [] --counts
+                , historyDetail = [] --detail
+              }
+            , Cmd.none
+            )
+
+        Msgs.ReceiveRatingsSeriesResponse seriesList ->
             let
                 extractedSeriesList =
                     Result.withDefault [] seriesList

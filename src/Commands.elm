@@ -1,16 +1,12 @@
 module Commands exposing
-    ( constructHistoryBreakdownUrl
-    , constructUrl
-    , fetchHistoryDetailData
-    , fetchHistoryDetailUrl
-    , fetchHistoryYearData
-    , fetchHistoryYearUrl
-    , sendAiringSeriesQuery
+    ( sendAiringSeriesQuery
     , sendGraphqlQueryRequest
     , sendHistoryCountsRequest
+    , sendHistorySeriesQuery
+    , sendHistoryYearSeriesQuery
     , sendRatingCountsRequest
+    , sendRatingsSeriesQuery
     , sendRepeatedSeriesQuery
-    , sendSeriesRatingsQuery
     , sendStatusCountsRequest
     )
 
@@ -19,64 +15,9 @@ import GraphQL.Request.Builder as GraphQLBuilder
 import Http
 import Models exposing (Count, CountData, EpisodeStatistic, HistoryDetail, HistoryDetailData, HistoryYear, HistoryYearData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Settings)
 import Msgs exposing (Msg)
-import RemoteData
 import Task exposing (Task)
 import Utils.Common as Common
-import Utils.Decoders as Decoders
 import Utils.Graphql as Graphql
-
-
-
--- History breakdown by partition
-
-
-fetchHistoryDetailData : Settings -> Cmd Msg
-fetchHistoryDetailData settings =
-    Http.get (fetchHistoryDetailUrl settings) Decoders.historyDetailDataDecoder
-        |> RemoteData.sendRequest
-        |> Cmd.map Msgs.OnFetchHistoryDetail
-
-
-fetchHistoryDetailUrl : Settings -> String
-fetchHistoryDetailUrl settings =
-    constructUrl "history-detail" settings ++ constructHistoryBreakdownUrl settings
-
-
-
--- History breakdown by year
-
-
-fetchHistoryYearData : Settings -> Cmd Msg
-fetchHistoryYearData settings =
-    Http.get (fetchHistoryYearUrl settings) Decoders.historyYearDetailDecoder
-        |> RemoteData.sendRequest
-        |> Cmd.map Msgs.OnFetchHistoryYear
-
-
-fetchHistoryYearUrl : Settings -> String
-fetchHistoryYearUrl settings =
-    constructUrl "history-years" settings ++ constructHistoryBreakdownUrl settings
-
-
-
--- Url helpers
-
-
-constructHistoryBreakdownUrl : Settings -> String
-constructHistoryBreakdownUrl settings =
-    "/" ++ String.toLower settings.breakdownType ++ "/" ++ settings.detailGroup
-
-
-constructUrl : String -> Settings -> String
-constructUrl urlType settings =
-    Common.replace ":type" settings.contentType ("/api/statistics/" ++ urlType ++ "/:type/:isAdult")
-        |> Common.replace ":isAdult"
-            (if settings.isAdult then
-                "true"
-
-             else
-                "false"
-            )
 
 
 
@@ -141,19 +82,57 @@ sendHistoryCountsRequest props =
 
 
 
+-- History Series
+
+
+historySeriesQueryRequest : Settings -> GraphQLBuilder.Request GraphQLBuilder.Query HistoryDetailData
+historySeriesQueryRequest props =
+    Graphql.historyItemQuery props.detailGroup
+        |> GraphQLBuilder.request
+            { contentType = props.contentType
+            , isAdult = props.isAdult
+            , breakdown = props.breakdownType
+            , partition = props.detailGroup
+            }
+
+
+sendHistorySeriesQuery : Settings -> Cmd Msg
+sendHistorySeriesQuery props =
+    sendGraphqlQueryRequest (historySeriesQueryRequest props)
+        |> Task.attempt Msgs.ReceiveHistorySeriesResponse
+
+
+historyYearSeriesQueryRequest : Settings -> GraphQLBuilder.Request GraphQLBuilder.Query HistoryYearDetail
+historyYearSeriesQueryRequest props =
+    Graphql.historyYearItemQuery props.detailGroup
+        |> GraphQLBuilder.request
+            { contentType = props.contentType
+            , isAdult = props.isAdult
+            , breakdown = props.breakdownType
+            , partition = props.detailGroup
+            }
+
+
+sendHistoryYearSeriesQuery : Settings -> Cmd Msg
+sendHistoryYearSeriesQuery props =
+    sendGraphqlQueryRequest (historyYearSeriesQueryRequest props)
+        |> Task.attempt Msgs.ReceiveHistoryYearSeriesResponse
+
+
+
 -- Ratings Series
 
 
-seriesQueryRequest : String -> Bool -> String -> List Int -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesData
-seriesQueryRequest contentType isAdult searchText selectedRatings =
+ratingsSeriesQueryRequest : String -> Bool -> String -> List Int -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesData
+ratingsSeriesQueryRequest contentType isAdult searchText selectedRatings =
     Graphql.ratingItemQuery contentType
         |> GraphQLBuilder.request { isAdult = isAdult, search = searchText, ratings = selectedRatings }
 
 
-sendSeriesRatingsQuery : String -> Bool -> String -> List Int -> Cmd Msg
-sendSeriesRatingsQuery contentType isAdult searchText selectedRatings =
-    sendGraphqlQueryRequest (seriesQueryRequest contentType isAdult searchText selectedRatings)
-        |> Task.attempt Msgs.ReceiveSeriesRatingsResponse
+sendRatingsSeriesQuery : String -> Bool -> String -> List Int -> Cmd Msg
+sendRatingsSeriesQuery contentType isAdult searchText selectedRatings =
+    sendGraphqlQueryRequest (ratingsSeriesQueryRequest contentType isAdult searchText selectedRatings)
+        |> Task.attempt Msgs.ReceiveRatingsSeriesResponse
 
 
 

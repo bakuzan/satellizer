@@ -1,5 +1,7 @@
 module Statistics.HistoryTable exposing (view)
 
+-- import Statistics.HistoryTableDetailYear
+
 import Components.Button as Button
 import Components.RadioButton exposing (radioGroup)
 import Components.SeasonKey as SeasonKey
@@ -10,7 +12,6 @@ import Html.Styled.Events exposing (onClick)
 import Models exposing (Count, CountData, Header, HistoryDetailData, HistoryYearData, Model, Settings, Theme, emptyCount)
 import Msgs exposing (Msg)
 import Statistics.HistoryTableDetail
-import Statistics.HistoryTableDetailYear
 import Utils.Colours exposing (getSeasonColour)
 import Utils.Common as Common
 import Utils.Constants as Constants
@@ -77,10 +78,14 @@ viewTableDetail model detail yearDetail =
         Statistics.HistoryTableDetail.view model detail
 
     else
-        div [ id "history-breakdown-detail" ]
-            [ Statistics.HistoryTableDetailYear.view model yearDetail
-            , Statistics.HistoryTableDetail.view model detail
-            ]
+        div [] []
+
+
+
+-- div [ id "history-breakdown-detail" ]
+--     [ Statistics.HistoryTableDetailYear.view model yearDetail
+--     , Statistics.HistoryTableDetail.view model detail
+--     ]
 
 
 viewTable : TableProps -> CountData -> Html Msg
