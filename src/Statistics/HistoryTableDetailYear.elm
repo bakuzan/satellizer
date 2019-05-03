@@ -96,37 +96,8 @@ viewTableHead settings =
 viewTableBody : Theme -> String -> HistoryYearData -> Html Msg
 viewTableBody theme breakdown data =
     let
-        isMonth =
-            breakdown == "MONTH"
-
-        fixValue =
-            if isMonth then
-                1
-
-            else
-                -2
-
-        headers =
-            if isMonth then
-                Constants.months
-
-            else
-                Constants.seasons
-
-        getKey x =
-            String.right 2 ("0" ++ String.fromInt (x.number + fixValue))
-
-        fixedData =
-            let
-                values =
-                    List.map .key data
-            in
-            List.filter (\x -> not (List.member (getKey x) values)) headers
-                |> List.map (\x -> { emptyHistoryYear | key = getKey x })
-                |> List.append data
-
         cells =
-            List.sortBy .key fixedData
+            data
 
         renderRow =
             viewTableRow theme

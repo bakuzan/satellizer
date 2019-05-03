@@ -421,21 +421,20 @@ update msg model =
 
         Msgs.ReceiveHistoryYearSeriesResponse response ->
             let
-                logger =
-                    Debug.log "LOG" response
+                extractData =
+                    Result.withDefault { counts = [], detail = [] } response
 
-                -- extractData =
-                --     Result.withDefault { counts = [], detail = [] } response
-                -- counts =
-                --     extractData
-                --         |> .counts
-                -- detail =
-                --     extractData
-                --         |> .detail
+                counts =
+                    extractData
+                        |> .counts
+
+                detail =
+                    extractData
+                        |> .detail
             in
             ( { model
-                | historyYear = [] --counts
-                , historyDetail = [] --detail
+                | historyYear = counts
+                , historyDetail = detail
               }
             , Cmd.none
             )

@@ -210,7 +210,7 @@ emptyEpisodeStatistic =
 
 emptyHistoryDetail : HistoryDetail
 emptyHistoryDetail =
-    HistoryDetail -1 "" -1 "" -1.0 -1 -1 -1
+    HistoryDetail 0 "" 0 "" 0.0 0 0 0
 
 
 type alias HistoryYearData =
@@ -228,7 +228,7 @@ type alias HistoryYear =
 
 emptyHistoryYear : HistoryYear
 emptyHistoryYear =
-    HistoryYear "" -1.0 -1 -1 -1
+    HistoryYear "" 0.0 0 0 0
 
 
 type alias HistoryYearDetail =
