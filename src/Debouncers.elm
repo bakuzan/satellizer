@@ -9,7 +9,7 @@ import Time
 
 debounceConfig : Debounce.Config Msg
 debounceConfig =
-    { strategy = Debounce.later 1000
+    { strategy = Debounce.later 666 -- devils delay
     , transform = Msgs.DebounceMsg
     }
 
