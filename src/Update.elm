@@ -3,7 +3,7 @@ module Update exposing (update)
 import Commands
 import Debounce
 import Debouncers
-import Models exposing (Model, emptyHistoryYearDetail)
+import Models exposing (Model, Settings, emptyHistoryYearDetail)
 import Msgs exposing (Msg)
 
 
@@ -88,9 +88,17 @@ update msg model =
             ( { model
                 | historyDetail = []
                 , historyYear = []
+                , seriesList = []
                 , settings = updatedSettings
+                , ratingsFilters =
+                    { searchText = ""
+                    , ratings = []
+                    }
+                , repeatedFilters =
+                    { searchText = ""
+                    }
               }
-            , Commands.sendStatusCountsRequest updatedSettings.contentType updatedSettings.isAdult
+            , callApi updatedSettings.activeTab updatedSettings
             )
 
         Msgs.UpdateBreakdownType breakdown ->
@@ -355,37 +363,13 @@ update msg model =
                 extractedCounts =
                     Result.withDefault [] counts
 
-                name =
-                    settings.activeTab
-
-                callApi =
-                    if name == "Airing" then
-                        Commands.sendAiringSeriesQuery
-
-                    else if name == "History" then
-                        Commands.sendHistoryCountsRequest settings
-
-                    else if name == "Ratings" then
-                        Commands.sendRatingCountsRequest settings.contentType settings.isAdult
-
-                    else if name == "Repeated" then
-                        Commands.sendRepeatedSeriesQuery settings.contentType settings.isAdult ""
-
-                    else
-                        Cmd.none
+                queryForTabData =
+                    callApi model.settings.activeTab model.settings
             in
             ( { model
                 | status = extractedCounts
-                , seriesList = []
-                , ratingsFilters =
-                    { searchText = ""
-                    , ratings = []
-                    }
-                , repeatedFilters =
-                    { searchText = ""
-                    }
               }
-            , callApi
+            , queryForTabData
             )
 
         Msgs.ReceiveRatingCountsResponse ratings ->
@@ -474,3 +458,21 @@ update msg model =
 
         _ ->
             ( model, Cmd.none )
+
+
+callApi : String -> Settings -> Cmd Msg
+callApi tabName settings =
+    if tabName == "Airing" then
+        Commands.sendAiringSeriesQuery
+
+    else if tabName == "History" then
+        Commands.sendHistoryCountsRequest settings
+
+    else if tabName == "Ratings" then
+        Commands.sendRatingCountsRequest settings.contentType settings.isAdult
+
+    else if tabName == "Repeated" then
+        Commands.sendRepeatedSeriesQuery settings.contentType settings.isAdult ""
+
+    else
+        Cmd.none
