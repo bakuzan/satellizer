@@ -1,4 +1,14 @@
-module Utils.Styles exposing (appearance, breakdownBodyRow, containerStyles, containers, content, icon, iconAfter, list, listTabStyles)
+module Utils.Styles exposing
+    ( appearance
+    , breakdownBodyRow
+    , containerStyles
+    , containers
+    , content
+    , icon
+    , iconAfter
+    , list
+    , listTabStyles
+    )
 
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)

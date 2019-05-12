@@ -126,7 +126,10 @@ viewTableRow theme name fun data =
         [ class "history-breakdown-body__row year-breakdown"
         , css (Styles.breakdownBodyRow theme)
         ]
-        ([ th [ class "history-breakdown-body__year-statistic", css [ paddingLeft (px 5), textAlign left ] ]
+        ([ th
+            [ class "history-breakdown-body__year-statistic"
+            , css [ paddingLeft (px 5), textAlign left ]
+            ]
             [ text name ]
          ]
             ++ List.map (\x -> fun x |> viewTableCell) data

@@ -209,7 +209,7 @@ viewTableRow props item =
             String.toLower item.season
 
         additonalStyles =
-            if props.isYearBreakdown && item.season /= "" then
+            if props.isYearBreakdown && props.breakdown /= "MONTH" then
                 [ hover
                     [ backgroundColor (hex (getSeasonColour seasonStr))
                     , color (hex "fff")
