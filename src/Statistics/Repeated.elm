@@ -115,7 +115,11 @@ viewSeriesEntry theme contentType entry =
             else
                 "❌︎"
     in
-    tr [ id (String.fromInt entry.id), class "repeated-series-table-row" ]
+    tr
+        [ id (String.fromInt entry.id)
+        , class "repeated-series-table-row"
+        , css (Styles.breakdownBodyRow theme)
+        ]
         [ td [ class "left-align", css leftAlign ]
             [ div
                 [ class "is-owned"

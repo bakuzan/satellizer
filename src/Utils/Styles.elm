@@ -11,7 +11,7 @@ module Utils.Styles exposing
     )
 
 import Css exposing (..)
-import Css.Global exposing (children, typeSelector)
+import Css.Global exposing (children, descendants, typeSelector)
 import Models exposing (Theme)
 
 
@@ -21,9 +21,9 @@ breakdownBodyRow theme =
     , hover
         [ backgroundColor (hex theme.primaryBackground)
         , color (hex theme.primaryColour)
-        , children
-            [ typeSelector "td > a"
-                [ color (hex theme.primaryColour) -- anchorColourHover
+        , descendants
+            [ typeSelector ".slz-new-tab-link"
+                [ color (hex theme.primaryColour)
                 ]
             ]
         ]

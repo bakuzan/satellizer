@@ -127,7 +127,15 @@ viewSeriesEntry theme contentType entry =
         seriesLink =
             "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ String.fromInt entry.id
     in
-    li [ css [ displayFlex, justifyContent spaceBetween, padding2 (px 0) (px 10) ] ]
+    li
+        [ css
+            ([ displayFlex
+             , justifyContent spaceBetween
+             , padding2 (px 0) (px 10)
+             ]
+                ++ Styles.breakdownBodyRow theme
+            )
+        ]
         [ Components.NewTabLink.view theme [ href seriesLink ] [ text entry.name ]
         , span [] [ text (String.fromInt entry.rating) ]
         ]
