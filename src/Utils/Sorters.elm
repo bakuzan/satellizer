@@ -8,7 +8,7 @@ repeatedSeriesOrdering : Ordering RepeatedSeries
 repeatedSeriesOrdering =
     Ordering.byField .timesCompleted
         |> Ordering.reverse
-        |> Ordering.breakTiesWith (Ordering.byField .name)
+        |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 seriesOrdering : Ordering Series
