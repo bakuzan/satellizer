@@ -60,7 +60,7 @@ view model =
             , ( "History", [ Statistics.HistoryTable.view model history detail yearDetail ] )
             , ( "Ratings", [ Statistics.Ratings.view model model.ratingsFilters model.rating seriesList ] )
             , ( "Repeated", [ Statistics.Repeated.view model model.repeatedFilters model.repeatedList ] )
-            , ( "Tags", [ Statistics.Tags.view model model.tagsFilters model.tags model.tagsSeriesList ] )
+            , ( "Tags", [ Statistics.Tags.view model model.tagsFilters model.tags model.tagsSeriesPage ] )
             ]
         ]
 

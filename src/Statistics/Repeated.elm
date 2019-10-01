@@ -3,7 +3,7 @@ module Statistics.Repeated exposing (view)
 import Components.ClearableInput
 import Components.NewTabLink
 import Css exposing (..)
-import Html.Styled exposing (Html, button, div, h4, span, strong, table, tbody, td, text, th, thead, tr)
+import Html.Styled exposing (Html, button, div, h2, span, strong, table, tbody, td, text, th, thead, tr)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
 import Models exposing (Model, RepeatedFilters, RepeatedSeries, RepeatedSeriesData, Settings, Theme)
 import Msgs exposing (Msg)
@@ -29,7 +29,7 @@ view model filters repeatedList =
                 text ""
 
             else
-                h4 [ id "series-title" ] [ text seriesCountTitle ]
+                h2 [ id "series-title", css [ fontSize (rem 1) ] ] [ text seriesCountTitle ]
     in
     div [ id "repeated-tab", css (Styles.listTabStyles ++ [ flexDirection column ]) ]
         [ Components.ClearableInput.view model.theme "repeatedSearch" "search" filters.searchText []

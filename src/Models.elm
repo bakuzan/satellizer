@@ -11,6 +11,7 @@ module Models exposing
     , HistoryYearDetail
     , InputField
     , Model
+    , Paging
     , RatingFilters
     , RepeatedFilters
     , RepeatedSeries
@@ -24,6 +25,7 @@ module Models exposing
     , TagsFilters
     , TagsSeries
     , TagsSeriesData
+    , TagsSeriesPage
     , Theme
     , emptyCount
     , emptyEpisodeStatistic
@@ -76,7 +78,7 @@ type alias Model =
     , seriesList : SeriesData
     , repeatedList : RepeatedSeriesData
     , tags : TagData
-    , tagsSeriesList : TagsSeriesData
+    , tagsSeriesPage : TagsSeriesPage
     , settings : Settings
     , ratingsFilters : RatingFilters
     , repeatedFilters : RepeatedFilters
@@ -117,6 +119,7 @@ type alias RepeatedFilters =
 type alias TagsFilters =
     { searchText : String
     , tagIds : List Int
+    , page : Int
     }
 
 
@@ -142,7 +145,11 @@ initialModel flags =
     , seriesList = []
     , repeatedList = []
     , tags = []
-    , tagsSeriesList = []
+    , tagsSeriesPage =
+        { hasMore = False
+        , total = 0
+        , nodes = []
+        }
     , airingList = []
     , settings =
         { activeTab = activeTab
@@ -166,6 +173,7 @@ initialModel flags =
     , tagsFilters =
         { searchText = ""
         , tagIds = []
+        , page = 0
         }
     , theme = flags.theme
     }
@@ -307,6 +315,23 @@ type alias TagsSeries =
 
 type alias TagsSeriesData =
     List TagsSeries
+
+
+type alias TagsSeriesPage =
+    { hasMore : Bool
+    , total : Int
+    , nodes : TagsSeriesData
+    }
+
+
+
+-- Paging
+
+
+type alias Paging =
+    { page : Int
+    , size : Int
+    }
 
 
 

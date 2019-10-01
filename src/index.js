@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'development') {
       contentType: 'anime',
       isAdult: false,
       activeTab: 'Tags',
-      breakdownType: 'MONTHS',
+      breakdownType: 'MONTH',
       detailGroup: '',
       theme: themeOne
     }

@@ -9,12 +9,13 @@ module Commands exposing
     , sendRepeatedSeriesQuery
     , sendStatusCountsRequest
     , sendTagsQuery
+    , sendTagsSeriesQuery
     )
 
 import GraphQL.Client.Http as GraphQLClient
 import GraphQL.Request.Builder as GraphQLBuilder
 import Http
-import Models exposing (Count, CountData, EpisodeStatistic, HistoryDetail, HistoryDetailData, HistoryYear, HistoryYearData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Settings, TagData)
+import Models exposing (Count, CountData, EpisodeStatistic, HistoryDetail, HistoryDetailData, HistoryYear, HistoryYearData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Settings, TagData, TagsFilters, TagsSeriesData, TagsSeriesPage)
 import Msgs exposing (Msg)
 import Task exposing (Task)
 import Utils.Common as Common
@@ -166,6 +167,27 @@ sendTagsQuery : String -> Bool -> Cmd Msg
 sendTagsQuery contentType isAdult =
     sendGraphqlQueryRequest (tagsQueryRequest contentType isAdult)
         |> Task.attempt Msgs.ReceiveTagsResponse
+
+
+
+-- Tags series
+
+
+tagsSeriesQueryRequest : String -> TagsFilters -> GraphQLBuilder.Request GraphQLBuilder.Query TagsSeriesPage
+tagsSeriesQueryRequest contentType filters =
+    Graphql.tagsSeriesQuery
+        |> GraphQLBuilder.request
+            { contentType = contentType
+            , search = filters.searchText
+            , tagIds = filters.tagIds
+            , paging = { page = filters.page, size = 20 }
+            }
+
+
+sendTagsSeriesQuery : String -> TagsFilters -> Cmd Msg
+sendTagsSeriesQuery contentType filters =
+    sendGraphqlQueryRequest (tagsSeriesQueryRequest contentType filters)
+        |> Task.attempt Msgs.ReceiveTagsSeriesResponse
 
 
 

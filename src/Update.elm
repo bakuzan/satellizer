@@ -103,6 +103,7 @@ update msg model =
                 , tagsFilters =
                     { searchText = ""
                     , tagIds = []
+                    , page = 0
                     }
               }
             , callApi updatedSettings.activeTab updatedSettings
@@ -319,6 +320,19 @@ update msg model =
 
         Msgs.SaveTextInput fieldName fieldValue ->
             let
+                newModel =
+                    if fieldName == "tagSeriesSearch" then
+                        { model
+                            | tagsFilters =
+                                { searchText = fieldValue
+                                , tagIds = tagsFilters.tagIds
+                                , page = 0
+                                }
+                        }
+
+                    else
+                        model
+
                 cmd =
                     if fieldName == "search" then
                         Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult fieldValue ratingsFilters.ratings
@@ -327,13 +341,12 @@ update msg model =
                         Commands.sendRepeatedSeriesQuery model.settings.contentType model.settings.isAdult fieldValue
 
                     else if fieldName == "tagSeriesSearch" then
-                        -- TODO Add query cmd
-                        Cmd.none
+                        Commands.sendTagsSeriesQuery model.settings.contentType newModel.tagsFilters
 
                     else
                         Cmd.none
             in
-            ( model, cmd )
+            ( newModel, cmd )
 
         Msgs.ClearSelectedRatings ->
             let
@@ -401,11 +414,27 @@ update msg model =
                 updatedFilters =
                     { tagsFilters
                         | tagIds = updatedTagIds
+                        , page = 0
                     }
 
-                -- TODO connect query
                 fetchSeriesForTags =
-                    Cmd.none
+                    Commands.sendTagsSeriesQuery model.settings.contentType updatedFilters
+            in
+            ( { model
+                | tagsFilters = updatedFilters
+              }
+            , fetchSeriesForTags
+            )
+
+        Msgs.NextTagsSeriesPage ->
+            let
+                updatedFilters =
+                    { tagsFilters
+                        | page = tagsFilters.page + 1
+                    }
+
+                fetchSeriesForTags =
+                    Commands.sendTagsSeriesQuery model.settings.contentType updatedFilters
             in
             ( { model
                 | tagsFilters = updatedFilters
@@ -507,6 +536,34 @@ update msg model =
             in
             ( { model
                 | tags = extractedList
+              }
+            , Cmd.none
+            )
+
+        Msgs.ReceiveTagsSeriesResponse page ->
+            let
+                newPage =
+                    Result.withDefault { hasMore = False, total = 0, nodes = [] } page
+
+                oldPage =
+                    model.tagsSeriesPage
+
+                nodesList =
+                    if tagsFilters.page == 0 then
+                        newPage.nodes
+
+                    else
+                        List.concat [ oldPage.nodes, newPage.nodes ]
+
+                updatedPage =
+                    { oldPage
+                        | hasMore = newPage.hasMore
+                        , total = newPage.total
+                        , nodes = nodesList
+                    }
+            in
+            ( { model
+                | tagsSeriesPage = updatedPage
               }
             , Cmd.none
             )

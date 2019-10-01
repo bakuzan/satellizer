@@ -8,6 +8,7 @@ module Utils.Graphql exposing
     , repeatedItemQuery
     , statusCountQuery
     , tagsQuery
+    , tagsSeriesQuery
     )
 
 import GraphQL.Request.Builder exposing (..)
@@ -22,12 +23,15 @@ import Models
         , HistoryDetailData
         , HistoryYear
         , HistoryYearDetail
+        , Paging
         , RepeatedSeries
         , RepeatedSeriesData
         , Series
         , SeriesData
         , Tag
         , TagData
+        , TagsSeries
+        , TagsSeriesPage
         )
 import Utils.Common exposing (toCapital)
 
@@ -248,6 +252,51 @@ tagsQuery =
                     , ( "isAdult", Arg.variable isAdultVar )
                     ]
                     items
+                )
+    in
+    queryDocument queryRoot
+
+
+tagsSeriesQuery : Document Query TagsSeriesPage { vars | contentType : String, search : String, tagIds : List Int, paging : Paging }
+tagsSeriesQuery =
+    let
+        page =
+            object TagsSeriesPage
+                |> with (field "hasMore" [] bool)
+                |> with (field "total" [] int)
+                |> with
+                    (field "nodes"
+                        []
+                        (list
+                            (object TagsSeries
+                                |> with (field "id" [] int)
+                                |> with (field "title" [] string)
+                            )
+                        )
+                    )
+
+        tagIdsVar =
+            Var.required "tagIds" .tagIds (Var.list Var.int)
+
+        pagingVar =
+            Var.required "paging"
+                .paging
+                (Var.object
+                    "Paging"
+                    [ Var.field "size" .size Var.int
+                    , Var.field "page" .page Var.int
+                    ]
+                )
+
+        queryRoot =
+            extract
+                (field "seriesByTags"
+                    [ ( "type", Arg.variable typeVar )
+                    , ( "search", Arg.variable searchVar )
+                    , ( "tagIds", Arg.variable tagIdsVar )
+                    , ( "paging", Arg.variable pagingVar )
+                    ]
+                    page
                 )
     in
     queryDocument queryRoot

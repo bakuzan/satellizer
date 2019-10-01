@@ -2,7 +2,7 @@ module Msgs exposing (Msg(..))
 
 import Debounce
 import GraphQL.Client.Http as GraphQLClient
-import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, RepeatedSeriesData, SeriesData, TagData, Theme)
+import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, RepeatedSeriesData, SeriesData, TagData, TagsSeriesPage, Theme)
 
 
 type Msg
@@ -22,6 +22,7 @@ type Msg
     | ClearSelectedRatings
     | ToggleRatingFilter Int
     | ToggleTagsFilter Int
+    | NextTagsSeriesPage
     | ReceiveStatusCountsResponse (Result GraphQLClient.Error CountData)
     | ReceiveRatingCountsResponse (Result GraphQLClient.Error CountData)
     | ReceiveHistoryCountsResponse (Result GraphQLClient.Error CountData)
@@ -30,4 +31,5 @@ type Msg
     | ReceiveRatingsSeriesResponse (Result GraphQLClient.Error SeriesData)
     | ReceiveRepeatedSeriesResponse (Result GraphQLClient.Error RepeatedSeriesData)
     | ReceiveTagsResponse (Result GraphQLClient.Error TagData)
+    | ReceiveTagsSeriesResponse (Result GraphQLClient.Error TagsSeriesPage)
     | ReceiveAiringSeriesResponse (Result GraphQLClient.Error HistoryDetailData)

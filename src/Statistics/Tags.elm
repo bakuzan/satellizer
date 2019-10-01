@@ -4,24 +4,30 @@ import Components.Button as Button
 import Components.ClearableInput
 import Components.NewTabLink
 import Css exposing (..)
-import Html.Styled exposing (Html, button, div, h4, li, span, strong, table, tbody, td, text, th, thead, tr, ul)
+import Html.Styled exposing (Html, button, div, h2, li, span, strong, table, tbody, td, text, th, thead, tr, ul)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (Model, Settings, Tag, TagsFilters, TagsSeries, TagsSeriesData, Theme)
+import Models exposing (Model, Settings, Tag, TagsFilters, TagsSeries, TagsSeriesPage, Theme)
 import Msgs exposing (Msg)
 import Utils.Common as Common
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 
 
-view : Model -> TagsFilters -> List Tag -> TagsSeriesData -> Html Msg
-view model filters tags seriesList =
+view : Model -> TagsFilters -> List Tag -> TagsSeriesPage -> Html Msg
+view model filters tags seriesPage =
     let
         tabColumn =
-            [ displayFlex, width (pct 50) ]
+            [ displayFlex, flexDirection column, width (pct 50) ]
+
+        nodeCount =
+            List.length seriesPage.nodes
+
+        listCountHeading =
+            "Showing " ++ String.fromInt nodeCount ++ " of " ++ String.fromInt seriesPage.total
     in
     div [ id "tags-tab", css Styles.listTabStyles ]
-        [ div [ css tabColumn ]
+        [ div [ css (tabColumn ++ [ marginRight (px 4) ]) ]
             [ table []
                 [ thead []
                     [ tr []
@@ -34,11 +40,22 @@ view model filters tags seriesList =
                 , tbody [] (List.map (viewTagRow model.theme filters.tagIds) tags)
                 ]
             ]
-        , div [ css tabColumn ]
+        , div [ css (tabColumn ++ [ marginLeft (px 4) ]) ]
             [ div [ css [ width (pct 100) ] ]
                 [ Components.ClearableInput.view model.theme "tagSeriesSearch" "search" filters.searchText [] ]
-            , ul []
-                (List.map viewSeriesItem seriesList)
+            , h2 [ css [ fontSize (rem 1), marginLeft (px 10) ] ] [ text listCountHeading ]
+            , ul [ css (Styles.list model.theme True 1) ]
+                (List.map (viewSeriesItem model.theme model.settings.contentType) seriesPage.nodes)
+            , if seriesPage.hasMore then
+                Button.view { isPrimary = False, theme = model.theme }
+                    [ css [ width (pct 100) ]
+                    , onClick Msgs.NextTagsSeriesPage
+                    ]
+                    [ text "Load more..."
+                    ]
+
+              else
+                text ""
             ]
         ]
 
@@ -117,6 +134,14 @@ viewTagRow theme selectedTagIds data =
         ]
 
 
-viewSeriesItem : TagsSeries -> Html msg
-viewSeriesItem item =
-    li [] []
+viewSeriesItem : Theme -> String -> TagsSeries -> Html Msg
+viewSeriesItem theme contentType item =
+    let
+        seriesLink =
+            "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ String.fromInt item.id
+    in
+    li []
+        [ Components.NewTabLink.view theme
+            [ href seriesLink, title ("View " ++ item.title ++ " details") ]
+            [ text item.title ]
+        ]
