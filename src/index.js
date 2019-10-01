@@ -36,9 +36,9 @@ if (process.env.NODE_ENV === 'development') {
     flags: {
       contentType: 'anime',
       isAdult: false,
-      activeTab: 'Airing',
-      breakdownType: 'SEASON',
-      detailGroup: '2018-04',
+      activeTab: 'Tags',
+      breakdownType: 'MONTHS',
+      detailGroup: '',
       theme: themeOne
     }
   });

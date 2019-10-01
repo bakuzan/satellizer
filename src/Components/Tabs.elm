@@ -148,6 +148,13 @@ viewTabBodys theme activeTab tabList =
                            )
                     )
                 , Common.setRole "tabpanel"
+                , Common.setCustomAttr "aria-hidden"
+                    (if isActive then
+                        "false"
+
+                     else
+                        "true"
+                    )
                 ]
                 ([] ++ Tuple.second tab)
     in

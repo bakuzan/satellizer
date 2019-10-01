@@ -6,8 +6,10 @@ module Utils.Styles exposing
     , content
     , icon
     , iconAfter
+    , leftAlign
     , list
     , listTabStyles
+    , rightAlign
     )
 
 import Css exposing (..)
@@ -207,3 +209,13 @@ list theme isColumn columns =
             else
                 []
            )
+
+
+leftAlign : List Css.Style
+leftAlign =
+    [ textAlign left ]
+
+
+rightAlign : List Css.Style
+rightAlign =
+    [ textAlign right ]

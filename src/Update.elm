@@ -22,6 +22,9 @@ update msg model =
         repeatedFilters =
             model.repeatedFilters
 
+        tagsFilters =
+            model.tagsFilters
+
         getBreakdownType contentType =
             if contentType == "anime" then
                 settings.breakdownType
@@ -96,6 +99,10 @@ update msg model =
                     }
                 , repeatedFilters =
                     { searchText = ""
+                    }
+                , tagsFilters =
+                    { searchText = ""
+                    , tagIds = []
                     }
               }
             , callApi updatedSettings.activeTab updatedSettings
@@ -265,6 +272,12 @@ update msg model =
                 isRatingInput =
                     fieldName == "search"
 
+                isRepeatedInput =
+                    fieldName == "repeatedSearch"
+
+                isTagsInput =
+                    fieldName == "tagSeriesSearch"
+
                 updatedRatingFilters =
                     { ratingsFilters
                         | searchText =
@@ -278,17 +291,28 @@ update msg model =
                 updatedReaptedFilters =
                     { repeatedFilters
                         | searchText =
-                            if not isRatingInput then
+                            if isRepeatedInput then
                                 txt
 
                             else
                                 repeatedFilters.searchText
+                    }
+
+                updatedTagsFilters =
+                    { tagsFilters
+                        | searchText =
+                            if isTagsInput then
+                                txt
+
+                            else
+                                tagsFilters.searchText
                     }
             in
             ( { model
                 | debounce = debounce
                 , ratingsFilters = updatedRatingFilters
                 , repeatedFilters = updatedReaptedFilters
+                , tagsFilters = updatedTagsFilters
               }
             , cmd
             )
@@ -299,8 +323,15 @@ update msg model =
                     if fieldName == "search" then
                         Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult fieldValue ratingsFilters.ratings
 
-                    else
+                    else if fieldName == "repeatedSearch" then
                         Commands.sendRepeatedSeriesQuery model.settings.contentType model.settings.isAdult fieldValue
+
+                    else if fieldName == "tagSeriesSearch" then
+                        -- TODO Add query cmd
+                        Cmd.none
+
+                    else
+                        Cmd.none
             in
             ( model, cmd )
 
@@ -356,6 +387,30 @@ update msg model =
                 | ratingsFilters = updatedFilters
               }
             , fetchSeriesRatings
+            )
+
+        Msgs.ToggleTagsFilter tagId ->
+            let
+                updatedTagIds =
+                    if List.member tagId tagsFilters.tagIds then
+                        List.filter (\x -> x /= tagId) tagsFilters.tagIds
+
+                    else
+                        List.append tagsFilters.tagIds [ tagId ]
+
+                updatedFilters =
+                    { tagsFilters
+                        | tagIds = updatedTagIds
+                    }
+
+                -- TODO connect query
+                fetchSeriesForTags =
+                    Cmd.none
+            in
+            ( { model
+                | tagsFilters = updatedFilters
+              }
+            , fetchSeriesForTags
             )
 
         Msgs.ReceiveStatusCountsResponse counts ->
@@ -445,6 +500,17 @@ update msg model =
             , Cmd.none
             )
 
+        Msgs.ReceiveTagsResponse tags ->
+            let
+                extractedList =
+                    Result.withDefault [] tags
+            in
+            ( { model
+                | tags = extractedList
+              }
+            , Cmd.none
+            )
+
         Msgs.ReceiveAiringSeriesResponse airingList ->
             let
                 extractedList =
@@ -473,6 +539,9 @@ callApi tabName settings =
 
     else if tabName == "Repeated" then
         Commands.sendRepeatedSeriesQuery settings.contentType settings.isAdult ""
+
+    else if tabName == "Tags" then
+        Commands.sendTagsQuery settings.contentType settings.isAdult
 
     else
         Cmd.none

@@ -7,6 +7,7 @@ module Utils.Graphql exposing
     , ratingItemQuery
     , repeatedItemQuery
     , statusCountQuery
+    , tagsQuery
     )
 
 import GraphQL.Request.Builder exposing (..)
@@ -25,6 +26,8 @@ import Models
         , RepeatedSeriesData
         , Series
         , SeriesData
+        , Tag
+        , TagData
         )
 import Utils.Common exposing (toCapital)
 
@@ -221,6 +224,30 @@ repeatedItemQuery contentType =
                         ]
                         items
                     )
+                )
+    in
+    queryDocument queryRoot
+
+
+tagsQuery : Document Query TagData { vars | contentType : String, isAdult : Bool }
+tagsQuery =
+    let
+        items =
+            list
+                (object Tag
+                    |> with (field "id" [] int)
+                    |> with (field "name" [] string)
+                    |> with (field "timesUsed" [] int)
+                    |> with (field "averageRating" [] string)
+                )
+
+        queryRoot =
+            extract
+                (field "tagStats"
+                    [ ( "type", Arg.variable typeVar )
+                    , ( "isAdult", Arg.variable isAdultVar )
+                    ]
+                    items
                 )
     in
     queryDocument queryRoot

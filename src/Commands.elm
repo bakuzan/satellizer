@@ -8,12 +8,13 @@ module Commands exposing
     , sendRatingsSeriesQuery
     , sendRepeatedSeriesQuery
     , sendStatusCountsRequest
+    , sendTagsQuery
     )
 
 import GraphQL.Client.Http as GraphQLClient
 import GraphQL.Request.Builder as GraphQLBuilder
 import Http
-import Models exposing (Count, CountData, EpisodeStatistic, HistoryDetail, HistoryDetailData, HistoryYear, HistoryYearData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Settings)
+import Models exposing (Count, CountData, EpisodeStatistic, HistoryDetail, HistoryDetailData, HistoryYear, HistoryYearData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Settings, TagData)
 import Msgs exposing (Msg)
 import Task exposing (Task)
 import Utils.Common as Common
@@ -149,6 +150,22 @@ sendRepeatedSeriesQuery : String -> Bool -> String -> Cmd Msg
 sendRepeatedSeriesQuery contentType isAdult searchText =
     sendGraphqlQueryRequest (repeatedSeriesQueryRequest contentType isAdult searchText)
         |> Task.attempt Msgs.ReceiveRepeatedSeriesResponse
+
+
+
+-- Tags
+
+
+tagsQueryRequest : String -> Bool -> GraphQLBuilder.Request GraphQLBuilder.Query TagData
+tagsQueryRequest contentType isAdult =
+    Graphql.tagsQuery
+        |> GraphQLBuilder.request { isAdult = isAdult, contentType = contentType }
+
+
+sendTagsQuery : String -> Bool -> Cmd Msg
+sendTagsQuery contentType isAdult =
+    sendGraphqlQueryRequest (tagsQueryRequest contentType isAdult)
+        |> Task.attempt Msgs.ReceiveTagsResponse
 
 
 

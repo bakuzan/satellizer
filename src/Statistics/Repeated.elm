@@ -12,16 +12,6 @@ import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 
 
-leftAlign : List Css.Style
-leftAlign =
-    [ textAlign left ]
-
-
-rightAlign : List Css.Style
-rightAlign =
-    [ textAlign right ]
-
-
 view : Model -> RepeatedFilters -> RepeatedSeriesData -> Html Msg
 view model filters repeatedList =
     let
@@ -63,19 +53,19 @@ viewSeriesList model seriesList =
         ]
         [ thead []
             [ tr []
-                [ th [ class "left-align", css leftAlign ]
+                [ th [ class "left-align", css Styles.leftAlign ]
                     [ strong []
                         [ text "Title" ]
                     ]
-                , th [ class "right-align", css rightAlign ]
+                , th [ class "right-align", css Styles.rightAlign ]
                     [ strong []
                         [ text "Rating" ]
                     ]
-                , th [ class "right-align", css rightAlign ]
+                , th [ class "right-align", css Styles.rightAlign ]
                     [ strong []
                         [ text "Repeats" ]
                     ]
-                , th [ class "right-align date-column", css (rightAlign ++ [ minWidth (px 105) ]) ]
+                , th [ class "right-align date-column", css (Styles.rightAlign ++ [ minWidth (px 105) ]) ]
                     [ strong []
                         [ text "Last repeat" ]
                     ]
@@ -120,7 +110,7 @@ viewSeriesEntry theme contentType entry =
         , class "repeated-series-table-row"
         , css (Styles.breakdownBodyRow theme)
         ]
-        [ td [ class "left-align", css leftAlign ]
+        [ td [ class "left-align", css Styles.leftAlign ]
             [ div
                 [ class "is-owned"
                 , classList [ ( "owned", entry.isOwned ), ( "not-owned", not entry.isOwned ) ]
@@ -144,13 +134,13 @@ viewSeriesEntry theme contentType entry =
                 [ href seriesLink, title ("View " ++ entry.title ++ " details") ]
                 [ text entry.title ]
             ]
-        , td [ class "right-align", css rightAlign ]
+        , td [ class "right-align", css Styles.rightAlign ]
             [ span [] [ text (String.fromInt entry.rating) ]
             ]
-        , td [ class "right-align", css rightAlign ]
+        , td [ class "right-align", css Styles.rightAlign ]
             [ span [] [ text (String.fromInt entry.timesCompleted) ]
             ]
-        , td [ class "right-align date-column", css (rightAlign ++ [ minWidth (px 105) ]) ]
+        , td [ class "right-align date-column", css (Styles.rightAlign ++ [ minWidth (px 105) ]) ]
             [ span [] [ text lastRepeatDate ]
             ]
         ]

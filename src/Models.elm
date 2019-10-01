@@ -19,6 +19,11 @@ module Models exposing
     , SeriesData
     , Settings
     , Sort
+    , Tag
+    , TagData
+    , TagsFilters
+    , TagsSeries
+    , TagsSeriesData
     , Theme
     , emptyCount
     , emptyEpisodeStatistic
@@ -70,9 +75,12 @@ type alias Model =
     , rating : CountData
     , seriesList : SeriesData
     , repeatedList : RepeatedSeriesData
+    , tags : TagData
+    , tagsSeriesList : TagsSeriesData
     , settings : Settings
     , ratingsFilters : RatingFilters
     , repeatedFilters : RepeatedFilters
+    , tagsFilters : TagsFilters
     , airingList : HistoryDetailData
     , theme : Theme
     }
@@ -106,6 +114,12 @@ type alias RepeatedFilters =
     }
 
 
+type alias TagsFilters =
+    { searchText : String
+    , tagIds : List Int
+    }
+
+
 initialModel : Flags -> Model
 initialModel flags =
     let
@@ -127,6 +141,8 @@ initialModel flags =
     , rating = []
     , seriesList = []
     , repeatedList = []
+    , tags = []
+    , tagsSeriesList = []
     , airingList = []
     , settings =
         { activeTab = activeTab
@@ -146,6 +162,10 @@ initialModel flags =
         }
     , repeatedFilters =
         { searchText = ""
+        }
+    , tagsFilters =
+        { searchText = ""
+        , tagIds = []
         }
     , theme = flags.theme
     }
@@ -265,6 +285,28 @@ type alias RepeatedSeries =
 
 type alias RepeatedSeriesData =
     List RepeatedSeries
+
+
+type alias Tag =
+    { id : Int
+    , name : String
+    , timesUsed : Int
+    , averageRating : String
+    }
+
+
+type alias TagData =
+    List Tag
+
+
+type alias TagsSeries =
+    { id : Int
+    , title : String
+    }
+
+
+type alias TagsSeriesData =
+    List TagsSeries
 
 
 
