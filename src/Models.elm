@@ -133,6 +133,9 @@ initialModel flags =
             if activeTab == "Airing" then
                 "AVERAGE"
 
+            else if activeTab == "Tags" then
+                "USAGE COUNT"
+
             else
                 "RATING"
     in

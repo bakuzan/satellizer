@@ -1,6 +1,6 @@
-module Utils.Sorters exposing (repeatedSeriesOrdering, seriesOrdering, sortHistoryDetailList)
+module Utils.Sorters exposing (repeatedSeriesOrdering, seriesOrdering, sortHistoryDetailList, sortTags)
 
-import Models exposing (HistoryDetail, HistoryDetailData, RepeatedSeries, Series)
+import Models exposing (HistoryDetail, HistoryDetailData, RepeatedSeries, Series, Tag, TagData)
 import Ordering exposing (Ordering)
 
 
@@ -18,8 +18,8 @@ seriesOrdering =
         |> Ordering.breakTiesWith (Ordering.byField .name)
 
 
-historyDetailDirection : Bool -> (Ordering a -> Ordering a)
-historyDetailDirection isDesc =
+directionHandler : Bool -> (Ordering a -> Ordering a)
+directionHandler isDesc =
     if isDesc == True then
         Ordering.reverse
 
@@ -30,42 +30,63 @@ historyDetailDirection isDesc =
 historyDetailOrderByTitle : Bool -> Ordering HistoryDetail
 historyDetailOrderByTitle isDesc =
     Ordering.byField .title
-        |> historyDetailDirection isDesc
+        |> directionHandler isDesc
 
 
 historyDetailOrderByRating : Bool -> Ordering HistoryDetail
 historyDetailOrderByRating isDesc =
     Ordering.byField .rating
-        |> historyDetailDirection isDesc
+        |> directionHandler isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByAverage : Bool -> Ordering HistoryDetail
 historyDetailOrderByAverage isDesc =
     Ordering.byField .average
-        |> historyDetailDirection isDesc
+        |> directionHandler isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByHighest : Bool -> Ordering HistoryDetail
 historyDetailOrderByHighest isDesc =
     Ordering.byField .highest
-        |> historyDetailDirection isDesc
+        |> directionHandler isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByLowest : Bool -> Ordering HistoryDetail
 historyDetailOrderByLowest isDesc =
     Ordering.byField .lowest
-        |> historyDetailDirection isDesc
+        |> directionHandler isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
 historyDetailOrderByMode : Bool -> Ordering HistoryDetail
 historyDetailOrderByMode isDesc =
     Ordering.byField .mode
-        |> historyDetailDirection isDesc
+        |> directionHandler isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
+
+
+tagOrderByName : Bool -> Ordering Tag
+tagOrderByName isDesc =
+    Ordering.byField .name
+        |> directionHandler isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .timesUsed)
+
+
+tagOrderByUsageCount : Bool -> Ordering Tag
+tagOrderByUsageCount isDesc =
+    Ordering.byField .timesUsed
+        |> directionHandler isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .name)
+
+
+tagOrderByAverageRating : Bool -> Ordering Tag
+tagOrderByAverageRating isDesc =
+    Ordering.byField .averageRating
+        |> directionHandler isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .name)
 
 
 
@@ -92,6 +113,22 @@ sortHistoryDetailList field isDesc list =
 
         "MODE" ->
             List.sortWith (historyDetailOrderByMode isDesc) list
+
+        _ ->
+            list
+
+
+sortTags : String -> Bool -> TagData -> TagData
+sortTags field isDesc list =
+    case field of
+        "NAME" ->
+            List.sortWith (tagOrderByName isDesc) list
+
+        "USAGE COUNT" ->
+            List.sortWith (tagOrderByUsageCount isDesc) list
+
+        "AVERAGE RATING" ->
+            List.sortWith (tagOrderByAverageRating isDesc) list
 
         _ ->
             list

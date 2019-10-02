@@ -63,6 +63,7 @@ iconAfter : Css.Style
 iconAfter =
     after
         [ property "content" "attr(icon)"
+        , position absolute
         ]
 
 

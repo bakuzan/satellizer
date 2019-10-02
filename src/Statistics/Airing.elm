@@ -3,7 +3,9 @@ module Statistics.Airing exposing (view)
 import Components.Accordion
 import Components.Button as Button
 import Components.NewTabLink
+import Components.TableSortHeader as TSH
 import Css exposing (..)
+import Css.Global exposing (children, typeSelector)
 import Html.Styled exposing (Html, button, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
 import Html.Styled.Attributes exposing (class, classList, css, href, id)
 import Html.Styled.Events exposing (onClick)
@@ -32,7 +34,7 @@ view model seriesList =
             Sorters.sortHistoryDetailList sorting.field sorting.isDesc seriesList
 
         renderHeaderCell =
-            viewHeaderCell sorting model.theme
+            TSH.view sorting model.theme
     in
     div
         [ id "airing-tab" ]
@@ -41,7 +43,7 @@ view model seriesList =
             , div [ class "flex-column" ]
                 [ table [ class "history-breakdown__table", css [ width (pct 100) ] ]
                     [ thead []
-                        [ renderHeaderCell "Title" [ paddingLeft (px 5), textAlign left ]
+                        [ renderHeaderCell "Title" [ children [ typeSelector "button" [ justifyContent flexStart ] ] ]
                         , renderHeaderCell "Average" []
                         , renderHeaderCell "Highest" []
                         , renderHeaderCell "Lowest" []
@@ -51,35 +53,6 @@ view model seriesList =
                         ([] ++ List.map (viewTableRow model.theme) sortedList)
                     ]
                 ]
-            ]
-        ]
-
-
-viewHeaderCell : Sort -> Theme -> String -> List Css.Style -> Html Msg
-viewHeaderCell sorting theme title styles =
-    let
-        icon =
-            if sorting.field /= String.toUpper title then
-                ""
-
-            else if sorting.isDesc == True then
-                "▼"
-
-            else
-                "▲"
-    in
-    th
-        [ css styles ]
-        [ Button.view { isPrimary = False, theme = theme }
-            [ onClick (Msgs.UpdateSortField (String.toUpper title)) ]
-            [ strong
-                [ Common.setIcon icon
-                , css
-                    [ lineHeight (int 1)
-                    , Styles.iconAfter
-                    ]
-                ]
-                [ text title ]
             ]
         ]
 

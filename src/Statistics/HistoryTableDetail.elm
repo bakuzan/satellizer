@@ -138,12 +138,73 @@ viewTableHeader props =
             viewHeaderCell props.sorting props.theme
     in
     thead []
-        [ renderHeaderCell { hide = False, title = "Title", style = [ paddingLeft (px 5), textAlign left ] }
-        , renderHeaderCell { hide = False, title = "Rating", style = [] }
-        , renderHeaderCell { hide = hideHeader, title = "Average", style = [] }
-        , renderHeaderCell { hide = hideHeader, title = "Highest", style = [] }
-        , renderHeaderCell { hide = hideHeader, title = "Lowest", style = [] }
-        , renderHeaderCell { hide = hideHeader, title = "Mode", style = [] }
+        [ renderHeaderCell
+            { hide = False
+            , title = "Title"
+            , style =
+                [ children
+                    [ typeSelector "button"
+                        [ justifyContent flexStart
+                        , padding (px 2)
+                        ]
+                    ]
+                ]
+            }
+        , renderHeaderCell
+            { hide = False
+            , title = "Rating"
+            , style =
+                [ children
+                    [ typeSelector "button"
+                        [ padding (px 2)
+                        ]
+                    ]
+                ]
+            }
+        , renderHeaderCell
+            { hide = hideHeader
+            , title = "Average"
+            , style =
+                [ children
+                    [ typeSelector "button"
+                        [ padding (px 2)
+                        ]
+                    ]
+                ]
+            }
+        , renderHeaderCell
+            { hide = hideHeader
+            , title = "Highest"
+            , style =
+                [ children
+                    [ typeSelector "button"
+                        [ padding (px 2)
+                        ]
+                    ]
+                ]
+            }
+        , renderHeaderCell
+            { hide = hideHeader
+            , title = "Lowest"
+            , style =
+                [ children
+                    [ typeSelector "button"
+                        [ padding (px 2)
+                        ]
+                    ]
+                ]
+            }
+        , renderHeaderCell
+            { hide = hideHeader
+            , title = "Mode"
+            , style =
+                [ children
+                    [ typeSelector "button"
+                        [ padding (px 2)
+                        ]
+                    ]
+                ]
+            }
         ]
 
 

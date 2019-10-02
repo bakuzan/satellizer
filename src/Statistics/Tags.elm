@@ -3,7 +3,9 @@ module Statistics.Tags exposing (view)
 import Components.Button as Button
 import Components.ClearableInput
 import Components.NewTabLink
+import Components.TableSortHeader as TSH
 import Css exposing (..)
+import Css.Global exposing (children, typeSelector)
 import Html.Styled exposing (Html, button, div, h2, li, span, strong, table, tbody, td, text, th, thead, tr, ul)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
 import Html.Styled.Events exposing (onClick)
@@ -14,33 +16,53 @@ import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 
 
+withReducedPadding : List Css.Style -> List Css.Style
+withReducedPadding style =
+    style
+        ++ [ children
+                [ typeSelector "button"
+                    [ padding (px 2)
+                    ]
+                ]
+           ]
+
+
 view : Model -> TagsFilters -> List Tag -> TagsSeriesPage -> Html Msg
 view model filters tags seriesPage =
     let
         tabColumn =
-            [ displayFlex, flexDirection column, width (pct 50) ]
+            [ displayFlex, flexDirection column ]
+
+        sorting =
+            model.settings.sorting
+
+        sortedList =
+            Sorters.sortTags sorting.field sorting.isDesc tags
 
         nodeCount =
             List.length seriesPage.nodes
 
         listCountHeading =
             "Showing " ++ String.fromInt nodeCount ++ " of " ++ String.fromInt seriesPage.total
+
+        renderTh =
+            TSH.view sorting model.theme
     in
-    div [ id "tags-tab", css Styles.listTabStyles ]
-        [ div [ css (tabColumn ++ [ marginRight (px 4) ]) ]
+    div [ id "tags-tab", css (Styles.listTabStyles ++ [ justifyContent spaceBetween ]) ]
+        [ div [ css (tabColumn ++ [ width (pct 35), minWidth (px 380), marginRight (px 8) ]) ]
             [ table []
                 [ thead []
                     [ tr []
                         [ th [] [ text "" ]
-                        , th [ css Styles.leftAlign ] [ text "Name" ]
-                        , th [ css Styles.rightAlign ] [ text "Usage count" ]
-                        , th [ css Styles.rightAlign ] [ text "Average rating" ]
+                        , renderTh "Name" (withReducedPadding (Styles.leftAlign ++ [ children [ typeSelector "button" [ justifyContent flexStart ] ] ]))
+                        , renderTh "Usage count" (withReducedPadding Styles.rightAlign)
+                        , renderTh "Average rating" (withReducedPadding Styles.rightAlign)
                         ]
                     ]
-                , tbody [] (List.map (viewTagRow model.theme filters.tagIds) tags)
+                , tbody [] (List.map (viewTagRow model.theme filters.tagIds) sortedList)
                 ]
             ]
-        , div [ css (tabColumn ++ [ marginLeft (px 4) ]) ]
+        , div [ css (tabColumn ++ [ flex (int 1), width (pct 65), marginLeft (px 8) ]) ]
             [ div [ css [ width (pct 100) ] ]
                 [ Components.ClearableInput.view model.theme "tagSeriesSearch" "search" filters.searchText [] ]
             , h2 [ css [ fontSize (rem 1), marginLeft (px 10) ] ] [ text listCountHeading ]
