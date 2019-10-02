@@ -3,7 +3,7 @@ module Update exposing (update)
 import Commands
 import Debounce
 import Debouncers
-import Models exposing (Model, Settings, emptyHistoryYearDetail)
+import Models exposing (Model, Settings, emptyHistoryYearDetail, emptyTagsSeriesPage)
 import Msgs exposing (Msg)
 
 
@@ -539,11 +539,35 @@ update msg model =
             let
                 extractedList =
                     Result.withDefault [] tags
+
+                extractedIds =
+                    List.map (\x -> x.id) extractedList
+
+                isInTagList tagId =
+                    List.member tagId extractedIds
+
+                updatedIds =
+                    List.filter (\id -> isInTagList id) tagsFilters.tagIds
+
+                updatedTagsFilters =
+                    { tagsFilters
+                        | tagIds = updatedIds
+                        , page = 0
+                    }
+
+                cmd =
+                    if List.length updatedIds > 0 then
+                        Commands.sendTagsSeriesQuery settings.contentType updatedTagsFilters
+
+                    else
+                        Cmd.none
             in
             ( { model
                 | tags = extractedList
+                , tagsFilters = updatedTagsFilters
+                , tagsSeriesPage = emptyTagsSeriesPage
               }
-            , Cmd.none
+            , cmd
             )
 
         Msgs.ReceiveTagsSeriesResponse page ->

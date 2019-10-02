@@ -32,6 +32,7 @@ module Models exposing
     , emptyHistoryDetail
     , emptyHistoryYear
     , emptyHistoryYearDetail
+    , emptyTagsSeriesPage
     , initialModel
     )
 
@@ -148,11 +149,7 @@ initialModel flags =
     , seriesList = []
     , repeatedList = []
     , tags = []
-    , tagsSeriesPage =
-        { hasMore = False
-        , total = 0
-        , nodes = []
-        }
+    , tagsSeriesPage = emptyTagsSeriesPage
     , airingList = []
     , settings =
         { activeTab = activeTab
@@ -324,6 +321,14 @@ type alias TagsSeriesPage =
     { hasMore : Bool
     , total : Int
     , nodes : TagsSeriesData
+    }
+
+
+emptyTagsSeriesPage : TagsSeriesPage
+emptyTagsSeriesPage =
+    { hasMore = False
+    , total = 0
+    , nodes = []
     }
 
 
