@@ -30,9 +30,6 @@ withReducedPadding style =
 view : Model -> TagsFilters -> List Tag -> TagsSeriesPage -> Html Msg
 view model filters tags seriesPage =
     let
-        tabColumn =
-            [ displayFlex, flexDirection column ]
-
         sorting =
             model.settings.sorting
 
@@ -48,9 +45,19 @@ view model filters tags seriesPage =
         renderTh =
             TSH.view sorting model.theme
     in
-    div [ id "tags-tab", css (Styles.listTabStyles ++ [ justifyContent spaceBetween ]) ]
-        [ div [ css (tabColumn ++ [ width (pct 35), minWidth (px 380), marginRight (px 8) ]) ]
-            [ table []
+    div
+        [ id "tags-tab"
+        , class "tag-stats"
+        , css
+            [ property "display" "grid"
+            , property "grid-template-columns" "minmax(380px, 480px) minmax(200px, 1fr)"
+            , property "grid-gap" "8px"
+            , width (pct 100)
+            , padding2 (px 10) (px 5)
+            ]
+        ]
+        [ div []
+            [ table [ css [ width (pct 100) ] ]
                 [ thead []
                     [ tr []
                         [ th [] [ text "" ]
@@ -62,7 +69,7 @@ view model filters tags seriesPage =
                 , tbody [] (List.map (viewTagRow model.theme filters.tagIds) sortedList)
                 ]
             ]
-        , div [ css (tabColumn ++ [ flex (int 1), width (pct 65), marginLeft (px 8) ]) ]
+        , div []
             [ div [ css [ width (pct 100) ] ]
                 [ Components.ClearableInput.view model.theme "tagSeriesSearch" "search" filters.searchText [] ]
             , h2 [ css [ fontSize (rem 1), marginLeft (px 10) ] ] [ text listCountHeading ]
