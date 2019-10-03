@@ -1,6 +1,6 @@
 module Utils.Styles exposing
     ( appearance
-    , breakdownBodyRow
+    , entryHoverHighlight
     , containerStyles
     , containers
     , content
@@ -10,6 +10,7 @@ module Utils.Styles exposing
     , list
     , listTabStyles
     , rightAlign
+    ,selectedStyle
     )
 
 import Css exposing (..)
@@ -17,8 +18,8 @@ import Css.Global exposing (children, descendants, typeSelector)
 import Models exposing (Theme)
 
 
-breakdownBodyRow : Theme -> List Css.Style
-breakdownBodyRow theme =
+entryHoverHighlight : Theme -> List Css.Style
+entryHoverHighlight theme =
     [ borderSpacing (px 0)
     , hover
         [ backgroundColor (hex theme.primaryBackground)
@@ -220,3 +221,17 @@ leftAlign =
 rightAlign : List Css.Style
 rightAlign =
     [ textAlign right ]
+
+
+
+selectedStyle : Theme -> Bool -> List Css.Style
+selectedStyle theme isSelected =
+    if isSelected then
+        [ important (backgroundColor (hex theme.primaryBackground))
+        , important (color (hex theme.primaryColour))
+        , hover [ backgroundColor (hex theme.primaryBackgroundHover) ]
+        ]
+
+    else
+        []
+

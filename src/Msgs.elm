@@ -22,6 +22,7 @@ type Msg
     | ClearSelectedRatings
     | ToggleRatingFilter Int
     | ToggleTagsFilter Int
+    | ClearAllTagsFilter
     | NextTagsSeriesPage
     | ReceiveStatusCountsResponse (Result GraphQLClient.Error CountData)
     | ReceiveRatingCountsResponse (Result GraphQLClient.Error CountData)

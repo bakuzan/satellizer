@@ -14,6 +14,7 @@ module Utils.Common exposing
     , setRole
     , splitList
     , toCapital
+    ,selectionIcon
     )
 
 import Html.Styled exposing (Attribute)
@@ -138,3 +139,12 @@ getListFirst list =
 toCapital : String -> String
 toCapital str =
     String.toUpper (String.left 1 str) ++ String.toLower (String.dropLeft 1 str)
+
+
+selectionIcon : Bool -> String
+selectionIcon isSelected =
+    if isSelected then
+        "☑︎"
+
+    else
+        "☐︎"

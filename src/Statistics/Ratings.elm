@@ -4,7 +4,7 @@ import Components.Button as Button
 import Components.ProgressBar
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
-import Html.Styled exposing (Html, button, div, text)
+import Html.Styled exposing (Html, button, div, span, text)
 import Html.Styled.Attributes exposing (class, classList, css, id, style)
 import Html.Styled.Events exposing (onClick)
 import Models exposing (Count, CountData, Model, RatingFilters, SeriesData, Settings, Theme, emptyCount)
@@ -30,6 +30,9 @@ view model filters ratingList seriesList =
 
         viewRatingBar =
             viewSingleRating model.theme filters.ratings total
+
+        hasSelected =
+            List.length filters.ratings > 0
     in
     div [ id "ratings-tab", css Styles.listTabStyles ]
         [ div
@@ -45,7 +48,39 @@ view model filters ratingList seriesList =
                        ]
                 )
             ]
-            ([ viewTotalAverageRating total ratingList
+            ([ div [ css [ margin2 (px 2) (px 0) ] ]
+                [ Button.view { isPrimary = False, theme = model.theme }
+                    [ class "rating-label"
+                    , classList [ ( "selected", hasSelected ) ]
+                    , css
+                        ([ position relative
+                         , displayFlex
+                         , alignItems center
+                         , justifyContent center
+                         , important (minWidth (rem 3))
+                         , height (rem 2)
+                         ]
+                            ++ Styles.selectedStyle model.theme hasSelected
+                        )
+                    , Common.setCustomAttr "title" "Click to clear all selected ratings"
+                    , Common.setCustomAttr "aria-label" "Click to clear all selected ratings"
+                    , onClick Msgs.ClearSelectedRatings
+                    ]
+                    [ span
+                        [ css
+                            [ position absolute
+                            , top (px 2)
+                            , displayFlex
+                            , alignItems center
+                            , fontSize (rem 2)
+                            , height (px 24)
+                            ]
+                        , Common.setCustomAttr "aria-hidden" "true"
+                        ]
+                        [ text (Common.selectionIcon hasSelected) ]
+                    ]
+                , viewTotalAverageRating total ratingList
+                ]
              ]
                 ++ List.map viewRatingBar ratings
             )
@@ -77,8 +112,9 @@ viewTotalAverageRating total list =
                 |> List.sum
                 |> divideIt
     in
-    div [ id "total-average-rating", css [ position absolute, top (px 0), right (px 10) ] ]
-        [ text ("Average rating: " ++ totalAverage)
+    div [ id "total-average-rating", css [ displayFlex, alignItems center, whiteSpace pre ] ]
+        [ span [ css [ fontWeight bold ] ] [ text "Average rating: " ]
+        , text totalAverage
         ]
 
 
@@ -114,28 +150,20 @@ viewSingleRating theme selectedRatings total rating =
 
         updatedRating =
             List.map (\x -> { x | key = setRatingKey x }) rating
-
-        selectedStyle =
-            if isSelected then
-                [ important (backgroundColor (hex theme.primaryBackground))
-                , important (color (hex theme.primaryColour))
-                , hover [ backgroundColor (hex theme.primaryBackgroundHover) ]
-                ]
-
-            else
-                []
     in
     div []
         [ Button.view { isPrimary = False, theme = theme }
             [ class "rating-label"
             , classList [ ( "selected", isSelected ) ]
             , css
-                ([ displayFlex
+                ([ position relative
+                 , displayFlex
                  , alignItems center
                  , justifyContent center
-                 , width (px 25)
+                 , important (minWidth (rem 3))
+                 , height (rem 2)
                  ]
-                    ++ selectedStyle
+                    ++ Styles.selectedStyle theme isSelected
                 )
             , onClick (Msgs.ToggleRatingFilter number)
             ]

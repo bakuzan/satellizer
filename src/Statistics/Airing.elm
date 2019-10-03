@@ -76,7 +76,7 @@ viewTableRow theme item =
     tr
         [ class "history-breakdown-body__row month-breakdown"
         , classList [ ( String.toLower item.season, True ) ]
-        , css (Styles.breakdownBodyRow theme)
+        , css (Styles.entryHoverHighlight theme)
         ]
         ([ td
             [ class "history-breakdown-body__month-title"

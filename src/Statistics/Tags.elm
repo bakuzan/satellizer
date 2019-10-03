@@ -44,6 +44,9 @@ view model filters tags seriesPage =
 
         renderTh =
             TSH.view sorting model.theme
+
+        hasSelected =
+            List.length filters.tagIds > 0
     in
     div
         [ id "tags-tab"
@@ -60,7 +63,38 @@ view model filters tags seriesPage =
             [ table [ css [ width (pct 100) ] ]
                 [ thead []
                     [ tr []
-                        [ th [] [ text "" ]
+                        [ th []
+                            [ Button.view { isPrimary = False, theme = model.theme }
+                                [ class "tags-label"
+                                , classList [ ( "selected", hasSelected ) ]
+                                , css
+                                    ([ position relative
+                                     , displayFlex
+                                     , alignItems center
+                                     , justifyContent center
+                                     , important (minWidth (rem 2))
+                                     , height (rem 2)
+                                     ]
+                                        ++ Styles.selectedStyle model.theme hasSelected
+                                    )
+                                , onClick Msgs.ClearAllTagsFilter
+                                , Common.setCustomAttr "aria-label" "Click to clear all selected"
+                                , Common.setCustomAttr "title" "Click to clear all selected"
+                                ]
+                                [ span
+                                    [ css
+                                        [ position absolute
+                                        , top (px 2)
+                                        , displayFlex
+                                        , alignItems center
+                                        , fontSize (rem 2)
+                                        , height (px 24)
+                                        ]
+                                    , Common.setCustomAttr "aria-hidden" "true"
+                                    ]
+                                    [ text (Common.selectionIcon hasSelected) ]
+                                ]
+                            ]
                         , renderTh "Name" (withReducedPadding (Styles.leftAlign ++ [ children [ typeSelector "button" [ justifyContent flexStart ] ] ]))
                         , renderTh "Usage count" (withReducedPadding Styles.rightAlign)
                         , renderTh "Average rating" (withReducedPadding Styles.rightAlign)
@@ -71,7 +105,8 @@ view model filters tags seriesPage =
             ]
         , div []
             [ div [ css [ width (pct 100) ] ]
-                [ Components.ClearableInput.view model.theme "tagSeriesSearch" "search" filters.searchText [] ]
+                [ Components.ClearableInput.view model.theme "tagSeriesSearch" "search" filters.searchText []
+                , viewInvalidFilterWarning filters ]
             , h2 [ css [ fontSize (rem 1), marginLeft (px 10) ] ] [ text listCountHeading ]
             , ul [ css (Styles.list model.theme True 1) ]
                 (List.map (viewSeriesItem model.theme model.settings.contentType) seriesPage.nodes)
@@ -88,6 +123,18 @@ view model filters tags seriesPage =
             ]
         ]
 
+        
+
+viewInvalidFilterWarning : TagsFilters -> Html Msg
+viewInvalidFilterWarning filters =
+    if List.length filters.tagIds == 0 && String.length filters.searchText > 0 then
+        div [ css [ color (hex "f00"), fontSize (em 0.75), margin2 (px 0) (px 10) ] ]
+            [ text "A tag must be selected for results to appear" ]
+
+    else
+        text ""
+
+
 
 viewTagRow : Theme -> List Int -> Tag -> Html Msg
 viewTagRow theme selectedTagIds data =
@@ -98,23 +145,6 @@ viewTagRow theme selectedTagIds data =
         isSelected =
             List.member data.id selectedTagIds
 
-        selectedStyle =
-            if isSelected then
-                [ important (backgroundColor (hex theme.primaryBackground))
-                , important (color (hex theme.primaryColour))
-                , hover [ backgroundColor (hex theme.primaryBackgroundHover) ]
-                ]
-
-            else
-                []
-
-        selectionIcon =
-            if isSelected then
-                "☑︎"
-
-            else
-                "☐︎"
-
         ariaLabel =
             if isSelected then
                 data.name ++ ": selected"
@@ -122,7 +152,7 @@ viewTagRow theme selectedTagIds data =
             else
                 data.name ++ ": not selected"
     in
-    tr []
+    tr [css (Styles.entryHoverHighlight theme)]
         [ td []
             [ Button.view { isPrimary = False, theme = theme }
                 [ class "tags-label"
@@ -135,7 +165,7 @@ viewTagRow theme selectedTagIds data =
                      , important (minWidth (rem 2))
                      , height (rem 2)
                      ]
-                        ++ selectedStyle
+                        ++ (Styles.selectedStyle theme isSelected)
                     )
                 , onClick (Msgs.ToggleTagsFilter data.id)
                 , Common.setCustomAttr "aria-label" ariaLabel
@@ -143,14 +173,15 @@ viewTagRow theme selectedTagIds data =
                 [ span
                     [ css
                         [ position absolute
-                        , top (px -8)
-                        , left (px 0)
-                        , right (px 0)
+                        , top (px 2)
+                        , displayFlex
+                        , alignItems center
                         , fontSize (rem 2)
+                        , height (px 24)
                         ]
                     , Common.setCustomAttr "aria-hidden" "true"
                     ]
-                    [ text selectionIcon ]
+                    [ text (Common.selectionIcon isSelected) ]
                 ]
             ]
         , td []
@@ -169,8 +200,10 @@ viewSeriesItem theme contentType item =
         seriesLink =
             "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ String.fromInt item.id
     in
-    li []
+    li [css (Styles.entryHoverHighlight theme)]
         [ Components.NewTabLink.view theme
             [ href seriesLink, title ("View " ++ item.title ++ " details") ]
             [ text item.title ]
         ]
+
+

@@ -108,7 +108,7 @@ viewSeriesEntry theme contentType entry =
     tr
         [ id (String.fromInt entry.id)
         , class "repeated-series-table-row"
-        , css (Styles.breakdownBodyRow theme)
+        , css (Styles.entryHoverHighlight theme)
         ]
         [ td [ class "left-align", css Styles.leftAlign ]
             [ div

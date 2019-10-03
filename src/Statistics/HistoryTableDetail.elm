@@ -289,7 +289,7 @@ viewTableRow props item =
     tr
         [ class "history-breakdown-body__row month-breakdown"
         , classList [ ( seasonStr, True ) ]
-        , css (Styles.breakdownBodyRow props.theme ++ additonalStyles)
+        , css (Styles.entryHoverHighlight props.theme ++ additonalStyles)
         ]
         ([ td
             [ class "history-breakdown-body__month-title"

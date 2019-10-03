@@ -340,13 +340,13 @@ update msg model =
                         model
 
                 cmd =
-                    if fieldName == "search" then
+                    if fieldName == "search" && List.length ratingsFilters.ratings > 0 then
                         Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult fieldValue ratingsFilters.ratings
 
                     else if fieldName == "repeatedSearch" then
                         Commands.sendRepeatedSeriesQuery model.settings.contentType model.settings.isAdult fieldValue
 
-                    else if fieldName == "tagSeriesSearch" then
+                    else if fieldName == "tagSeriesSearch" && List.length newModel.tagsFilters.tagIds > 0 then
                         Commands.sendTagsSeriesQuery model.settings.contentType newModel.tagsFilters
 
                     else
@@ -360,29 +360,12 @@ update msg model =
                     { ratingsFilters
                         | ratings = []
                     }
-
-                shouldFetch =
-                    String.length model.ratingsFilters.searchText > 0
-
-                updatedSeriesList =
-                    if shouldFetch then
-                        model.seriesList
-
-                    else
-                        []
-
-                maybeFetchSeriesRatings =
-                    if shouldFetch then
-                        Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText []
-
-                    else
-                        Cmd.none
             in
             ( { model
-                | seriesList = updatedSeriesList
+                | seriesList = []
                 , ratingsFilters = updatedFilters
               }
-            , maybeFetchSeriesRatings
+            , Cmd.none
             )
 
         Msgs.ToggleRatingFilter rating ->
@@ -399,13 +382,28 @@ update msg model =
                         | ratings = updatedRatings
                     }
 
-                fetchSeriesRatings =
-                    Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText updatedRatings
+                willFetch =
+                    List.length updatedRatings > 0
+
+                updatedSeriesList =
+                    if willFetch then
+                        model.seriesList
+
+                    else
+                        []
+
+                maybeFetchSeriesRatings =
+                    if willFetch then
+                        Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText updatedRatings
+
+                    else
+                        Cmd.none
             in
             ( { model
                 | ratingsFilters = updatedFilters
+                , seriesList = updatedSeriesList
               }
-            , fetchSeriesRatings
+            , maybeFetchSeriesRatings
             )
 
         Msgs.ToggleTagsFilter tagId ->
@@ -430,6 +428,21 @@ update msg model =
                 | tagsFilters = updatedFilters
               }
             , fetchSeriesForTags
+            )
+
+        Msgs.ClearAllTagsFilter ->
+            let
+                updatedFilters =
+                    { tagsFilters
+                        | tagIds = []
+                        , page = 0
+                    }
+            in
+            ( { model
+                | tagsFilters = updatedFilters
+                , tagsSeriesPage = emptyTagsSeriesPage
+              }
+            , Cmd.none
             )
 
         Msgs.NextTagsSeriesPage ->

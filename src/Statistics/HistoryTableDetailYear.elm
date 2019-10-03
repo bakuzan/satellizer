@@ -124,7 +124,7 @@ viewTableRow : Theme -> String -> (HistoryYear -> String) -> HistoryYearData -> 
 viewTableRow theme name fun data =
     tr
         [ class "history-breakdown-body__row year-breakdown"
-        , css (Styles.breakdownBodyRow theme)
+        , css (Styles.entryHoverHighlight theme)
         ]
         ([ th
             [ class "history-breakdown-body__year-statistic"
