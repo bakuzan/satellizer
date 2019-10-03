@@ -59,6 +59,7 @@ view model filters ratingList seriesList =
                          , justifyContent center
                          , important (minWidth (rem 3))
                          , height (rem 2)
+                         , margin2 (px 0) (px 5)
                          ]
                             ++ Styles.selectedStyle model.theme hasSelected
                         )
@@ -162,6 +163,7 @@ viewSingleRating theme selectedRatings total rating =
                  , justifyContent center
                  , important (minWidth (rem 3))
                  , height (rem 2)
+                 , margin2 (px 0) (px 5)
                  ]
                     ++ Styles.selectedStyle theme isSelected
                 )
