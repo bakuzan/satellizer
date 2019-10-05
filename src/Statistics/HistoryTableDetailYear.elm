@@ -74,7 +74,11 @@ viewTableHead settings =
         viewHeader obj =
             th
                 [ class (String.toLower obj.name)
-                , css (colourised (String.toLower obj.name))
+                , css
+                    (colourised (String.toLower obj.name)
+                        ++ [ padding2 (px 0) (px 4)
+                           ]
+                    )
                 ]
                 [ text obj.name
                 ]
@@ -128,7 +132,10 @@ viewTableRow theme name fun data =
         ]
         ([ th
             [ class "history-breakdown-body__year-statistic"
-            , css [ paddingLeft (px 5), textAlign left ]
+            , css
+                [ padding2 (px 0) (px 4)
+                , textAlign left
+                ]
             ]
             [ text name ]
          ]
@@ -138,5 +145,10 @@ viewTableRow theme name fun data =
 
 viewTableCell : String -> Html Msg
 viewTableCell value =
-    td [ css [ textAlign center ] ]
+    td
+        [ css
+            [ padding2 (px 0) (px 4)
+            , textAlign center
+            ]
+        ]
         [ text value ]

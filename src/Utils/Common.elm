@@ -9,12 +9,12 @@ module Utils.Common exposing
     , maxOfField
     , minOfField
     , replace
+    , selectionIcon
     , setCustomAttr
     , setIcon
     , setRole
     , splitList
     , toCapital
-    ,selectionIcon
     )
 
 import Html.Styled exposing (Attribute)

@@ -12,6 +12,8 @@ import Html.Styled.Events exposing (onClick)
 import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Settings, Sort, Theme, emptyHistoryDetail)
 import Msgs exposing (Msg)
 import Round
+import Tuple
+import Utils.Colours exposing (getSeasonColour)
 import Utils.Common as Common
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
@@ -33,6 +35,9 @@ view model seriesList =
         sortedList =
             Sorters.sortHistoryDetailList sorting.field sorting.isDesc seriesList
 
+        tupes =
+            List.indexedMap Tuple.pair sortedList
+
         renderHeaderCell =
             TSH.view sorting model.theme
     in
@@ -43,23 +48,33 @@ view model seriesList =
             , div [ class "flex-column" ]
                 [ table [ class "history-breakdown__table", css [ width (pct 100) ] ]
                     [ thead []
-                        [ renderHeaderCell "Title" [ children [ typeSelector "button" [ justifyContent flexStart ] ] ]
+                        [ td
+                            [ css
+                                [ padding2 (px 0) (px 4)
+                                , textAlign center
+                                ]
+                            ]
+                            [ text "#" ]
+                        , renderHeaderCell "Title" [ children [ typeSelector "button" [ justifyContent flexStart ] ] ]
                         , renderHeaderCell "Average" []
                         , renderHeaderCell "Highest" []
                         , renderHeaderCell "Lowest" []
                         , renderHeaderCell "Mode" []
                         ]
                     , tbody [ class "history-breakdown-body" ]
-                        ([] ++ List.map (viewTableRow model.theme) sortedList)
+                        ([] ++ List.map (viewTableRow model.theme) tupes)
                     ]
                 ]
             ]
         ]
 
 
-viewTableRow : Theme -> HistoryDetail -> Html Msg
-viewTableRow theme item =
+viewTableRow : Theme -> ( Int, HistoryDetail ) -> Html Msg
+viewTableRow theme tup =
     let
+        ( idx, item ) =
+            tup
+
         es =
             EpisodeStatistic item.average item.highest item.lowest item.mode
 
@@ -72,13 +87,36 @@ viewTableRow theme item =
 
         setTitleIndication =
             indicate ++ item.title
+
+        seasonStr =
+            String.toLower item.season
+
+        seasonStyles =
+            [ hover
+                [ backgroundColor (hex (getSeasonColour seasonStr))
+                , color (hex "fff")
+                , children
+                    [ typeSelector "td > a"
+                        [ backgroundColor inherit
+                        , color inherit
+                        ]
+                    ]
+                ]
+            ]
     in
     tr
         [ class "history-breakdown-body__row month-breakdown"
-        , classList [ ( String.toLower item.season, True ) ]
-        , css (Styles.entryHoverHighlight theme)
+        , classList [ ( seasonStr, True ) ]
+        , css (Styles.entryHoverHighlight theme ++ seasonStyles)
         ]
         ([ td
+            [ css
+                [ padding2 (px 0) (px 4)
+                , textAlign center
+                ]
+            ]
+            [ text (String.fromInt (idx + 1) |> String.padLeft 3 '0') ]
+         , td
             [ class "history-breakdown-body__month-title"
             , css [ paddingLeft (px 5), textAlign left ]
             ]

@@ -74,6 +74,7 @@ view model filters tags seriesPage =
                                      , justifyContent center
                                      , important (minWidth (rem 2))
                                      , height (rem 2)
+                                     , margin auto
                                      ]
                                         ++ Styles.selectedStyle model.theme hasSelected
                                     )
@@ -95,9 +96,9 @@ view model filters tags seriesPage =
                                     [ text (Common.selectionIcon hasSelected) ]
                                 ]
                             ]
-                        , renderTh "Name" (withReducedPadding (Styles.leftAlign ++ [ children [ typeSelector "button" [ justifyContent flexStart ] ] ]))
-                        , renderTh "Usage count" (withReducedPadding Styles.rightAlign)
-                        , renderTh "Average rating" (withReducedPadding Styles.rightAlign)
+                        , renderTh "Name" (withReducedPadding (Styles.leftAlign ++ [ padding2 (px 0) (px 4), children [ typeSelector "button" [ justifyContent flexStart ] ] ]))
+                        , renderTh "Usage count" (withReducedPadding Styles.rightAlign ++ [padding2 (px 0) (px 4)])
+                        , renderTh "Average rating" (withReducedPadding Styles.rightAlign ++ [padding2 (px 0) (px 4)])
                         ]
                     ]
                 , tbody [] (List.map (viewTagRow model.theme filters.tagIds) sortedList)
@@ -153,7 +154,7 @@ viewTagRow theme selectedTagIds data =
                 data.name ++ ": not selected"
     in
     tr [css (Styles.entryHoverHighlight theme)]
-        [ td []
+        [ td [css [padding2 (px 0) (px 4)]]
             [ Button.view { isPrimary = False, theme = theme }
                 [ class "tags-label"
                 , classList [ ( "selected", isSelected ) ]
@@ -164,6 +165,7 @@ viewTagRow theme selectedTagIds data =
                      , justifyContent center
                      , important (minWidth (rem 2))
                      , height (rem 2)
+                     , margin auto
                      ]
                         ++ (Styles.selectedStyle theme isSelected)
                     )
@@ -184,13 +186,13 @@ viewTagRow theme selectedTagIds data =
                     [ text (Common.selectionIcon isSelected) ]
                 ]
             ]
-        , td []
+        , td [css [padding2 (px 0) (px 4)]]
             [ Components.NewTabLink.view theme
                 [ href seriesLink, title ("View " ++ data.name ++ " details") ]
                 [ text data.name ]
             ]
-        , td [ css Styles.rightAlign ] [ text (String.fromInt data.timesUsed) ]
-        , td [ css Styles.rightAlign ] [ text data.averageRating ]
+        , td [ css (Styles.rightAlign ++ [padding2 (px 0) (px 4)]) ] [ text (String.fromInt data.timesUsed) ]
+        , td [ css (Styles.rightAlign ++ [padding2 (px 0) (px 4)]) ] [ text data.averageRating ]
         ]
 
 
@@ -200,7 +202,7 @@ viewSeriesItem theme contentType item =
         seriesLink =
             "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ String.fromInt item.id
     in
-    li [css (Styles.entryHoverHighlight theme)]
+    li [css (Styles.entryHoverHighlight theme ++ [padding2 (px 0) (px 4)])]
         [ Components.NewTabLink.view theme
             [ href seriesLink, title ("View " ++ item.title ++ " details") ]
             [ text item.title ]

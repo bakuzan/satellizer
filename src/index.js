@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === 'development') {
     flags: {
       contentType: 'anime',
       isAdult: false,
-      activeTab: 'Tags',
+      activeTab: 'Airing',
       breakdownType: 'MONTH',
       detailGroup: '',
       theme: themeOne

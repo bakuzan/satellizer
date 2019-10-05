@@ -48,12 +48,13 @@ viewSeriesList model seriesList =
         [ id "repeated-series-table"
         , css
             [ minWidth (px 400)
-            , maxWidth (pct 75)
+            , maxWidth (pct 80)
             ]
         ]
         [ thead []
             [ tr []
-                [ th [ class "left-align", css Styles.leftAlign ]
+                [ th [] []
+                , th [ class "left-align", css Styles.leftAlign ]
                     [ strong []
                         [ text "Title" ]
                     ]
@@ -110,7 +111,7 @@ viewSeriesEntry theme contentType entry =
         , class "repeated-series-table-row"
         , css (Styles.entryHoverHighlight theme)
         ]
-        [ td [ class "left-align", css Styles.leftAlign ]
+        [ td [ css [ padding2 (px 0) (px 4), textAlign center ] ]
             [ div
                 [ class "is-owned"
                 , classList [ ( "owned", entry.isOwned ), ( "not-owned", not entry.isOwned ) ]
@@ -130,17 +131,19 @@ viewSeriesEntry theme contentType entry =
                     ]
                 ]
                 []
-            , Components.NewTabLink.view theme
+            ]
+        , td [ class "left-align", css (Styles.leftAlign ++ [ padding2 (px 0) (px 4) ]) ]
+            [ Components.NewTabLink.view theme
                 [ href seriesLink, title ("View " ++ entry.title ++ " details") ]
                 [ text entry.title ]
             ]
-        , td [ class "right-align", css Styles.rightAlign ]
+        , td [ class "right-align", css (Styles.rightAlign ++ [ padding2 (px 0) (px 4) ]) ]
             [ span [] [ text (String.fromInt entry.rating) ]
             ]
-        , td [ class "right-align", css Styles.rightAlign ]
+        , td [ class "right-align", css (Styles.rightAlign ++ [ padding2 (px 0) (px 4) ]) ]
             [ span [] [ text (String.fromInt entry.timesCompleted) ]
             ]
-        , td [ class "right-align date-column", css (Styles.rightAlign ++ [ minWidth (px 105) ]) ]
+        , td [ class "right-align date-column", css (Styles.rightAlign ++ [ minWidth (px 105), padding2 (px 0) (px 4) ]) ]
             [ span [] [ text lastRepeatDate ]
             ]
         ]

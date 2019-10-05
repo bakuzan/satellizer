@@ -11,6 +11,7 @@ import Html.Styled.Events exposing (onClick)
 import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Settings, Sort, Theme, emptyHistoryDetail)
 import Msgs exposing (Msg)
 import Round
+import Tuple
 import Utils.Colours exposing (getSeasonColour)
 import Utils.Common as Common
 import Utils.Sorters as Sorters
@@ -138,11 +139,19 @@ viewTableHeader props =
             viewHeaderCell props.sorting props.theme
     in
     thead []
-        [ renderHeaderCell
+        [ td
+            [ css
+                [ padding2 (px 0) (px 4)
+                , textAlign center
+                ]
+            ]
+            [ text "#" ]
+        , renderHeaderCell
             { hide = False
             , title = "Title"
             , style =
-                [ children
+                [ padding2 (px 0) (px 4)
+                , children
                     [ typeSelector "button"
                         [ justifyContent flexStart
                         , padding (px 2)
@@ -154,7 +163,8 @@ viewTableHeader props =
             { hide = False
             , title = "Rating"
             , style =
-                [ children
+                [ padding2 (px 0) (px 4)
+                , children
                     [ typeSelector "button"
                         [ padding (px 2)
                         ]
@@ -165,7 +175,8 @@ viewTableHeader props =
             { hide = hideHeader
             , title = "Average"
             , style =
-                [ children
+                [ padding2 (px 0) (px 4)
+                , children
                     [ typeSelector "button"
                         [ padding (px 2)
                         ]
@@ -176,7 +187,8 @@ viewTableHeader props =
             { hide = hideHeader
             , title = "Highest"
             , style =
-                [ children
+                [ padding2 (px 0) (px 4)
+                , children
                     [ typeSelector "button"
                         [ padding (px 2)
                         ]
@@ -187,7 +199,8 @@ viewTableHeader props =
             { hide = hideHeader
             , title = "Lowest"
             , style =
-                [ children
+                [ padding2 (px 0) (px 4)
+                , children
                     [ typeSelector "button"
                         [ padding (px 2)
                         ]
@@ -198,7 +211,8 @@ viewTableHeader props =
             { hide = hideHeader
             , title = "Mode"
             , style =
-                [ children
+                [ padding2 (px 0) (px 4)
+                , children
                     [ typeSelector "button"
                         [ padding (px 2)
                         ]
@@ -246,13 +260,20 @@ viewHeaderCell sorting theme props =
 
 viewTableBody : DetailTableProps -> HistoryDetailData -> Html Msg
 viewTableBody props list =
-    tbody [ class "history-breakdown-body" ]
-        ([] ++ List.map (viewTableRow props) list)
-
-
-viewTableRow : DetailTableProps -> HistoryDetail -> Html Msg
-viewTableRow props item =
     let
+        tuples =
+            List.indexedMap Tuple.pair list
+    in
+    tbody [ class "history-breakdown-body" ]
+        ([] ++ List.map (viewTableRow props) tuples)
+
+
+viewTableRow : DetailTableProps -> ( Int, HistoryDetail ) -> Html Msg
+viewTableRow props tup =
+    let
+        ( idx, item ) =
+            tup
+
         es =
             EpisodeStatistic item.average item.highest item.lowest item.mode
 
@@ -292,8 +313,15 @@ viewTableRow props item =
         , css (Styles.entryHoverHighlight props.theme ++ additonalStyles)
         ]
         ([ td
+            [ css
+                [ padding2 (px 0) (px 4)
+                , textAlign center
+                ]
+            ]
+            [ text (String.fromInt (idx + 1) |> String.padLeft 3 '0') ]
+         , td
             [ class "history-breakdown-body__month-title"
-            , css [ paddingLeft (px 5), textAlign left ]
+            , css [ padding2 (px 0) (px 4), textAlign left ]
             ]
             [ Components.NewTabLink.view props.theme
                 [ href ("http://localhost:9003/erza/" ++ props.contentType ++ "-view/" ++ String.fromInt item.id)
@@ -329,7 +357,7 @@ renderEpisodeStatistics es =
 
 renderCell : String -> Html Msg
 renderCell str =
-    td [ css [ textAlign center ] ]
+    td [ css [ padding2 (px 0) (px 4), textAlign center ] ]
         [ text str
         ]
 

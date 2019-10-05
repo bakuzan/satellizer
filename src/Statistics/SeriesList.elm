@@ -40,6 +40,7 @@ view model filters seriesList =
                         [ fontSize (em 1)
                         , marginBlockStart (em 1)
                         , marginBlockEnd (em 1)
+                        , marginLeft (em 0.5)
                         ]
                     ]
                     [ text seriesCountTitle ]
@@ -84,7 +85,7 @@ viewSeriesEntry theme contentType entry =
         [ css
             ([ displayFlex
              , justifyContent spaceBetween
-             , padding2 (px 0) (px 10)
+             , padding2 (px 0) (px 4)
              ]
                 ++ Styles.entryHoverHighlight theme
             )
