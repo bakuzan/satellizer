@@ -1,7 +1,7 @@
 module View exposing (view)
 
 import Components.ProgressBar
-import Components.Tabs exposing (..)
+import Components.Tabs as Tabs
 import Css exposing (..)
 import Css.Global exposing (global, typeSelector)
 import Html.Styled exposing (Html, div)
@@ -53,7 +53,7 @@ view model =
         ]
         [ hoverDataStyles
         , viewStatus status
-        , viewTabContainer model.theme
+        , Tabs.viewTabContainer model.theme
             activeTab
             disabledTabs
             [ ( "Airing", [ Statistics.Airing.view model model.airingList ] )

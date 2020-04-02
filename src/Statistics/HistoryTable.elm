@@ -59,11 +59,7 @@ viewBreakdownToggle : Theme -> Settings -> Html Msg
 viewBreakdownToggle theme settings =
     let
         blockInteraction =
-            if settings.contentType == "manga" || settings.isAdult == True then
-                True
-
-            else
-                False
+            settings.contentType == "manga" || settings.isAdult == True
 
         radioOptions =
             List.map (\x -> { x | disabled = blockInteraction }) Constants.breakdownOptions
@@ -144,9 +140,8 @@ viewHeader settings headers =
                 []
     in
     thead [ class "history-breakdown-header" ]
-        ([ th [] []
-         ]
-            ++ List.map displayHeader headers
+        (th [] []
+            :: List.map displayHeader headers
         )
 
 
@@ -196,14 +191,13 @@ viewRow theme breakdown total data =
             Common.getYear (Common.getListFirst data)
     in
     tr [ class "history-breakdown-body__row" ]
-        ([ th []
+        (th []
             [ Button.view { isPrimary = False, theme = theme }
                 [ onClick (Msgs.DisplayHistoryDetail rowYear) ]
                 [ text rowYear
                 ]
             ]
-         ]
-            ++ List.map (viewCell theme breakdown total) cells
+            :: List.map (viewCell theme breakdown total) cells
         )
 
 

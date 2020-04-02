@@ -4,10 +4,10 @@ import Components.Button as Button
 import Components.ProgressBar
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
-import Html.Styled exposing (Html, button, div, span, text)
-import Html.Styled.Attributes exposing (class, classList, css, id, style)
+import Html.Styled exposing (Html, div, span, text)
+import Html.Styled.Attributes exposing (class, classList, css, id)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (Count, CountData, Model, RatingFilters, SeriesData, Settings, Theme, emptyCount)
+import Models exposing (Count, CountData, Model, RatingFilters, SeriesData, Theme, emptyCount)
 import Msgs exposing (Msg)
 import Round
 import Statistics.SeriesList
@@ -19,9 +19,6 @@ import Utils.Styles as Styles
 view : Model -> RatingFilters -> CountData -> SeriesData -> Html Msg
 view model filters ratingList seriesList =
     let
-        settings =
-            model.settings
-
         total =
             Common.calculateTotalOfValues ratingList
 
@@ -48,7 +45,7 @@ view model filters ratingList seriesList =
                        ]
                 )
             ]
-            ([ div [ css [ margin2 (px 2) (px 0) ] ]
+            (div [ css [ margin2 (px 2) (px 0) ] ]
                 [ Button.view { isPrimary = False, theme = model.theme }
                     [ class "rating-label"
                     , classList [ ( "selected", hasSelected ) ]
@@ -82,8 +79,7 @@ view model filters ratingList seriesList =
                     ]
                 , viewTotalAverageRating total ratingList
                 ]
-             ]
-                ++ List.map viewRatingBar ratings
+                :: List.map viewRatingBar ratings
             )
         , Statistics.SeriesList.view model filters seriesList
         ]

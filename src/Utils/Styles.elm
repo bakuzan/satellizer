@@ -1,16 +1,16 @@
 module Utils.Styles exposing
     ( appearance
-    , entryHoverHighlight
     , containerStyles
     , containers
     , content
+    , entryHoverHighlight
     , icon
     , iconAfter
     , leftAlign
     , list
     , listTabStyles
     , rightAlign
-    ,selectedStyle
+    , selectedStyle
     )
 
 import Css exposing (..)
@@ -110,7 +110,7 @@ floatLabel =
             , opacity (int 1)
             , property "transition" "all 0.2s"
             ]
-        , typeSelector "select" ([ appearance "none" ] ++ controlFloatLabelStyle ++ [ marginBottom (px 0) ])
+        , typeSelector "select" (controlFloatLabelStyle ++ [ appearance "none", marginBottom (px 0) ])
         , typeSelector "input" controlFloatLabelStyle
         ]
     ]
@@ -223,7 +223,6 @@ rightAlign =
     [ textAlign right ]
 
 
-
 selectedStyle : Theme -> Bool -> List Css.Style
 selectedStyle theme isSelected =
     if isSelected then
@@ -234,4 +233,3 @@ selectedStyle theme isSelected =
 
     else
         []
-

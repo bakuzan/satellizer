@@ -3,11 +3,12 @@ module Statistics.Repeated exposing (view)
 import Components.ClearableInput
 import Components.NewTabLink
 import Css exposing (..)
-import Html.Styled exposing (Html, button, div, h2, span, strong, table, tbody, td, text, th, thead, tr)
+import Html.Styled exposing (Html, div, h2, span, strong, table, tbody, td, text, th, thead, tr)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
-import Models exposing (Model, RepeatedFilters, RepeatedSeries, RepeatedSeriesData, Settings, Theme)
+import Models exposing (Model, RepeatedFilters, RepeatedSeries, RepeatedSeriesData, Theme)
 import Msgs exposing (Msg)
 import Utils.Common as Common
+import Utils.Constants as Constants
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 
@@ -15,9 +16,6 @@ import Utils.Styles as Styles
 view : Model -> RepeatedFilters -> RepeatedSeriesData -> Html Msg
 view model filters repeatedList =
     let
-        settings =
-            model.settings
-
         seriesCount =
             List.length repeatedList
 
@@ -83,7 +81,7 @@ viewSeriesEntry : Theme -> String -> RepeatedSeries -> Html Msg
 viewSeriesEntry theme contentType entry =
     let
         seriesLink =
-            "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ String.fromInt entry.id
+            Constants.erzaSeriesLink contentType entry.id
 
         lastRepeatDate =
             if entry.lastRepeatDate == "" then

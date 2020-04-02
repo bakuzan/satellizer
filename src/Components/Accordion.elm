@@ -1,7 +1,7 @@
 module Components.Accordion exposing (view)
 
 import Css exposing (..)
-import Css.Global exposing (children, global, typeSelector)
+import Css.Global exposing (global, typeSelector)
 import Html.Styled exposing (Html, div, input, label, text)
 import Html.Styled.Attributes exposing (class, css, for, id, name, type_)
 import Models exposing (Theme)

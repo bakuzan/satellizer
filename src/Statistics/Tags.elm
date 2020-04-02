@@ -6,12 +6,13 @@ import Components.NewTabLink
 import Components.TableSortHeader as TSH
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
-import Html.Styled exposing (Html, button, div, h2, li, span, strong, table, tbody, td, text, th, thead, tr, ul)
+import Html.Styled exposing (Html, div, h2, li, span, table, tbody, td, text, th, thead, tr, ul)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (Model, Settings, Tag, TagsFilters, TagsSeries, TagsSeriesPage, Theme)
+import Models exposing (Model, Tag, TagsFilters, TagsSeries, TagsSeriesPage, Theme)
 import Msgs exposing (Msg)
 import Utils.Common as Common
+import Utils.Constants as Constants
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 
@@ -97,8 +98,8 @@ view model filters tags seriesPage =
                                 ]
                             ]
                         , renderTh "Name" (withReducedPadding (Styles.leftAlign ++ [ padding2 (px 0) (px 4), children [ typeSelector "button" [ justifyContent flexStart ] ] ]))
-                        , renderTh "Usage count" (withReducedPadding Styles.rightAlign ++ [padding2 (px 0) (px 4)])
-                        , renderTh "Average rating" (withReducedPadding Styles.rightAlign ++ [padding2 (px 0) (px 4)])
+                        , renderTh "Usage count" (withReducedPadding Styles.rightAlign ++ [ padding2 (px 0) (px 4) ])
+                        , renderTh "Average rating" (withReducedPadding Styles.rightAlign ++ [ padding2 (px 0) (px 4) ])
                         ]
                     ]
                 , tbody [] (List.map (viewTagRow model.theme filters.tagIds) sortedList)
@@ -107,7 +108,8 @@ view model filters tags seriesPage =
         , div []
             [ div [ css [ width (pct 100) ] ]
                 [ Components.ClearableInput.view model.theme "tagSeriesSearch" "search" filters.searchText []
-                , viewInvalidFilterWarning filters ]
+                , viewInvalidFilterWarning filters
+                ]
             , h2 [ css [ fontSize (rem 1), marginLeft (px 10) ] ] [ text listCountHeading ]
             , ul [ css (Styles.list model.theme True 1) ]
                 (List.map (viewSeriesItem model.theme model.settings.contentType) seriesPage.nodes)
@@ -124,7 +126,6 @@ view model filters tags seriesPage =
             ]
         ]
 
-        
 
 viewInvalidFilterWarning : TagsFilters -> Html Msg
 viewInvalidFilterWarning filters =
@@ -136,12 +137,11 @@ viewInvalidFilterWarning filters =
         text ""
 
 
-
 viewTagRow : Theme -> List Int -> Tag -> Html Msg
 viewTagRow theme selectedTagIds data =
     let
         seriesLink =
-            "http://localhost:9003/erza/tag-management/" ++ String.fromInt data.id
+            "/erza/tag-management/" ++ String.fromInt data.id
 
         isSelected =
             List.member data.id selectedTagIds
@@ -153,8 +153,8 @@ viewTagRow theme selectedTagIds data =
             else
                 data.name ++ ": not selected"
     in
-    tr [css (Styles.entryHoverHighlight theme)]
-        [ td [css [padding2 (px 0) (px 4)]]
+    tr [ css (Styles.entryHoverHighlight theme) ]
+        [ td [ css [ padding2 (px 0) (px 4) ] ]
             [ Button.view { isPrimary = False, theme = theme }
                 [ class "tags-label"
                 , classList [ ( "selected", isSelected ) ]
@@ -167,7 +167,7 @@ viewTagRow theme selectedTagIds data =
                      , height (rem 2)
                      , margin auto
                      ]
-                        ++ (Styles.selectedStyle theme isSelected)
+                        ++ Styles.selectedStyle theme isSelected
                     )
                 , onClick (Msgs.ToggleTagsFilter data.id)
                 , Common.setCustomAttr "aria-label" ariaLabel
@@ -186,13 +186,13 @@ viewTagRow theme selectedTagIds data =
                     [ text (Common.selectionIcon isSelected) ]
                 ]
             ]
-        , td [css [padding2 (px 0) (px 4)]]
+        , td [ css [ padding2 (px 0) (px 4) ] ]
             [ Components.NewTabLink.view theme
                 [ href seriesLink, title ("View " ++ data.name ++ " details") ]
                 [ text data.name ]
             ]
-        , td [ css (Styles.rightAlign ++ [padding2 (px 0) (px 4)]) ] [ text (String.fromInt data.timesUsed) ]
-        , td [ css (Styles.rightAlign ++ [padding2 (px 0) (px 4)]) ] [ text data.averageRating ]
+        , td [ css (Styles.rightAlign ++ [ padding2 (px 0) (px 4) ]) ] [ text (String.fromInt data.timesUsed) ]
+        , td [ css (Styles.rightAlign ++ [ padding2 (px 0) (px 4) ]) ] [ text data.averageRating ]
         ]
 
 
@@ -200,12 +200,27 @@ viewSeriesItem : Theme -> String -> TagsSeries -> Html Msg
 viewSeriesItem theme contentType item =
     let
         seriesLink =
-            "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ String.fromInt item.id
+            Constants.erzaSeriesLink contentType item.id
     in
-    li [css (Styles.entryHoverHighlight theme ++ [padding2 (px 0) (px 4)])]
+    li
+        [ css
+            ([ displayFlex
+             , justifyContent spaceBetween
+             , padding2 (px 0) (px 4)
+             ]
+                ++ Styles.entryHoverHighlight theme
+            )
+        ]
         [ Components.NewTabLink.view theme
             [ href seriesLink, title ("View " ++ item.title ++ " details") ]
             [ text item.title ]
+        , span []
+            [ text
+                (if item.rating == 0 then
+                    "-"
+
+                 else
+                    String.fromInt item.rating
+                )
+            ]
         ]
-
-

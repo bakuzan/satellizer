@@ -1,13 +1,12 @@
 module Statistics.HistoryTableDetailYear exposing (view)
 
 import Css exposing (..)
-import Html.Styled exposing (Html, button, div, li, strong, table, tbody, td, text, th, thead, tr, ul)
-import Html.Styled.Attributes exposing (class, classList, css, href, id, style)
-import Models exposing (HistoryYear, HistoryYearData, Model, Settings, Theme, emptyHistoryYear)
+import Html.Styled exposing (Html, div, table, tbody, td, text, th, thead, tr)
+import Html.Styled.Attributes exposing (class, classList, css)
+import Models exposing (HistoryYear, HistoryYearData, Model, Settings, Theme)
 import Msgs exposing (Msg)
 import Round
 import Utils.Colours exposing (getSeasonColour)
-import Utils.Common as Common
 import Utils.Constants as Constants
 import Utils.Styles as Styles
 
@@ -29,12 +28,6 @@ viewHistoryYearDetail model data =
 
         breakdown =
             settings.breakdownType
-
-        detailGroup =
-            settings.detailGroup
-
-        getYearCount =
-            List.length model.historyDetail
     in
     div [ class "history-detail" ]
         [ div [ class "flex-row" ]
@@ -91,14 +84,13 @@ viewTableHead settings =
                 Constants.months
     in
     thead [ class "history-breakdown-header" ]
-        ([ th [] []
-         ]
-            ++ List.map viewHeader getHeaderList
+        (th [] []
+            :: List.map viewHeader getHeaderList
         )
 
 
 viewTableBody : Theme -> String -> HistoryYearData -> Html Msg
-viewTableBody theme breakdown data =
+viewTableBody theme _ data =
     let
         cells =
             data
@@ -130,7 +122,7 @@ viewTableRow theme name fun data =
         [ class "history-breakdown-body__row year-breakdown"
         , css (Styles.entryHoverHighlight theme)
         ]
-        ([ th
+        (th
             [ class "history-breakdown-body__year-statistic"
             , css
                 [ padding2 (px 0) (px 4)
@@ -138,8 +130,7 @@ viewTableRow theme name fun data =
                 ]
             ]
             [ text name ]
-         ]
-            ++ List.map (\x -> fun x |> viewTableCell) data
+            :: List.map (\x -> fun x |> viewTableCell) data
         )
 
 

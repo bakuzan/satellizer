@@ -2,8 +2,8 @@ module Components.ClearableInput exposing (view)
 
 import Components.Button as Button
 import Css exposing (..)
-import Html.Styled exposing (Html, button, div, input, label, span, text)
-import Html.Styled.Attributes exposing (autocomplete, class, css, for, id, maxlength, name, placeholder, property, title, type_, value)
+import Html.Styled exposing (Html, div, input, label, span, text)
+import Html.Styled.Attributes exposing (autocomplete, class, css, for, id, maxlength, name, placeholder, title, type_, value)
 import Html.Styled.Events exposing (onClick, onInput)
 import Models exposing (Theme)
 import Msgs exposing (Msg)

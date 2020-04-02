@@ -1,11 +1,9 @@
 module Components.Button exposing (view, viewIcon, viewLink)
 
 import Css exposing (..)
-import Html.Styled exposing (Html, button)
+import Html.Styled exposing (button)
 import Html.Styled.Attributes exposing (class, css, type_)
-import Html.Styled.Events exposing (onClick)
 import Models exposing (Theme)
-import Msgs exposing (Msg)
 import Utils.Common as Common
 import Utils.Styles as Styles
 
@@ -52,7 +50,7 @@ viewLink theme attrs children =
     button
         ([ class "slz-button button-link"
          , type_ "button"
-         , css (btnStyle ++ [ textDecoration underline ] ++ linkTheme)
+         , css (btnStyle ++ (textDecoration underline :: linkTheme))
          ]
             ++ attrs
         )

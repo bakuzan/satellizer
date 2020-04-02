@@ -14,11 +14,9 @@ module Commands exposing
 
 import GraphQL.Client.Http as GraphQLClient
 import GraphQL.Request.Builder as GraphQLBuilder
-import Http
-import Models exposing (Count, CountData, EpisodeStatistic, HistoryDetail, HistoryDetailData, HistoryYear, HistoryYearData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Settings, TagData, TagsFilters, TagsSeriesData, TagsSeriesPage)
+import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Settings, TagData, TagsFilters, TagsSeriesPage)
 import Msgs exposing (Msg)
 import Task exposing (Task)
-import Utils.Common as Common
 import Utils.Graphql as Graphql
 
 

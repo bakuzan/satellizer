@@ -34,7 +34,7 @@ port theme : (Theme -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.batch
         [ isAdult Msgs.UpdateIsAdult
         , contentType Msgs.UpdateContentType

@@ -3,7 +3,7 @@ module Components.Tabs exposing (viewTabContainer)
 import Components.Button as Button
 import Css exposing (..)
 import Html.Styled exposing (Html, div, li, text, ul)
-import Html.Styled.Attributes exposing (class, classList, css, type_)
+import Html.Styled.Attributes exposing (class, classList, css)
 import Html.Styled.Events exposing (onClick)
 import Models exposing (Theme)
 import Msgs exposing (Msg)

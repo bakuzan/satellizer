@@ -1,23 +1,19 @@
 module Statistics.Airing exposing (view)
 
-import Components.Accordion
-import Components.Button as Button
 import Components.NewTabLink
 import Components.TableSortHeader as TSH
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
-import Html.Styled exposing (Html, button, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
+import Html.Styled exposing (Html, div, h2, table, tbody, td, text, thead, tr)
 import Html.Styled.Attributes exposing (class, classList, css, href, id)
-import Html.Styled.Events exposing (onClick)
-import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Settings, Sort, Theme, emptyHistoryDetail)
+import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Theme)
 import Msgs exposing (Msg)
 import Round
 import Tuple
 import Utils.Colours exposing (getSeasonColour)
-import Utils.Common as Common
+import Utils.Constants as Constants
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
-import Utils.TableFunctions exposing (getBreakdownName)
 
 
 view : Model -> HistoryDetailData -> Html Msg
@@ -28,9 +24,6 @@ view model seriesList =
 
         sorting =
             model.settings.sorting
-
-        isDesc =
-            sorting.isDesc
 
         sortedList =
             Sorters.sortHistoryDetailList sorting.field sorting.isDesc seriesList
@@ -121,7 +114,7 @@ viewTableRow theme tup =
             , css [ paddingLeft (px 5), textAlign left ]
             ]
             [ Components.NewTabLink.view theme
-                [ href ("http://localhost:9003/erza/anime-view/" ++ String.fromInt item.id) ]
+                [ href (Constants.erzaSeriesLink "anime" item.id) ]
                 [ text setTitleIndication ]
             ]
          ]

@@ -19,7 +19,7 @@ module Utils.Common exposing
 
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes exposing (attribute)
-import Models exposing (Count, CountData, HistoryDetail, HistoryDetailData, HistoryYearData)
+import Models exposing (Count, CountData, HistoryDetailData)
 import Round
 
 

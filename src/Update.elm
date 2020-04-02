@@ -3,7 +3,7 @@ module Update exposing (update)
 import Commands
 import Debounce
 import Debouncers
-import Models exposing (Model, Settings, emptyHistoryYearDetail, emptyTagsSeriesPage)
+import Models exposing (Model, Settings, emptyTagsSeriesPage)
 import Msgs exposing (Msg)
 
 

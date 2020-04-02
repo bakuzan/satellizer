@@ -1,4 +1,4 @@
-module Utils.Constants exposing (ItemType, breakdownOptions, itemType, months, numberNames, seasons)
+module Utils.Constants exposing (ItemType, breakdownOptions, erzaSeriesLink, itemType, months, numberNames, seasons)
 
 import Components.RadioButton exposing (RadioOption)
 import Models exposing (Header)
@@ -70,3 +70,8 @@ numberNames =
     , "nine"
     , "ten"
     ]
+
+
+erzaSeriesLink : String -> Int -> String
+erzaSeriesLink contentType itemId =
+    "/erza/" ++ contentType ++ "-view/" ++ String.fromInt itemId

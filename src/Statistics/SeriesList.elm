@@ -1,15 +1,13 @@
 module Statistics.SeriesList exposing (view)
 
-import Components.Button as Button
 import Components.ClearableInput
 import Components.NewTabLink
 import Css exposing (..)
-import Html.Styled exposing (Html, button, div, h2, li, span, text, ul)
-import Html.Styled.Attributes exposing (class, css, href, id, title, type_)
-import Html.Styled.Events exposing (onClick)
-import Models exposing (Model, RatingFilters, Series, SeriesData, Settings, Theme)
+import Html.Styled exposing (Html, div, h2, li, span, text, ul)
+import Html.Styled.Attributes exposing (css, href, id)
+import Models exposing (Model, RatingFilters, Series, SeriesData, Theme)
 import Msgs exposing (Msg)
-import Utils.Common as Common
+import Utils.Constants as Constants
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 
@@ -17,12 +15,6 @@ import Utils.Styles as Styles
 view : Model -> RatingFilters -> SeriesData -> Html Msg
 view model filters seriesList =
     let
-        settings =
-            model.settings
-
-        ratingCount =
-            List.length filters.ratings
-
         seriesCount =
             List.length seriesList
 
@@ -79,7 +71,7 @@ viewSeriesEntry : Theme -> String -> Series -> Html Msg
 viewSeriesEntry theme contentType entry =
     let
         seriesLink =
-            "http://localhost:9003/erza/" ++ contentType ++ "-view/" ++ String.fromInt entry.id
+            Constants.erzaSeriesLink contentType entry.id
     in
     li
         [ css

@@ -5,15 +5,16 @@ import Components.Button as Button
 import Components.NewTabLink
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
-import Html.Styled exposing (Html, button, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
-import Html.Styled.Attributes exposing (class, classList, css, href, id, style)
+import Html.Styled exposing (Html, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
+import Html.Styled.Attributes exposing (class, classList, css, href)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Settings, Sort, Theme, emptyHistoryDetail)
+import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Sort, Theme, emptyHistoryDetail)
 import Msgs exposing (Msg)
 import Round
 import Tuple
 import Utils.Colours exposing (getSeasonColour)
 import Utils.Common as Common
+import Utils.Constants as Constants
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 import Utils.TableFunctions exposing (getBreakdownName)
@@ -324,7 +325,7 @@ viewTableRow props tup =
             , css [ padding2 (px 0) (px 4), textAlign left ]
             ]
             [ Components.NewTabLink.view props.theme
-                [ href ("http://localhost:9003/erza/" ++ props.contentType ++ "-view/" ++ String.fromInt item.id)
+                [ href (Constants.erzaSeriesLink props.contentType item.id)
                 , css
                     [ width (pct 75)
                     , textAlign left

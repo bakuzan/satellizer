@@ -18,7 +18,6 @@ import Models
     exposing
         ( Count
         , CountData
-        , EpisodeStatistic
         , HistoryDetail
         , HistoryDetailData
         , HistoryYear
@@ -107,7 +106,7 @@ historyItemQuery :
                 , breakdown : String
                 , partition : String
             }
-historyItemQuery partition =
+historyItemQuery _ =
     let
         queryRoot =
             extract
@@ -136,7 +135,7 @@ historyYearItemQuery :
                 , breakdown : String
                 , partition : String
             }
-historyYearItemQuery partition =
+historyYearItemQuery _ =
     let
         yearResponse =
             object HistoryYearDetail
@@ -181,7 +180,7 @@ ratingItemQuery contentType =
 
         pagingVar =
             Var.required "paging"
-                (\x -> { size = 1000, page = 0 })
+                (\_ -> { size = 1000, page = 0 })
                 (Var.object
                     "Paging"
                     [ Var.field "size" .size Var.int
@@ -271,6 +270,7 @@ tagsSeriesQuery =
                             (object TagsSeries
                                 |> with (field "id" [] int)
                                 |> with (field "title" [] string)
+                                |> with (field "rating" [] int)
                             )
                         )
                     )

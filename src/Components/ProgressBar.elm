@@ -2,7 +2,7 @@ module Components.ProgressBar exposing (getPercentage, singleSegmentPercentage, 
 
 import Css exposing (..)
 import Html.Styled exposing (Html, div, text)
-import Html.Styled.Attributes exposing (attribute, class, classList, css, style, title)
+import Html.Styled.Attributes exposing (attribute, class, classList, css, style)
 import Models exposing (Count, CountData)
 import Msgs exposing (Msg)
 import Round
@@ -45,9 +45,6 @@ viewProgressSegment total pair =
     let
         percentageString =
             String.fromFloat (getPercentage pair.value total) ++ "%"
-
-        percentage =
-            getPercentage pair.value total
 
         barColour =
             List.filter (\x -> Tuple.first x == pair.key) ratingColours

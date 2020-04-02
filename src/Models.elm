@@ -310,6 +310,7 @@ type alias TagData =
 type alias TagsSeries =
     { id : Int
     , title : String
+    , rating : Int
     }
 
 
