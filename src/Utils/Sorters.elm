@@ -1,13 +1,34 @@
-module Utils.Sorters exposing (repeatedSeriesOrdering, seriesOrdering, sortHistoryDetailList, sortTags)
+module Utils.Sorters exposing (seriesOrdering, sortHistoryDetailList, sortRepeatedSeries, sortTags)
 
-import Models exposing (HistoryDetail, HistoryDetailData, RepeatedSeries, Series, Tag, TagData)
+import Models exposing (HistoryDetail, HistoryDetailData, RepeatedSeries, RepeatedSeriesData, Series, Tag, TagData)
 import Ordering exposing (Ordering)
 
 
-repeatedSeriesOrdering : Ordering RepeatedSeries
-repeatedSeriesOrdering =
+repeatedSeriesOrderByTitle : Bool -> Ordering RepeatedSeries
+repeatedSeriesOrderByTitle isDesc =
+    Ordering.byField .title
+        |> directionHandler isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .timesCompleted)
+
+
+repeatedSeriesOrderByRating : Bool -> Ordering RepeatedSeries
+repeatedSeriesOrderByRating isDesc =
+    Ordering.byField .rating
+        |> directionHandler isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .title)
+
+
+repeatedSeriesOrderByTimesCompleted : Bool -> Ordering RepeatedSeries
+repeatedSeriesOrderByTimesCompleted isDesc =
     Ordering.byField .timesCompleted
-        |> Ordering.reverse
+        |> directionHandler isDesc
+        |> Ordering.breakTiesWith (Ordering.byField .title)
+
+
+repeatedSeriesOrderByLastRepeat : Bool -> Ordering RepeatedSeries
+repeatedSeriesOrderByLastRepeat isDesc =
+    Ordering.byField .lastRepeatDate
+        |> directionHandler isDesc
         |> Ordering.breakTiesWith (Ordering.byField .title)
 
 
@@ -129,6 +150,25 @@ sortTags field isDesc list =
 
         "AVERAGE RATING" ->
             List.sortWith (tagOrderByAverageRating isDesc) list
+
+        _ ->
+            list
+
+
+sortRepeatedSeries : String -> Bool -> RepeatedSeriesData -> RepeatedSeriesData
+sortRepeatedSeries field isDesc list =
+    case field of
+        "TITLE" ->
+            List.sortWith (repeatedSeriesOrderByTitle isDesc) list
+
+        "RATING" ->
+            List.sortWith (repeatedSeriesOrderByRating isDesc) list
+
+        "REPEATS" ->
+            List.sortWith (repeatedSeriesOrderByTimesCompleted isDesc) list
+
+        "LAST REPEAT" ->
+            List.sortWith (repeatedSeriesOrderByLastRepeat isDesc) list
 
         _ ->
             list

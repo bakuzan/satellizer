@@ -1,6 +1,6 @@
 module Components.Button exposing (view, viewIcon, viewLink)
 
-import Css exposing (..)
+import Css
 import Html.Styled exposing (button)
 import Html.Styled.Attributes exposing (class, css, type_)
 import Models exposing (Theme)
@@ -21,9 +21,9 @@ view btnTheme attrs children =
          , type_ "button"
          , css
             (btnStyle
-                ++ [ minWidth (px 100)
-                   , minHeight (px 25)
-                   , textDecoration none
+                ++ [ Css.minWidth (Css.px 100)
+                   , Css.minHeight (Css.px 25)
+                   , Css.textDecoration Css.none
                    ]
                 ++ themeing btnTheme
             )
@@ -37,20 +37,20 @@ viewLink : Theme -> List (Html.Styled.Attribute msg) -> List (Html.Styled.Html m
 viewLink theme attrs children =
     let
         baseColour =
-            color (hex theme.anchorColour)
+            Css.color (Css.hex theme.anchorColour)
 
         linkTheme =
             [ baseColour
-            , active [ baseColour ]
-            , focus [ baseColour ]
-            , visited [ baseColour ]
-            , hover [ color (hex theme.anchorColourHover) ]
+            , Css.active [ baseColour ]
+            , Css.focus [ baseColour ]
+            , Css.visited [ baseColour ]
+            , Css.hover [ Css.color (Css.hex theme.anchorColourHover) ]
             ]
     in
     button
         ([ class "slz-button button-link"
          , type_ "button"
-         , css (btnStyle ++ (textDecoration underline :: linkTheme))
+         , css (btnStyle ++ (Css.textDecoration Css.underline :: linkTheme))
          ]
             ++ attrs
         )
@@ -66,16 +66,16 @@ viewIcon icon btnTheme attrs children =
          , css
             (btnStyle
                 ++ [ Styles.icon
-                   , flexGrow (int 0)
-                   , flexShrink (int 1)
-                   , flexBasis (pct 0)
-                   , padding2 (px 3) (px 6)
-                   , margin2 (px 2) (px 5)
-                   , textDecoration none
-                   , before
-                        [ fontSize (em 1.25)
+                   , Css.flexGrow (Css.int 0)
+                   , Css.flexShrink (Css.int 1)
+                   , Css.flexBasis (Css.pct 0)
+                   , Css.padding2 (Css.px 3) (Css.px 6)
+                   , Css.margin2 (Css.px 2) (Css.px 5)
+                   , Css.textDecoration Css.none
+                   , Css.before
+                        [ Css.fontSize (Css.em 1.25)
                         ]
-                   , pseudoClass "not:disabled" [ cursor pointer ]
+                   , Css.pseudoClass "not:disabled" [ Css.cursor Css.pointer ]
                    ]
                 ++ themeing btnTheme
             )
@@ -88,19 +88,19 @@ viewIcon icon btnTheme attrs children =
 btnStyle : List Css.Style
 btnStyle =
     [ Styles.appearance "none"
-    , displayFlex
-    , justifyContent center
-    , alignItems center
-    , backgroundColor inherit
-    , color inherit
-    , padding (px 5)
-    , property "border" "none"
-    , whiteSpace noWrap
-    , cursor pointer
-    , disabled
-        [ important (backgroundColor (hex "ccc"))
-        , color (hex "666")
-        , cursor default
+    , Css.displayFlex
+    , Css.justifyContent Css.center
+    , Css.alignItems Css.center
+    , Css.backgroundColor Css.inherit
+    , Css.color Css.inherit
+    , Css.padding (Css.px 5)
+    , Css.property "border" "none"
+    , Css.whiteSpace Css.noWrap
+    , Css.cursor Css.pointer
+    , Css.disabled
+        [ Css.important (Css.backgroundColor (Css.hex "ccc"))
+        , Css.color (Css.hex "666")
+        , Css.cursor Css.default
         ]
     ]
 
@@ -108,13 +108,13 @@ btnStyle =
 themeing : ButtonTheme -> List Css.Style
 themeing btnTheme =
     if btnTheme.isPrimary then
-        [ backgroundColor (hex btnTheme.theme.primaryBackground)
-        , color (hex btnTheme.theme.primaryColour)
-        , hover [ backgroundColor (hex btnTheme.theme.primaryBackgroundHover) ]
+        [ Css.backgroundColor (Css.hex btnTheme.theme.primaryBackground)
+        , Css.color (Css.hex btnTheme.theme.primaryColour)
+        , Css.hover [ Css.backgroundColor (Css.hex btnTheme.theme.primaryBackgroundHover) ]
         ]
 
     else
-        [ backgroundColor (hex btnTheme.theme.baseBackground)
-        , color (hex btnTheme.theme.baseColour)
-        , hover [ backgroundColor (hex btnTheme.theme.baseBackgroundHover) ]
+        [ Css.backgroundColor (Css.hex btnTheme.theme.baseBackground)
+        , Css.color (Css.hex btnTheme.theme.baseColour)
+        , Css.hover [ Css.backgroundColor (Css.hex btnTheme.theme.baseBackgroundHover) ]
         ]

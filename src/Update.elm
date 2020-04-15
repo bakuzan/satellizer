@@ -36,6 +36,9 @@ update msg model =
             if activeTab == "Airing" || breakdown == "SEASON" then
                 "AVERAGE"
 
+            else if activeTab == "Repeated" then
+                "REPEATS"
+
             else if activeTab == "Tags" then
                 "USAGE COUNT"
 
@@ -77,6 +80,9 @@ update msg model =
 
                             else
                                 "RATING"
+
+                        "Repeated" ->
+                            "REPEATS"
 
                         "Tags" ->
                             "USAGE COUNT"

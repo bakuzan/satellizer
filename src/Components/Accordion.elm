@@ -1,6 +1,6 @@
 module Components.Accordion exposing (view)
 
-import Css exposing (..)
+import Css
 import Css.Global exposing (global, typeSelector)
 import Html.Styled exposing (Html, div, input, label, text)
 import Html.Styled.Attributes exposing (class, css, for, id, name, type_)
@@ -15,40 +15,40 @@ view theme htmlId title children =
             htmlId ++ "-accordion"
 
         labelPseudoStyle =
-            [ position absolute
-            , backgroundColor (hex theme.baseColour)
-            , property "content" "''"
-            , transform (rotate (deg 0))
-            , property "transition" "0.5s"
-            , top (pct 50)
+            [ Css.position Css.absolute
+            , Css.backgroundColor (Css.hex theme.baseColour)
+            , Css.property "content" "''"
+            , Css.transform (Css.rotate (Css.deg 0))
+            , Css.property "transition" "0.5s"
+            , Css.top (Css.pct 50)
             ]
     in
     div
         [ class "accordion"
         , css
-            [ width (pct 25)
-            , minWidth (px 500)
-            , margin (px 0)
-            , borderBottom3 (px 2) solid (hex "888")
+            [ Css.width (Css.pct 25)
+            , Css.minWidth (Css.px 500)
+            , Css.margin (Css.px 0)
+            , Css.borderBottom3 (Css.px 2) Css.solid (Css.hex "888")
             ]
         ]
         [ global
             [ typeSelector ".accordion-toggler:checked + label:before"
-                [ transform (rotate (deg 360))
-                , property "transition" "0.5s"
+                [ Css.transform (Css.rotate (Css.deg 360))
+                , Css.property "transition" "0.5s"
                 ]
             , typeSelector ".accordion-toggler:checked + label:after"
-                [ transform (rotate (deg 450))
-                , property "transition" "0.5s"
+                [ Css.transform (Css.rotate (Css.deg 450))
+                , Css.property "transition" "0.5s"
                 ]
             , typeSelector ".accordion-toggler:checked ~ .accordion-content"
-                [ height auto
-                , margin3 (px 0) (px 0) (rem 1.6)
+                [ Css.height Css.auto
+                , Css.margin3 (Css.px 0) (Css.px 0) (Css.rem 1.6)
                 , Css.Global.children
                     [ typeSelector "*"
-                        [ opacity (int 1)
-                        , property "transition" "0.5s"
-                        , property "transition-delay" "0.25s"
+                        [ Css.opacity (Css.int 1)
+                        , Css.property "transition" "0.5s"
+                        , Css.property "transition-delay" "0.25s"
                         ]
                     ]
                 ]
@@ -59,33 +59,33 @@ view theme htmlId title children =
             , id idLink
             , name "accordion"
             , css
-                [ display none
+                [ Css.display Css.none
                 ]
             ]
             []
         , label
             [ for idLink
             , css
-                [ display block
-                , position relative
-                , padding (px 5)
-                , fontWeight (int 700)
-                , marginRight (px 10)
-                , cursor pointer
-                , before
+                [ Css.display Css.block
+                , Css.position Css.relative
+                , Css.padding (Css.px 5)
+                , Css.fontWeight (Css.int 700)
+                , Css.marginRight (Css.px 10)
+                , Css.cursor Css.pointer
+                , Css.before
                     (labelPseudoStyle
-                        ++ [ right (px 0)
-                           , width (px 10)
-                           , height (px 2)
-                           , marginTop (px -1)
+                        ++ [ Css.right (Css.px 0)
+                           , Css.width (Css.px 10)
+                           , Css.height (Css.px 2)
+                           , Css.marginTop (Css.px -1)
                            ]
                     )
-                , after
+                , Css.after
                     (labelPseudoStyle
-                        ++ [ right (px 4)
-                           , height (px 10)
-                           , width (px 2)
-                           , marginTop (px -5)
+                        ++ [ Css.right (Css.px 4)
+                           , Css.height (Css.px 10)
+                           , Css.width (Css.px 2)
+                           , Css.marginTop (Css.px -5)
                            ]
                     )
                 ]
@@ -94,13 +94,13 @@ view theme htmlId title children =
         , div
             [ class "accordion-content"
             , css
-                [ height (px 1)
-                , overflow hidden
+                [ Css.height (Css.px 1)
+                , Css.overflow Css.hidden
                 , Css.Global.children
                     [ typeSelector "*"
-                        [ opacity (int 0)
-                        , property "transition" "0.5s"
-                        , lineHeight (em 1.75)
+                        [ Css.opacity (Css.int 0)
+                        , Css.property "transition" "0.5s"
+                        , Css.lineHeight (Css.em 1.75)
                         ]
                     ]
                 ]

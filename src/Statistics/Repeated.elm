@@ -2,8 +2,9 @@ module Statistics.Repeated exposing (view)
 
 import Components.ClearableInput
 import Components.NewTabLink
+import Components.TableSortHeader as TSH
 import Css exposing (..)
-import Html.Styled exposing (Html, div, h2, span, strong, table, tbody, td, text, th, thead, tr)
+import Html.Styled exposing (Html, div, h2, span, table, tbody, td, text, th, thead, tr)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
 import Models exposing (Model, RepeatedFilters, RepeatedSeries, RepeatedSeriesData, Theme)
 import Msgs exposing (Msg)
@@ -39,8 +40,14 @@ view model filters repeatedList =
 viewSeriesList : Model -> RepeatedSeriesData -> Html Msg
 viewSeriesList model seriesList =
     let
+        sorting =
+            model.settings.sorting
+
         sortedSeriesList =
-            List.sortWith Sorters.repeatedSeriesOrdering seriesList
+            Sorters.sortRepeatedSeries sorting.field sorting.isDesc seriesList
+
+        renderTh =
+            TSH.view model.settings.sorting model.theme
     in
     table
         [ id "repeated-series-table"
@@ -52,22 +59,10 @@ viewSeriesList model seriesList =
         [ thead []
             [ tr []
                 [ th [] []
-                , th [ class "left-align", css Styles.leftAlign ]
-                    [ strong []
-                        [ text "Title" ]
-                    ]
-                , th [ class "right-align", css Styles.rightAlign ]
-                    [ strong []
-                        [ text "Rating" ]
-                    ]
-                , th [ class "right-align", css Styles.rightAlign ]
-                    [ strong []
-                        [ text "Repeats" ]
-                    ]
-                , th [ class "right-align date-column", css (Styles.rightAlign ++ [ minWidth (px 105) ]) ]
-                    [ strong []
-                        [ text "Last repeat" ]
-                    ]
+                , renderTh "Title" Styles.leftAlign
+                , renderTh "Rating" Styles.rightAlign
+                , renderTh "Repeats" Styles.rightAlign
+                , renderTh "Last Repeat" (Styles.rightAlign ++ [ minWidth (px 105) ])
                 ]
             ]
         , tbody []
