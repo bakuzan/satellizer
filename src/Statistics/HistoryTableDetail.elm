@@ -3,6 +3,7 @@ module Statistics.HistoryTableDetail exposing (view)
 import Components.Accordion
 import Components.Button as Button
 import Components.NewTabLink
+import Components.TableSortHeader as TSH
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
 import Html.Styled exposing (Html, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
@@ -137,126 +138,43 @@ viewTableHeader props =
             props.breakdown == "MONTH"
 
         renderHeaderCell =
-            viewHeaderCell props.sorting props.theme
+            TSH.view props.sorting props.theme
     in
     thead []
-        [ td
+        ([ td
             [ css
                 [ padding2 (px 0) (px 4)
                 , textAlign center
                 ]
             ]
             [ text "#" ]
-        , renderHeaderCell
-            { hide = False
-            , title = "Title"
-            , style =
-                [ padding2 (px 0) (px 4)
-                , children
-                    [ typeSelector "button"
-                        [ justifyContent flexStart
-                        , padding (px 2)
-                        ]
-                    ]
-                ]
-            }
-        , renderHeaderCell
-            { hide = False
-            , title = "Rating"
-            , style =
-                [ padding2 (px 0) (px 4)
-                , children
-                    [ typeSelector "button"
-                        [ padding (px 2)
-                        ]
-                    ]
-                ]
-            }
-        , renderHeaderCell
-            { hide = hideHeader
-            , title = "Average"
-            , style =
-                [ padding2 (px 0) (px 4)
-                , children
-                    [ typeSelector "button"
-                        [ padding (px 2)
-                        ]
-                    ]
-                ]
-            }
-        , renderHeaderCell
-            { hide = hideHeader
-            , title = "Highest"
-            , style =
-                [ padding2 (px 0) (px 4)
-                , children
-                    [ typeSelector "button"
-                        [ padding (px 2)
-                        ]
-                    ]
-                ]
-            }
-        , renderHeaderCell
-            { hide = hideHeader
-            , title = "Lowest"
-            , style =
-                [ padding2 (px 0) (px 4)
-                , children
-                    [ typeSelector "button"
-                        [ padding (px 2)
-                        ]
-                    ]
-                ]
-            }
-        , renderHeaderCell
-            { hide = hideHeader
-            , title = "Mode"
-            , style =
-                [ padding2 (px 0) (px 4)
-                , children
-                    [ typeSelector "button"
-                        [ padding (px 2)
-                        ]
-                    ]
-                ]
-            }
-        ]
-
-
-viewHeaderCell : Sort -> Theme -> HeaderProps -> Html Msg
-viewHeaderCell sorting theme props =
-    let
-        icon =
-            if sorting.field /= String.toUpper props.title then
-                ""
-
-            else if sorting.isDesc == True then
-                "▼"
-
-            else
-                "▲"
-    in
-    th
-        [ css
-            (if props.hide then
-                [ display none ]
-
-             else
-                props.style
-            )
-        ]
-        [ Button.view { isPrimary = False, theme = theme }
-            [ onClick (Msgs.UpdateSortField (String.toUpper props.title)) ]
-            [ strong
-                [ Common.setIcon icon
-                , css
-                    [ lineHeight (int 1)
-                    , Styles.iconAfter
-                    ]
-                ]
-                [ text props.title ]
+         , renderHeaderCell "Title"
+            [ justifyContent flexStart
             ]
-        ]
+         , renderHeaderCell "Rating"
+            [ padding (px 2)
+            , margin2 (px 0) auto
+            ]
+         ]
+            ++ (if hideHeader then
+                    []
+
+                else
+                    [ renderHeaderCell "Average"
+                        [ padding (px 2)
+                        ]
+                    , renderHeaderCell "Highest"
+                        [ padding (px 2)
+                        ]
+                    , renderHeaderCell "Lowest"
+                        [ padding (px 2)
+                        ]
+                    , renderHeaderCell "Mode"
+                        [ padding (px 2)
+                        ]
+                    ]
+               )
+        )
 
 
 viewTableBody : DetailTableProps -> HistoryDetailData -> Html Msg

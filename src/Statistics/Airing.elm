@@ -48,7 +48,7 @@ view model seriesList =
                                 ]
                             ]
                             [ text "#" ]
-                        , renderHeaderCell "Title" [ children [ typeSelector "button" [ justifyContent flexStart ] ] ]
+                        , renderHeaderCell "Title" [ justifyContent flexStart ]
                         , renderHeaderCell "Average" []
                         , renderHeaderCell "Highest" []
                         , renderHeaderCell "Lowest" []

@@ -37,7 +37,7 @@ viewHistoryYearDetail model data =
                     [ ( String.toLower breakdown, True )
                     , ( "year", True )
                     ]
-                , css [ width (pct 100) ]
+                , css [ width (pct 100), tableLayout fixed ]
                 ]
                 [ viewTableHead settings
                 , viewTableBody model.theme breakdown data
@@ -70,6 +70,7 @@ viewTableHead settings =
                 , css
                     (colourised (String.toLower obj.name)
                         ++ [ padding2 (px 0) (px 4)
+                           , width (calc (pct 25) minus (px (101 / 4)))
                            ]
                     )
                 ]
@@ -84,7 +85,7 @@ viewTableHead settings =
                 Constants.months
     in
     thead [ class "history-breakdown-header" ]
-        (th [] []
+        (th [ css [ width (px 101) ] ] []
             :: List.map viewHeader getHeaderList
         )
 
@@ -126,7 +127,7 @@ viewTableRow theme name fun data =
             [ class "history-breakdown-body__year-statistic"
             , css
                 [ padding2 (px 0) (px 4)
-                , textAlign left
+                , textAlign right
                 ]
             ]
             [ text name ]

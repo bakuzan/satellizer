@@ -25,14 +25,17 @@ view sorting theme title styles =
                 "▲"
     in
     th
-        [ css styles ]
+        []
         [ Button.view { isPrimary = False, theme = theme }
-            [ onClick (Msgs.UpdateSortField (String.toUpper title)) ]
+            [ onClick (Msgs.UpdateSortField (String.toUpper title))
+            , css styles
+            ]
             [ strong
                 [ Common.setIcon icon
                 , css
-                    [ lineHeight (int 1)
-                    , paddingRight (px 14)
+                    [ position relative
+                    , lineHeight (int 1)
+                    , paddingRight (rem 1.25)
                     , Styles.iconAfter
                     ]
                 ]

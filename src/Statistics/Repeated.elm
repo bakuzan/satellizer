@@ -59,10 +59,10 @@ viewSeriesList model seriesList =
         [ thead []
             [ tr []
                 [ th [] []
-                , renderTh "Title" Styles.leftAlign
-                , renderTh "Rating" Styles.rightAlign
-                , renderTh "Repeats" Styles.rightAlign
-                , renderTh "Last Repeat" (Styles.rightAlign ++ [ minWidth (px 105) ])
+                , renderTh "Title" [ justifyContent flexStart ]
+                , renderTh "Rating" [ margin2 (px 0) auto ]
+                , renderTh "Repeats" [ margin2 (px 0) auto ]
+                , renderTh "Last Repeat" [ minWidth (px 105), margin2 (px 0) auto ]
                 ]
             ]
         , tbody []
@@ -130,13 +130,13 @@ viewSeriesEntry theme contentType entry =
                 [ href seriesLink, title ("View " ++ entry.title ++ " details") ]
                 [ text entry.title ]
             ]
-        , td [ class "right-align", css (Styles.rightAlign ++ [ padding2 (px 0) (px 4) ]) ]
+        , td [ css [ padding2 (px 0) (px 4), textAlign center ] ]
             [ span [] [ text (String.fromInt entry.rating) ]
             ]
-        , td [ class "right-align", css (Styles.rightAlign ++ [ padding2 (px 0) (px 4) ]) ]
+        , td [ css [ padding2 (px 0) (px 4), textAlign center ] ]
             [ span [] [ text (String.fromInt entry.timesCompleted) ]
             ]
-        , td [ class "right-align date-column", css (Styles.rightAlign ++ [ minWidth (px 105), padding2 (px 0) (px 4) ]) ]
+        , td [ class "date-column", css [ minWidth (px 105), padding2 (px 0) (px 4), textAlign center ] ]
             [ span [] [ text lastRepeatDate ]
             ]
         ]

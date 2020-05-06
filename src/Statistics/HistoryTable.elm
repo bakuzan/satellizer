@@ -193,7 +193,9 @@ viewRow theme breakdown total data =
     tr [ class "history-breakdown-body__row" ]
         (th []
             [ Button.view { isPrimary = False, theme = theme }
-                [ onClick (Msgs.DisplayHistoryDetail rowYear) ]
+                [ onClick (Msgs.DisplayHistoryDetail rowYear)
+                , css [ fontWeight bold ]
+                ]
                 [ text rowYear
                 ]
             ]

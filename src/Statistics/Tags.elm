@@ -5,7 +5,6 @@ import Components.ClearableInput
 import Components.NewTabLink
 import Components.TableSortHeader as TSH
 import Css exposing (..)
-import Css.Global exposing (children, typeSelector)
 import Html.Styled exposing (Html, div, h2, li, span, table, tbody, td, text, th, thead, tr, ul)
 import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
 import Html.Styled.Events exposing (onClick)
@@ -15,17 +14,6 @@ import Utils.Common as Common
 import Utils.Constants as Constants
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
-
-
-withReducedPadding : List Css.Style -> List Css.Style
-withReducedPadding style =
-    style
-        ++ [ children
-                [ typeSelector "button"
-                    [ padding (px 2)
-                    ]
-                ]
-           ]
 
 
 view : Model -> TagsFilters -> List Tag -> TagsSeriesPage -> Html Msg
@@ -97,9 +85,9 @@ view model filters tags seriesPage =
                                     [ text (Common.selectionIcon hasSelected) ]
                                 ]
                             ]
-                        , renderTh "Name" (withReducedPadding (Styles.leftAlign ++ [ padding2 (px 0) (px 4), children [ typeSelector "button" [ justifyContent flexStart ] ] ]))
-                        , renderTh "Usage count" (withReducedPadding Styles.rightAlign ++ [ padding2 (px 0) (px 4) ])
-                        , renderTh "Average rating" (withReducedPadding Styles.rightAlign ++ [ padding2 (px 0) (px 4) ])
+                        , renderTh "Name" [ justifyContent flexStart ]
+                        , renderTh "Usage count" (Styles.rightAlign ++ [ padding2 (px 0) (px 4) ])
+                        , renderTh "Average rating" (Styles.rightAlign ++ [ padding2 (px 0) (px 4) ])
                         ]
                     ]
                 , tbody [] (List.map (viewTagRow model.theme filters.tagIds) sortedList)

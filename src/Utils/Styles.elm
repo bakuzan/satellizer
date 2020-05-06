@@ -65,6 +65,7 @@ iconAfter =
     after
         [ property "content" "attr(icon)"
         , position absolute
+        , margin2 (px 0) (px 2)
         ]
 
 
