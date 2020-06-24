@@ -13,11 +13,13 @@ module Models exposing
     , Model
     , Paging
     , RatingFilters
+    , RatingSeriesPage
     , RepeatedFilters
     , RepeatedSeries
     , RepeatedSeriesData
     , Series
     , SeriesData
+    , SeriesTypes
     , Settings
     , Sort
     , Tag
@@ -32,6 +34,7 @@ module Models exposing
     , emptyHistoryDetail
     , emptyHistoryYear
     , emptyHistoryYearDetail
+    , emptyRatingSeriesPage
     , emptyTagsSeriesPage
     , initialModel
     )
@@ -76,7 +79,7 @@ type alias Model =
     , historyDetail : HistoryDetailData
     , historyYear : HistoryYearData
     , rating : CountData
-    , seriesList : SeriesData
+    , ratingSeriesPage : RatingSeriesPage
     , repeatedList : RepeatedSeriesData
     , tags : TagData
     , tagsSeriesPage : TagsSeriesPage
@@ -85,6 +88,7 @@ type alias Model =
     , repeatedFilters : RepeatedFilters
     , tagsFilters : TagsFilters
     , airingList : HistoryDetailData
+    , seriesTypes : SeriesTypes
     , theme : Theme
     }
 
@@ -109,6 +113,8 @@ type alias Sort =
 type alias RatingFilters =
     { searchText : String
     , ratings : List Int
+    , seriesTypes : SeriesTypes
+    , page : Int
     }
 
 
@@ -146,11 +152,12 @@ initialModel flags =
     , historyDetail = []
     , historyYear = []
     , rating = []
-    , seriesList = []
+    , ratingSeriesPage = emptyRatingSeriesPage
     , repeatedList = []
     , tags = []
     , tagsSeriesPage = emptyTagsSeriesPage
     , airingList = []
+    , seriesTypes = []
     , settings =
         { activeTab = activeTab
         , breakdownType = flags.breakdownType
@@ -166,6 +173,8 @@ initialModel flags =
     , ratingsFilters =
         { searchText = ""
         , ratings = []
+        , seriesTypes = []
+        , page = 0
         }
     , repeatedFilters =
         { searchText = ""
@@ -327,6 +336,25 @@ type alias TagsSeriesPage =
 
 emptyTagsSeriesPage : TagsSeriesPage
 emptyTagsSeriesPage =
+    { hasMore = False
+    , total = 0
+    , nodes = []
+    }
+
+
+type alias SeriesTypes =
+    List String
+
+
+type alias RatingSeriesPage =
+    { hasMore : Bool
+    , total : Int
+    , nodes : SeriesData
+    }
+
+
+emptyRatingSeriesPage : RatingSeriesPage
+emptyRatingSeriesPage =
     { hasMore = False
     , total = 0
     , nodes = []

@@ -4,10 +4,10 @@ import Components.Button as Button
 import Components.ProgressBar
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
-import Html.Styled exposing (Html, div, span, text)
+import Html.Styled exposing (Html, div, span, strong, table, tbody, td, text, th, thead, tr)
 import Html.Styled.Attributes exposing (class, classList, css, id)
 import Html.Styled.Events exposing (onClick)
-import Models exposing (Count, CountData, Model, RatingFilters, SeriesData, Theme, emptyCount)
+import Models exposing (Count, CountData, Model, RatingFilters, RatingSeriesPage, SeriesTypes, Theme, emptyCount)
 import Msgs exposing (Msg)
 import Round
 import Statistics.SeriesList
@@ -16,8 +16,8 @@ import Utils.Constants as Constants
 import Utils.Styles as Styles
 
 
-view : Model -> RatingFilters -> CountData -> SeriesData -> Html Msg
-view model filters ratingList seriesList =
+view : Model -> RatingFilters -> CountData -> SeriesTypes -> RatingSeriesPage -> Html Msg
+view model filters ratingList seriesTypes seriesPage =
     let
         total =
             Common.calculateTotalOfValues ratingList
@@ -32,56 +32,72 @@ view model filters ratingList seriesList =
             List.length filters.ratings > 0
     in
     div [ id "ratings-tab", css Styles.listTabStyles ]
-        [ div
-            [ id "rating-container"
-            , css
-                (Styles.containerStyles
-                    ++ [ children
-                            [ typeSelector "div"
-                                [ display inlineFlex
-                                , flexDirection row
-                                ]
+        [ div [ css Styles.containerStyles ]
+            [ div
+                [ id "rating-container"
+                , css
+                    [ displayFlex
+                    , flexDirection column
+                    , marginBottom (px 15)
+                    , children
+                        [ typeSelector "div"
+                            [ display inlineFlex
+                            , flexDirection row
                             ]
-                       ]
-                )
-            ]
-            (div [ css [ margin2 (px 2) (px 0) ] ]
-                [ Button.view { isPrimary = False, theme = model.theme }
-                    [ class "rating-label"
-                    , classList [ ( "selected", hasSelected ) ]
-                    , css
-                        ([ position relative
-                         , displayFlex
-                         , alignItems center
-                         , justifyContent center
-                         , important (minWidth (rem 3))
-                         , height (rem 2)
-                         , margin2 (px 0) (px 5)
-                         ]
-                            ++ Styles.selectedStyle model.theme hasSelected
-                        )
-                    , Common.setCustomAttr "title" "Click to clear all selected ratings"
-                    , Common.setCustomAttr "aria-label" "Click to clear all selected ratings"
-                    , onClick Msgs.ClearSelectedRatings
-                    ]
-                    [ span
-                        [ css
-                            [ position absolute
-                            , top (px 2)
-                            , displayFlex
-                            , alignItems center
-                            , fontSize (rem 2)
-                            , height (px 24)
-                            ]
-                        , Common.setCustomAttr "aria-hidden" "true"
                         ]
-                        [ text (Common.selectionIcon hasSelected) ]
                     ]
-                , viewTotalAverageRating total ratingList
                 ]
-                :: List.map viewRatingBar ratings
-            )
-        , Statistics.SeriesList.view model filters seriesList
+                (div [ css [ margin2 (px 2) (px 0) ] ]
+                    [ Button.view { isPrimary = False, theme = model.theme }
+                        [ class "rating-label"
+                        , classList [ ( "selected", hasSelected ) ]
+                        , css
+                            ([ position relative
+                             , displayFlex
+                             , alignItems center
+                             , justifyContent center
+                             , important (minWidth (rem 3))
+                             , height (rem 2)
+                             , margin2 (px 0) (px 5)
+                             ]
+                                ++ Styles.selectedStyle model.theme hasSelected
+                            )
+                        , Common.setCustomAttr "title" "Click to clear all selected ratings"
+                        , Common.setCustomAttr "aria-label" "Click to clear all selected ratings"
+                        , onClick Msgs.ClearSelectedRatings
+                        ]
+                        [ span
+                            [ css
+                                [ position absolute
+                                , top (px 2)
+                                , displayFlex
+                                , alignItems center
+                                , fontSize (rem 2)
+                                , height (px 24)
+                                ]
+                            , Common.setCustomAttr "aria-hidden" "true"
+                            ]
+                            [ text (Common.selectionIcon hasSelected) ]
+                        ]
+                    , viewTotalAverageRating total ratingList
+                    ]
+                    :: List.map viewRatingBar ratings
+                )
+            , viewSeriesTypes model.theme seriesTypes filters.seriesTypes
+            ]
+        , div [ css Styles.containerStyles ]
+            [ Statistics.SeriesList.view model filters seriesPage
+            , if seriesPage.hasMore then
+                Button.view { isPrimary = False, theme = model.theme }
+                    [ css [ width (pct 100) ]
+                    , onClick Msgs.NextRatingSeriesPage
+                    ]
+                    [ text "Load more..."
+                    ]
+
+              else
+                text ""
+            ]
         ]
 
 
@@ -186,3 +202,123 @@ getNumberName str =
         |> (\x -> List.drop (x - 1) Constants.numberNames)
         |> List.head
         |> Maybe.withDefault "missing"
+
+
+viewSeriesTypes : Theme -> SeriesTypes -> SeriesTypes -> Html Msg
+viewSeriesTypes theme seriesTypes selectedTypes =
+    let
+        hasSelected =
+            List.length selectedTypes == List.length seriesTypes
+    in
+    div
+        [ id "series-type-container"
+        , css
+            [ displayFlex
+            , flexDirection column
+            , marginBottom (px 15)
+            ]
+        ]
+        [ table [ css [ width (pct 100) ] ]
+            [ thead []
+                [ tr []
+                    [ th [ css [ padding2 (px 0) (px 4), width (px 50) ] ]
+                        [ Button.view { isPrimary = False, theme = theme }
+                            [ class "series-type-label"
+                            , classList [ ( "selected", hasSelected ) ]
+                            , css
+                                ([ position relative
+                                 , displayFlex
+                                 , alignItems center
+                                 , justifyContent center
+                                 , important (minWidth (rem 2))
+                                 , height (rem 2)
+                                 , margin2 (px 0) (px 10)
+                                 ]
+                                    ++ Styles.selectedStyle theme hasSelected
+                                )
+                            , onClick Msgs.ResetSeriesTypeFilter
+                            , Common.setCustomAttr "aria-label" "Click to reselect all"
+                            , Common.setCustomAttr "title" "Click to reselect all"
+                            ]
+                            [ span
+                                [ css
+                                    [ position absolute
+                                    , top (px 2)
+                                    , displayFlex
+                                    , alignItems center
+                                    , fontSize (rem 2)
+                                    , height (px 24)
+                                    ]
+                                , Common.setCustomAttr "aria-hidden" "true"
+                                ]
+                                [ text (Common.selectionIcon hasSelected) ]
+                            ]
+                        ]
+                    , th
+                        [ css [ textAlign left ] ]
+                        [ strong
+                            [ css
+                                [ position relative
+                                , lineHeight (int 1)
+                                , paddingRight (rem 1.25)
+                                ]
+                            ]
+                            [ text "Series Type" ]
+                        ]
+                    ]
+                ]
+            , tbody [] (List.map (viewSeriesTypeRow theme selectedTypes) seriesTypes)
+            ]
+        ]
+
+
+viewSeriesTypeRow : Theme -> SeriesTypes -> String -> Html Msg
+viewSeriesTypeRow theme selectedTypes data =
+    let
+        isSelected =
+            List.member data selectedTypes
+
+        ariaLabel =
+            if isSelected then
+                data ++ ": selected"
+
+            else
+                data ++ ": not selected"
+    in
+    tr [ css (Styles.entryHoverHighlight theme) ]
+        [ td [ css [ padding2 (px 0) (px 4) ] ]
+            [ Button.view { isPrimary = False, theme = theme }
+                [ class "series-type-label"
+                , classList [ ( "selected", isSelected ) ]
+                , css
+                    ([ position relative
+                     , displayFlex
+                     , alignItems center
+                     , justifyContent center
+                     , important (minWidth (rem 2))
+                     , height (rem 2)
+                     , margin2 (px 0) (px 10)
+                     ]
+                        ++ Styles.selectedStyle theme isSelected
+                    )
+                , onClick (Msgs.ToggleSeriesTypeFilter data)
+                , Common.setCustomAttr "aria-label" ariaLabel
+                ]
+                [ span
+                    [ css
+                        [ position absolute
+                        , top (px 2)
+                        , displayFlex
+                        , alignItems center
+                        , fontSize (rem 2)
+                        , height (px 24)
+                        ]
+                    , Common.setCustomAttr "aria-hidden" "true"
+                    ]
+                    [ text (Common.selectionIcon isSelected) ]
+                ]
+            ]
+        , td [ css [ padding2 (px 0) (px 4) ] ]
+            [ text data
+            ]
+        ]

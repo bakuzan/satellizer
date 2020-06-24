@@ -2,7 +2,7 @@ module View exposing (view)
 
 import Components.ProgressBar
 import Components.Tabs as Tabs
-import Css exposing (..)
+import Css
 import Css.Global exposing (global, typeSelector)
 import Html.Styled exposing (Html, div)
 import Html.Styled.Attributes exposing (css, id)
@@ -34,9 +34,6 @@ view model =
         yearDetail =
             model.historyYear
 
-        seriesList =
-            model.seriesList
-
         disabledTabs =
             if model.settings.isAdult || model.settings.contentType /= "anime" then
                 [ "Airing" ]
@@ -46,9 +43,9 @@ view model =
     in
     div
         [ css
-            [ displayFlex
-            , flexDirection column
-            , flexGrow (int 1)
+            [ Css.displayFlex
+            , Css.flexDirection Css.column
+            , Css.flexGrow (Css.int 1)
             ]
         ]
         [ hoverDataStyles
@@ -58,7 +55,7 @@ view model =
             disabledTabs
             [ ( "Airing", [ Statistics.Airing.view model model.airingList ] )
             , ( "History", [ Statistics.HistoryTable.view model history detail yearDetail ] )
-            , ( "Ratings", [ Statistics.Ratings.view model model.ratingsFilters model.rating seriesList ] )
+            , ( "Ratings", [ Statistics.Ratings.view model model.ratingsFilters model.rating model.seriesTypes model.ratingSeriesPage ] )
             , ( "Repeated", [ Statistics.Repeated.view model model.repeatedFilters model.repeatedList ] )
             , ( "Tags", [ Statistics.Tags.view model model.tagsFilters model.tags model.tagsSeriesPage ] )
             ]
@@ -71,7 +68,7 @@ viewStatus list =
         total =
             Common.calculateTotalOfValues list
     in
-    div [ id "status-container", css [ margin (px 15) ] ]
+    div [ id "status-container", css [ Css.margin (Css.px 15) ] ]
         [ Components.ProgressBar.viewProgressBar total list
         ]
 
@@ -80,186 +77,186 @@ hoverDataStyles : Html msg
 hoverDataStyles =
     let
         fallbackColour =
-            hex "000"
+            Css.hex "000"
 
         tooltipColour =
-            rgba 51 51 51 0.9
+            Css.rgba 51 51 51 0.9
 
         coreBandA =
-            [ position absolute
-            , visibility hidden
-            , opacity (int 0)
-            , property "transition" "opacity 0.2s ease-in-out, visibility 0.2s ease-in-out, transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24)"
-            , transform (translate3d (px 0) (px 0) (px 0))
-            , pointerEvents none
-            , property "-ms-filter" "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"
-            , property "filter" "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"
+            [ Css.position Css.absolute
+            , Css.visibility Css.hidden
+            , Css.opacity (Css.int 0)
+            , Css.property "transition" "opacity 0.2s ease-in-out, visibility 0.2s ease-in-out, transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24)"
+            , Css.transform (Css.translate3d (Css.px 0) (Css.px 0) (Css.px 0))
+            , Css.pointerEvents Css.none
+            , Css.property "-ms-filter" "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"
+            , Css.property "filter" "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"
             ]
 
         hoverBandA =
-            [ visibility visible
-            , property "-ms-filter" "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"
-            , property "filter" "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"
-            , opacity (int 1)
-            , textAlign center
+            [ Css.visibility Css.visible
+            , Css.property "-ms-filter" "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"
+            , Css.property "filter" "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"
+            , Css.opacity (Css.int 1)
+            , Css.textAlign Css.center
             ]
 
         onlyB =
-            [ zIndex (int 1001)
-            , border3 (px 6) solid transparent
-            , backgroundColor transparent
-            , property "content" "''"
+            [ Css.zIndex (Css.int 1001)
+            , Css.border3 (Css.px 6) Css.solid Css.transparent
+            , Css.backgroundColor Css.transparent
+            , Css.property "content" "''"
             ]
 
         onlyA =
-            [ zIndex (int 1000)
-            , padding (px 8)
-            , width (px 160)
-            , backgroundColor fallbackColour
-            , backgroundColor tooltipColour
-            , color (hex "fff")
-            , fontSize (px 14)
-            , lineHeight (num 1.2)
-            , property "content" "attr(hover-data)"
+            [ Css.zIndex (Css.int 1000)
+            , Css.padding (Css.px 8)
+            , Css.width (Css.px 160)
+            , Css.backgroundColor fallbackColour
+            , Css.backgroundColor tooltipColour
+            , Css.color (Css.hex "fff")
+            , Css.fontSize (Css.px 14)
+            , Css.lineHeight (Css.num 1.2)
+            , Css.property "content" "attr(hover-data)"
             ]
 
         defaultOrTopBandA =
-            [ bottom (pct 100)
-            , left (pct 50)
+            [ Css.bottom (Css.pct 100)
+            , Css.left (Css.pct 50)
             ]
 
         defaultOrTopOnlyB =
-            [ marginLeft (px -6)
-            , marginBottom (px -12)
-            , borderTopColor fallbackColour
-            , borderTopColor tooltipColour
+            [ Css.marginLeft (Css.px -6)
+            , Css.marginBottom (Css.px -12)
+            , Css.borderTopColor fallbackColour
+            , Css.borderTopColor tooltipColour
             ]
 
         defaultOrTopOnlyA =
-            [ marginLeft (px -80)
+            [ Css.marginLeft (Css.px -80)
             ]
 
         defaultOrTopHoverOrFocusBandA =
-            [ transform (translateY (px -12))
+            [ Css.transform (Css.translateY (Css.px -12))
             ]
 
         leftBandA =
-            [ right (pct 100)
-            , bottom (pct 50)
-            , left auto
+            [ Css.right (Css.pct 100)
+            , Css.bottom (Css.pct 50)
+            , Css.left Css.auto
             ]
 
         leftOnlyB =
-            [ marginLeft (px 0)
-            , marginRight (px -12)
-            , marginBottom (px 0)
-            , borderTopColor transparent
-            , borderLeftColor fallbackColour
-            , borderLeftColor tooltipColour
+            [ Css.marginLeft (Css.px 0)
+            , Css.marginRight (Css.px -12)
+            , Css.marginBottom (Css.px 0)
+            , Css.borderTopColor Css.transparent
+            , Css.borderLeftColor fallbackColour
+            , Css.borderLeftColor tooltipColour
             ]
 
         leftHoverOrFocusBandA =
-            [ transform (translateX (px -12))
+            [ Css.transform (Css.translateX (Css.px -12))
             ]
 
         bottomBandA =
-            [ top (pct 100)
-            , bottom auto
-            , left (pct 50)
+            [ Css.top (Css.pct 100)
+            , Css.bottom Css.auto
+            , Css.left (Css.pct 50)
             ]
 
         bottomOnlyB =
-            [ marginTop (px -12)
-            , marginBottom (px 0)
-            , borderTopColor transparent
-            , borderBottomColor fallbackColour
-            , borderBottomColor tooltipColour
+            [ Css.marginTop (Css.px -12)
+            , Css.marginBottom (Css.px 0)
+            , Css.borderTopColor Css.transparent
+            , Css.borderBottomColor fallbackColour
+            , Css.borderBottomColor tooltipColour
             ]
 
         bottomHoverOrFocusBandA =
-            [ transform (translateY (px 12))
+            [ Css.transform (Css.translateY (Css.px 12))
             ]
 
         rightBandA =
-            [ bottom (pct 50)
-            , left (pct 100)
+            [ Css.bottom (Css.pct 50)
+            , Css.left (Css.pct 100)
             ]
 
         rightOnlyB =
-            [ marginBottom (px 0)
-            , marginLeft (px -12)
-            , borderTopColor transparent
-            , borderRightColor fallbackColour
-            , borderRightColor tooltipColour
+            [ Css.marginBottom (Css.px 0)
+            , Css.marginLeft (Css.px -12)
+            , Css.borderTopColor Css.transparent
+            , Css.borderRightColor fallbackColour
+            , Css.borderRightColor tooltipColour
             ]
 
         rightHoverOrFocusBandA =
-            [ transform (translateX (px 12))
+            [ Css.transform (Css.translateX (Css.px 12))
             ]
 
         leftOrRightOnlyB =
-            [ top (px 3)
+            [ Css.top (Css.px 3)
             ]
 
         leftOrRightOnlyA =
-            [ marginLeft (px 0)
-            , marginBottom (px -16)
+            [ Css.marginLeft (Css.px 0)
+            , Css.marginBottom (Css.px -16)
             ]
 
         defaultAndTopStyles =
-            [ before (defaultOrTopBandA ++ defaultOrTopOnlyB)
-            , after (defaultOrTopBandA ++ defaultOrTopOnlyA)
-            , hover
-                [ before defaultOrTopHoverOrFocusBandA
-                , after defaultOrTopHoverOrFocusBandA
+            [ Css.before (defaultOrTopBandA ++ defaultOrTopOnlyB)
+            , Css.after (defaultOrTopBandA ++ defaultOrTopOnlyA)
+            , Css.hover
+                [ Css.before defaultOrTopHoverOrFocusBandA
+                , Css.after defaultOrTopHoverOrFocusBandA
                 ]
             ]
     in
     global
         [ typeSelector "[hover-data]"
-            [ position relative
-            , cursor pointer
+            [ Css.position Css.relative
+            , Css.cursor Css.pointer
             ]
         , typeSelector ".tooltip"
-            [ before (coreBandA ++ onlyB)
-            , after (coreBandA ++ onlyA)
-            , hover
-                [ before hoverBandA
-                , after hoverBandA
+            [ Css.before (coreBandA ++ onlyB)
+            , Css.after (coreBandA ++ onlyA)
+            , Css.hover
+                [ Css.before hoverBandA
+                , Css.after hoverBandA
                 ]
             ]
         , typeSelector ".tooltip" defaultAndTopStyles
         , typeSelector ".tooltip-top" defaultAndTopStyles
         , typeSelector ".tooltip-left"
-            [ before (leftBandA ++ leftOnlyB)
-            , after leftBandA
-            , hover
-                [ before leftHoverOrFocusBandA
-                , after leftHoverOrFocusBandA
+            [ Css.before (leftBandA ++ leftOnlyB)
+            , Css.after leftBandA
+            , Css.hover
+                [ Css.before leftHoverOrFocusBandA
+                , Css.after leftHoverOrFocusBandA
                 ]
             ]
         , typeSelector ".tooltip-bottom"
-            [ before (bottomBandA ++ bottomOnlyB)
-            , after bottomBandA
-            , hover
-                [ before bottomHoverOrFocusBandA
-                , after bottomHoverOrFocusBandA
+            [ Css.before (bottomBandA ++ bottomOnlyB)
+            , Css.after bottomBandA
+            , Css.hover
+                [ Css.before bottomHoverOrFocusBandA
+                , Css.after bottomHoverOrFocusBandA
                 ]
             ]
         , typeSelector ".tooltip-right"
-            [ before (rightBandA ++ rightOnlyB)
-            , after rightBandA
-            , hover
-                [ before rightHoverOrFocusBandA
-                , after rightHoverOrFocusBandA
+            [ Css.before (rightBandA ++ rightOnlyB)
+            , Css.after rightBandA
+            , Css.hover
+                [ Css.before rightHoverOrFocusBandA
+                , Css.after rightHoverOrFocusBandA
                 ]
             ]
         , typeSelector ".tooltip-left"
-            [ before leftOrRightOnlyB
-            , after leftOrRightOnlyA
+            [ Css.before leftOrRightOnlyB
+            , Css.after leftOrRightOnlyA
             ]
         , typeSelector ".tooltip-right"
-            [ before leftOrRightOnlyB
-            , after leftOrRightOnlyA
+            [ Css.before leftOrRightOnlyB
+            , Css.after leftOrRightOnlyA
             ]
         ]

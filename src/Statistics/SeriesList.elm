@@ -5,24 +5,24 @@ import Components.NewTabLink
 import Css exposing (..)
 import Html.Styled exposing (Html, div, h2, li, span, text, ul)
 import Html.Styled.Attributes exposing (css, href, id)
-import Models exposing (Model, RatingFilters, Series, SeriesData, Theme)
+import Models exposing (Model, RatingFilters, RatingSeriesPage, Series, SeriesData, Theme)
 import Msgs exposing (Msg)
 import Utils.Constants as Constants
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
 
 
-view : Model -> RatingFilters -> SeriesData -> Html Msg
-view model filters seriesList =
+view : Model -> RatingFilters -> RatingSeriesPage -> Html Msg
+view model filters seriesPage =
     let
-        seriesCount =
-            List.length seriesList
+        nodeCount =
+            List.length seriesPage.nodes
 
-        seriesCountTitle =
-            "Showing " ++ String.fromInt seriesCount ++ " series"
+        listCountHeading =
+            "Showing " ++ String.fromInt nodeCount ++ " of " ++ String.fromInt seriesPage.total
 
         renderTitle =
-            if seriesCount < 1 then
+            if nodeCount < 1 then
                 text ""
 
             else
@@ -35,24 +35,13 @@ view model filters seriesList =
                         , marginLeft (em 0.5)
                         ]
                     ]
-                    [ text seriesCountTitle ]
+                    [ text listCountHeading ]
     in
-    div [ id "series-by-ratings-container", css Styles.containerStyles ]
+    div [ id "series-by-ratings-container" ]
         [ Components.ClearableInput.view model.theme "search" "search" filters.searchText []
-        , viewInvalidFilterWarning filters
         , renderTitle
-        , viewSeriesList model seriesList
+        , viewSeriesList model seriesPage.nodes
         ]
-
-
-viewInvalidFilterWarning : RatingFilters -> Html Msg
-viewInvalidFilterWarning filters =
-    if List.length filters.ratings == 0 && String.length filters.searchText > 0 then
-        div [ css [ color (hex "f00"), fontSize (em 0.75), margin2 (px 0) (px 10) ] ]
-            [ text "A rating must be selected for results to appear" ]
-
-    else
-        text ""
 
 
 viewSeriesList : Model -> SeriesData -> Html Msg

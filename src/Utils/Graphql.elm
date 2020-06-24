@@ -6,12 +6,32 @@ module Utils.Graphql exposing
     , ratingCountQuery
     , ratingItemQuery
     , repeatedItemQuery
+    , seriesTypesQuery
     , statusCountQuery
     , tagsQuery
     , tagsSeriesQuery
     )
 
-import GraphQL.Request.Builder exposing (..)
+import GraphQL.Request.Builder
+    exposing
+        ( Document
+        , ListType
+        , NonNull
+        , ObjectType
+        , Query
+        , ValueSpec
+        , aliasAs
+        , bool
+        , extract
+        , field
+        , float
+        , int
+        , list
+        , object
+        , queryDocument
+        , string
+        , with
+        )
 import GraphQL.Request.Builder.Arg as Arg
 import GraphQL.Request.Builder.Variable as Var
 import Models
@@ -23,10 +43,11 @@ import Models
         , HistoryYear
         , HistoryYearDetail
         , Paging
+        , RatingSeriesPage
         , RepeatedSeries
         , RepeatedSeriesData
         , Series
-        , SeriesData
+        , SeriesTypes
         , Tag
         , TagData
         , TagsSeries
@@ -172,21 +193,43 @@ historyYearItemQuery _ =
     queryDocument queryRoot
 
 
-ratingItemQuery : String -> Document Query SeriesData { vars | isAdult : Bool, search : String, ratings : List Int }
+ratingItemQuery :
+    String
+    ->
+        Document Query
+            RatingSeriesPage
+            { vars
+                | isAdult : Bool
+                , search : String
+                , ratings : List Int
+                , seriesTypes : SeriesTypes
+                , paging : Paging
+            }
 ratingItemQuery contentType =
     let
         ratingsVar =
             Var.required "ratings" .ratings (Var.list Var.int)
 
-        pagingVar =
-            Var.required "paging"
-                (\_ -> { size = 1000, page = 0 })
-                (Var.object
-                    "Paging"
-                    [ Var.field "size" .size Var.int
-                    , Var.field "page" .page Var.int
-                    ]
-                )
+        sortingVar =
+            Var.required "sorting"
+                (\_ -> [ "rating", "DESC" ])
+                (Var.list Var.string)
+
+        page =
+            object RatingSeriesPage
+                |> with (field "hasMore" [] bool)
+                |> with (field "total" [] int)
+                |> with
+                    (field "nodes"
+                        []
+                        (list
+                            (object Series
+                                |> with (field "id" [] int)
+                                |> with (field "title" [] string)
+                                |> with (field "rating" [] int)
+                            )
+                        )
+                    )
 
         queryRoot =
             extract
@@ -195,9 +238,11 @@ ratingItemQuery contentType =
                         [ ( "isAdult", Arg.variable isAdultVar )
                         , ( "search", Arg.variable searchVar )
                         , ( "ratings", Arg.variable ratingsVar )
+                        , ( "seriesTypes", Arg.variable (seriesTypesVar contentType) )
                         , ( "paging", Arg.variable pagingVar )
+                        , ( "sorting", Arg.variable sortingVar )
                         ]
-                        seriesItems
+                        page
                     )
                 )
     in
@@ -278,16 +323,6 @@ tagsSeriesQuery =
         tagIdsVar =
             Var.required "tagIds" .tagIds (Var.list Var.int)
 
-        pagingVar =
-            Var.required "paging"
-                .paging
-                (Var.object
-                    "Paging"
-                    [ Var.field "size" .size Var.int
-                    , Var.field "page" .page Var.int
-                    ]
-                )
-
         queryRoot =
             extract
                 (field "seriesByTags"
@@ -312,6 +347,20 @@ airingItemQuery =
                         []
                         historyItems
                     )
+                )
+    in
+    queryDocument queryRoot
+
+
+seriesTypesQuery : Document Query SeriesTypes { vars | contentType : String }
+seriesTypesQuery =
+    let
+        queryRoot =
+            extract
+                (field "seriesTypes"
+                    [ ( "type", Arg.variable typeVar )
+                    ]
+                    (list string)
                 )
     in
     queryDocument queryRoot
@@ -346,6 +395,27 @@ partitionVar =
     Var.required "partition" .partition (Var.enum "HistoryPartition" (\x -> x))
 
 
+seriesTypesVar : String -> Var.Variable { vars | seriesTypes : SeriesTypes }
+seriesTypesVar contentType =
+    let
+        enumName =
+            toCapital contentType ++ "Type"
+    in
+    Var.required "seriesTypes" .seriesTypes (Var.list (Var.enum enumName (\x -> x)))
+
+
+pagingVar : Var.Variable { vars | paging : Paging }
+pagingVar =
+    Var.required "paging"
+        .paging
+        (Var.object
+            "Paging"
+            [ Var.field "size" .size Var.int
+            , Var.field "page" .page Var.int
+            ]
+        )
+
+
 countItems : ValueSpec NonNull (ListType NonNull ObjectType) (List Count) vars
 countItems =
     list
@@ -367,19 +437,4 @@ historyItems =
             |> with (field "highest" [] int)
             |> with (field "lowest" [] int)
             |> with (field "mode" [] int)
-        )
-
-
-seriesItems : ValueSpec NonNull ObjectType (List Series) vars
-seriesItems =
-    extract
-        (field "nodes"
-            []
-            (list
-                (object Series
-                    |> with (field "id" [] int)
-                    |> with (field "title" [] string)
-                    |> with (field "rating" [] int)
-                )
-            )
         )

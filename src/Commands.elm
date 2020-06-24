@@ -7,6 +7,7 @@ module Commands exposing
     , sendRatingCountsRequest
     , sendRatingsSeriesQuery
     , sendRepeatedSeriesQuery
+    , sendSeriesTypesRequest
     , sendStatusCountsRequest
     , sendTagsQuery
     , sendTagsSeriesQuery
@@ -14,7 +15,7 @@ module Commands exposing
 
 import GraphQL.Client.Http as GraphQLClient
 import GraphQL.Request.Builder as GraphQLBuilder
-import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, RepeatedSeriesData, SeriesData, Settings, TagData, TagsFilters, TagsSeriesPage)
+import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, RatingFilters, RatingSeriesPage, RepeatedSeriesData, SeriesTypes, Settings, TagData, TagsFilters, TagsSeriesPage)
 import Msgs exposing (Msg)
 import Task exposing (Task)
 import Utils.Graphql as Graphql
@@ -59,6 +60,22 @@ sendRatingCountsRequest : String -> Bool -> Cmd Msg
 sendRatingCountsRequest contentType isAdult =
     sendGraphqlQueryRequest (ratingCountsRequest contentType isAdult)
         |> Task.attempt Msgs.ReceiveRatingCountsResponse
+
+
+
+-- Series Types
+
+
+seriesTypesRequest : String -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesTypes
+seriesTypesRequest contentType =
+    Graphql.seriesTypesQuery
+        |> GraphQLBuilder.request { contentType = contentType }
+
+
+sendSeriesTypesRequest : String -> Cmd Msg
+sendSeriesTypesRequest contentType =
+    sendGraphqlQueryRequest (seriesTypesRequest contentType)
+        |> Task.attempt Msgs.ReceiveSeriesTypesResponse
 
 
 
@@ -123,15 +140,21 @@ sendHistoryYearSeriesQuery props =
 -- Ratings Series
 
 
-ratingsSeriesQueryRequest : String -> Bool -> String -> List Int -> GraphQLBuilder.Request GraphQLBuilder.Query SeriesData
-ratingsSeriesQueryRequest contentType isAdult searchText selectedRatings =
+ratingsSeriesQueryRequest : String -> Bool -> RatingFilters -> GraphQLBuilder.Request GraphQLBuilder.Query RatingSeriesPage
+ratingsSeriesQueryRequest contentType isAdult filters =
     Graphql.ratingItemQuery contentType
-        |> GraphQLBuilder.request { isAdult = isAdult, search = searchText, ratings = selectedRatings }
+        |> GraphQLBuilder.request
+            { isAdult = isAdult
+            , search = filters.searchText
+            , ratings = filters.ratings
+            , seriesTypes = filters.seriesTypes
+            , paging = { page = filters.page, size = 20 }
+            }
 
 
-sendRatingsSeriesQuery : String -> Bool -> String -> List Int -> Cmd Msg
-sendRatingsSeriesQuery contentType isAdult searchText selectedRatings =
-    sendGraphqlQueryRequest (ratingsSeriesQueryRequest contentType isAdult searchText selectedRatings)
+sendRatingsSeriesQuery : String -> Bool -> RatingFilters -> Cmd Msg
+sendRatingsSeriesQuery contentType isAdult filters =
+    sendGraphqlQueryRequest (ratingsSeriesQueryRequest contentType isAdult filters)
         |> Task.attempt Msgs.ReceiveRatingsSeriesResponse
 
 

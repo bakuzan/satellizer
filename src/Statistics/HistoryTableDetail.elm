@@ -1,14 +1,12 @@
 module Statistics.HistoryTableDetail exposing (view)
 
 import Components.Accordion
-import Components.Button as Button
 import Components.NewTabLink
 import Components.TableSortHeader as TSH
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
-import Html.Styled exposing (Html, div, h2, li, strong, table, tbody, td, text, th, thead, tr, ul)
+import Html.Styled exposing (Html, div, h2, li, table, tbody, td, text, thead, tr, ul)
 import Html.Styled.Attributes exposing (class, classList, css, href)
-import Html.Styled.Events exposing (onClick)
 import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Sort, Theme, emptyHistoryDetail)
 import Msgs exposing (Msg)
 import Round
@@ -27,13 +25,6 @@ type alias DetailTableProps =
     , breakdown : String
     , theme : Theme
     , sorting : Sort
-    }
-
-
-type alias HeaderProps =
-    { hide : Bool
-    , title : String
-    , style : List Css.Style
     }
 
 

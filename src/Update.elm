@@ -3,7 +3,7 @@ module Update exposing (update)
 import Commands
 import Debounce
 import Debouncers
-import Models exposing (Model, Settings, emptyTagsSeriesPage)
+import Models exposing (Model, Settings, emptyRatingSeriesPage, emptyTagsSeriesPage)
 import Msgs exposing (Msg)
 
 
@@ -103,11 +103,12 @@ update msg model =
             ( { model
                 | historyDetail = []
                 , historyYear = []
-                , seriesList = []
                 , settings = updatedSettings
                 , ratingsFilters =
                     { searchText = ""
                     , ratings = []
+                    , seriesTypes = []
+                    , page = 0
                     }
                 , repeatedFilters =
                     { searchText = ""
@@ -333,7 +334,17 @@ update msg model =
         Msgs.SaveTextInput fieldName fieldValue ->
             let
                 newModel =
-                    if fieldName == "tagSeriesSearch" then
+                    if fieldName == "search" then
+                        { model
+                            | ratingsFilters =
+                                { searchText = fieldValue
+                                , ratings = ratingsFilters.ratings
+                                , seriesTypes = ratingsFilters.seriesTypes
+                                , page = 0
+                                }
+                        }
+
+                    else if fieldName == "tagSeriesSearch" then
                         { model
                             | tagsFilters =
                                 { searchText = fieldValue
@@ -346,14 +357,14 @@ update msg model =
                         model
 
                 cmd =
-                    if fieldName == "search" && List.length ratingsFilters.ratings > 0 then
-                        Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult fieldValue ratingsFilters.ratings
+                    if fieldName == "search" then
+                        Commands.sendRatingsSeriesQuery settings.contentType settings.isAdult newModel.ratingsFilters
 
                     else if fieldName == "repeatedSearch" then
-                        Commands.sendRepeatedSeriesQuery model.settings.contentType model.settings.isAdult fieldValue
+                        Commands.sendRepeatedSeriesQuery settings.contentType settings.isAdult fieldValue
 
                     else if fieldName == "tagSeriesSearch" && List.length newModel.tagsFilters.tagIds > 0 then
-                        Commands.sendTagsSeriesQuery model.settings.contentType newModel.tagsFilters
+                        Commands.sendTagsSeriesQuery settings.contentType newModel.tagsFilters
 
                     else
                         Cmd.none
@@ -365,13 +376,13 @@ update msg model =
                 updatedFilters =
                     { ratingsFilters
                         | ratings = []
+                        , page = 0
                     }
             in
             ( { model
-                | seriesList = []
-                , ratingsFilters = updatedFilters
+                | ratingsFilters = updatedFilters
               }
-            , Cmd.none
+            , Commands.sendRatingsSeriesQuery settings.contentType settings.isAdult updatedFilters
             )
 
         Msgs.ToggleRatingFilter rating ->
@@ -386,30 +397,48 @@ update msg model =
                 updatedFilters =
                     { ratingsFilters
                         | ratings = updatedRatings
+                        , page = 0
                     }
-
-                willFetch =
-                    List.length updatedRatings > 0
-
-                updatedSeriesList =
-                    if willFetch then
-                        model.seriesList
-
-                    else
-                        []
-
-                maybeFetchSeriesRatings =
-                    if willFetch then
-                        Commands.sendRatingsSeriesQuery model.settings.contentType model.settings.isAdult ratingsFilters.searchText updatedRatings
-
-                    else
-                        Cmd.none
             in
             ( { model
                 | ratingsFilters = updatedFilters
-                , seriesList = updatedSeriesList
               }
-            , maybeFetchSeriesRatings
+            , Commands.sendRatingsSeriesQuery settings.contentType settings.isAdult updatedFilters
+            )
+
+        Msgs.ToggleSeriesTypeFilter seriesType ->
+            let
+                updatedTypes =
+                    if List.member seriesType ratingsFilters.seriesTypes then
+                        List.filter (\x -> x /= seriesType) ratingsFilters.seriesTypes
+
+                    else
+                        List.append ratingsFilters.seriesTypes [ seriesType ]
+
+                updatedFilters =
+                    { ratingsFilters
+                        | seriesTypes = updatedTypes
+                        , page = 0
+                    }
+            in
+            ( { model
+                | ratingsFilters = updatedFilters
+              }
+            , Commands.sendRatingsSeriesQuery settings.contentType settings.isAdult updatedFilters
+            )
+
+        Msgs.ResetSeriesTypeFilter ->
+            let
+                updatedFilters =
+                    { ratingsFilters
+                        | seriesTypes = model.seriesTypes
+                        , page = 0
+                    }
+            in
+            ( { model
+                | ratingsFilters = updatedFilters
+              }
+            , Commands.sendRatingsSeriesQuery settings.contentType settings.isAdult updatedFilters
             )
 
         Msgs.ToggleTagsFilter tagId ->
@@ -467,6 +496,19 @@ update msg model =
             , fetchSeriesForTags
             )
 
+        Msgs.NextRatingSeriesPage ->
+            let
+                updatedFilters =
+                    { ratingsFilters
+                        | page = ratingsFilters.page + 1
+                    }
+            in
+            ( { model
+                | ratingsFilters = updatedFilters
+              }
+            , Commands.sendRatingsSeriesQuery settings.contentType settings.isAdult updatedFilters
+            )
+
         Msgs.ReceiveStatusCountsResponse counts ->
             let
                 extractedCounts =
@@ -489,7 +531,25 @@ update msg model =
             ( { model
                 | rating = extractedCounts
               }
-            , Cmd.none
+            , Commands.sendSeriesTypesRequest model.settings.contentType
+            )
+
+        Msgs.ReceiveSeriesTypesResponse seriesTypes ->
+            let
+                extractedTypes =
+                    Result.withDefault [] seriesTypes
+
+                updatedFilters =
+                    { ratingsFilters
+                        | seriesTypes = extractedTypes
+                        , page = 0
+                    }
+            in
+            ( { model
+                | seriesTypes = extractedTypes
+                , ratingsFilters = updatedFilters
+              }
+            , Commands.sendRatingsSeriesQuery settings.contentType settings.isAdult updatedFilters
             )
 
         Msgs.ReceiveHistoryCountsResponse historyCounts ->
@@ -532,13 +592,30 @@ update msg model =
             , Cmd.none
             )
 
-        Msgs.ReceiveRatingsSeriesResponse seriesList ->
+        Msgs.ReceiveRatingsSeriesResponse page ->
             let
-                extractedSeriesList =
-                    Result.withDefault [] seriesList
+                newPage =
+                    Result.withDefault emptyRatingSeriesPage page
+
+                oldPage =
+                    model.ratingSeriesPage
+
+                nodesList =
+                    if ratingsFilters.page == 0 then
+                        newPage.nodes
+
+                    else
+                        List.concat [ oldPage.nodes, newPage.nodes ]
+
+                updatedPage =
+                    { oldPage
+                        | hasMore = newPage.hasMore
+                        , total = newPage.total
+                        , nodes = nodesList
+                    }
             in
             ( { model
-                | seriesList = extractedSeriesList
+                | ratingSeriesPage = updatedPage
               }
             , Cmd.none
             )
@@ -592,7 +669,7 @@ update msg model =
         Msgs.ReceiveTagsSeriesResponse page ->
             let
                 newPage =
-                    Result.withDefault { hasMore = False, total = 0, nodes = [] } page
+                    Result.withDefault emptyTagsSeriesPage page
 
                 oldPage =
                     model.tagsSeriesPage
