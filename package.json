@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "scripts": {
+    "start": "elm-app start",
     "build": "bash ./tools/optimise.sh 'src/Main.elm'"
   },
   "repository": {

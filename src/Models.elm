@@ -36,6 +36,7 @@ module Models exposing
     , emptyHistoryYearDetail
     , emptyRatingSeriesPage
     , emptyTagsSeriesPage
+    , initialHistoryStartIndex
     , initialModel
     )
 
@@ -101,6 +102,7 @@ type alias Settings =
     , isAdult : Bool
     , contentType : String
     , requireKey : Bool
+    , historyStartIndex : Int
     }
 
 
@@ -128,6 +130,11 @@ type alias TagsFilters =
     , tagIds : List Int
     , page : Int
     }
+
+
+initialHistoryStartIndex : Int
+initialHistoryStartIndex =
+    0
 
 
 initialModel : Flags -> Model
@@ -169,6 +176,7 @@ initialModel flags =
         , contentType = flags.contentType
         , isAdult = flags.isAdult
         , requireKey = False
+        , historyStartIndex = initialHistoryStartIndex
         }
     , ratingsFilters =
         { searchText = ""

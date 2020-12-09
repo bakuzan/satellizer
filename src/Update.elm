@@ -3,7 +3,7 @@ module Update exposing (update)
 import Commands
 import Debounce
 import Debouncers
-import Models exposing (Model, Settings, emptyRatingSeriesPage, emptyTagsSeriesPage)
+import Models exposing (Model, Settings, emptyRatingSeriesPage, emptyTagsSeriesPage, initialHistoryStartIndex)
 import Msgs exposing (Msg)
 
 
@@ -98,6 +98,7 @@ update msg model =
                             { field = sortField
                             , isDesc = True
                             }
+                        , historyStartIndex = initialHistoryStartIndex
                     }
             in
             ( { model
@@ -267,6 +268,19 @@ update msg model =
                 updatedSettings =
                     { settings
                         | requireKey = required
+                    }
+            in
+            ( { model
+                | settings = updatedSettings
+              }
+            , Cmd.none
+            )
+
+        Msgs.MoveTableRowDisplay direction ->
+            let
+                updatedSettings =
+                    { settings
+                        | historyStartIndex = settings.historyStartIndex + direction
                     }
             in
             ( { model

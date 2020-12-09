@@ -1,11 +1,12 @@
 module Statistics.HistoryTable exposing (view)
 
+import Array
 import Components.Button as Button
 import Components.RadioButton exposing (radioGroup)
 import Components.SeasonKey as SeasonKey
 import Css exposing (..)
 import Html.Styled exposing (Html, button, div, table, tbody, td, text, th, thead, tr)
-import Html.Styled.Attributes exposing (attribute, class, classList, css, id, style)
+import Html.Styled.Attributes exposing (attribute, class, classList, css, disabled, id, style, title)
 import Html.Styled.Events exposing (onClick)
 import Models exposing (Count, CountData, Header, HistoryDetailData, HistoryYearData, Model, Settings, Theme, emptyCount)
 import Msgs exposing (Msg)
@@ -21,6 +22,15 @@ type alias TableProps =
     { theme : Theme
     , breakdown : String
     , isYearBreakdown : Bool
+    , historyStartIndex : Int
+    }
+
+
+type alias HeaderSettings =
+    { isSeason : Bool
+    , isYear : Bool
+    , startIndex : Int
+    , maxIndex : Int
     }
 
 
@@ -48,6 +58,7 @@ view model data detail yearDetail =
             { theme = model.theme
             , breakdown = breakdownType
             , isYearBreakdown = isYearBreakdown
+            , historyStartIndex = settings.historyStartIndex
             }
             data
         , viewTableDetail model detail yearDetail
@@ -100,6 +111,22 @@ viewTable props countData =
 
             else
                 Constants.seasons
+
+        headerSettings =
+            { isSeason = not isMonths
+            , isYear = props.isYearBreakdown
+            , startIndex = props.historyStartIndex
+            , maxIndex = List.length (split data)
+            }
+
+        endIndex =
+            props.historyStartIndex + Constants.historyTableDisplayCount
+
+        viewableRows =
+            split data
+                |> Array.fromList
+                |> Array.slice props.historyStartIndex endIndex
+                |> Array.toList
     in
     table
         [ class "history-breakdown__table"
@@ -108,13 +135,13 @@ viewTable props countData =
             [ width (pct 100)
             ]
         ]
-        [ viewHeader { isSeason = not isMonths, isYear = props.isYearBreakdown } headers
-        , viewBody props.theme props.breakdown total data
+        [ viewHeader props.theme headerSettings headers
+        , viewBody props.theme props.breakdown total viewableRows
         ]
 
 
-viewHeader : { isSeason : Bool, isYear : Bool } -> List Header -> Html Msg
-viewHeader settings headers =
+viewHeader : Theme -> HeaderSettings -> List Header -> Html Msg
+viewHeader theme settings headers =
     let
         colourised season =
             if settings.isSeason && settings.isYear then
@@ -140,19 +167,43 @@ viewHeader settings headers =
                 []
     in
     thead [ class "history-breakdown-header" ]
-        (th [] []
+        (tableRowDisplayControls theme headers settings.startIndex settings.maxIndex
             :: List.map displayHeader headers
         )
 
 
-viewBody : Theme -> String -> Int -> CountData -> Html Msg
+tableRowDisplayControls : Theme -> List Header -> Int -> Int -> Html Msg
+tableRowDisplayControls theme headers startIndex maxIndex =
+    th [ css [ displayFlex ] ]
+        [ Button.view { isPrimary = False, theme = theme }
+            [ onClick (Msgs.MoveTableRowDisplay 1)
+            , css [ fontWeight bold, Css.important (minWidth (px 0)), width (pct 50) ]
+            , title "Move the view backwards years"
+            , Common.setCustomAttr "aria-label" "Move the view backwards years"
+            , disabled (maxIndex - Constants.historyTableDisplayCount == startIndex)
+            ]
+            [ text "▼"
+            ]
+        , Button.view { isPrimary = False, theme = theme }
+            [ onClick (Msgs.MoveTableRowDisplay -1)
+            , css [ fontWeight bold, Css.important (minWidth (px 0)), width (pct 50) ]
+            , title "Move the view forwards years"
+            , Common.setCustomAttr "aria-label" "Move the view forwards years"
+            , disabled (startIndex == 0)
+            ]
+            [ text "▲"
+            ]
+        ]
+
+
+viewBody : Theme -> String -> Int -> List (List Count) -> Html Msg
 viewBody theme breakdown total data =
     let
         displayRow =
             viewRow theme breakdown total
     in
     tbody [ class "history-breakdown-body" ]
-        ([] ++ List.map displayRow (split data))
+        ([] ++ List.map displayRow data)
 
 
 viewRow : Theme -> String -> Int -> List Count -> Html Msg

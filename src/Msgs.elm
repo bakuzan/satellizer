@@ -25,6 +25,7 @@ type Msg
     | UpdateSortField String
     | UpdateSortDirection Bool
     | DisplayHistoryDetail String
+    | MoveTableRowDisplay Int
     | UpdateIsAdult Bool
     | UpdateContentType String
     | UpdateRequireKey Bool
