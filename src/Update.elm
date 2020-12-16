@@ -133,6 +133,7 @@ update msg model =
                             { sorting
                                 | field = ensureValidSortField breakdown model.settings.activeTab
                             }
+                        , historyStartIndex = initialHistoryStartIndex
                     }
             in
             ( { model
@@ -225,6 +226,7 @@ update msg model =
                                 | field = ensureValidSortField breakdownType activeTab
                             }
                         , activeTab = activeTab
+                        , historyStartIndex = initialHistoryStartIndex
                     }
             in
             ( { model
@@ -255,6 +257,7 @@ update msg model =
                                 | field = ensureValidSortField breakdownType activeTab
                             }
                         , activeTab = activeTab
+                        , historyStartIndex = initialHistoryStartIndex
                     }
             in
             ( { model
