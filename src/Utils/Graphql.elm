@@ -433,6 +433,7 @@ historyItems =
             |> with (field "title" [] string)
             |> with (field "rating" [] int)
             |> with (field "season" [] string)
+            |> with (field "year" [] int)
             |> with (field "average" [] float)
             |> with (field "highest" [] int)
             |> with (field "lowest" [] int)

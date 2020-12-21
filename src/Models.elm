@@ -233,6 +233,7 @@ type alias HistoryDetail =
     , title : String
     , rating : Int
     , season : String
+    , year : Int
     , average : Float
     , highest : Int
     , lowest : Int
@@ -255,7 +256,7 @@ emptyEpisodeStatistic =
 
 emptyHistoryDetail : HistoryDetail
 emptyHistoryDetail =
-    HistoryDetail 0 "" 0 "" 0.0 0 0 0
+    HistoryDetail 0 "" 0 "" 0 0.0 0 0 0
 
 
 type alias HistoryYearData =

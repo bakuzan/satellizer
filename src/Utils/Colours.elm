@@ -1,5 +1,7 @@
 module Utils.Colours exposing (getSeasonColour, ratingColours, seasonColours)
 
+import Css
+
 
 ratingColours : List ( String, String )
 ratingColours =
@@ -23,10 +25,10 @@ ratingColours =
 
 seasonColours : List ( String, String )
 seasonColours =
-    [ ( "winter", "4682b4" )
-    , ( "spring", "228b22" )
-    , ( "summer", "ff4500" )
-    , ( "fall", "a52a2a" )
+    [ ( "winter", "50A3C6" )
+    , ( "spring", "5B9E48" )
+    , ( "summer", "FEF24E" )
+    , ( "autumn", "E84F0B" )
     ]
 
 
@@ -34,9 +36,21 @@ seasonColours =
 -- Helper
 
 
-getSeasonColour : String -> String
+getSeasonColour : String -> List Css.Style
 getSeasonColour season =
-    List.filter (\x -> Tuple.first x == season) seasonColours
-        |> List.head
-        |> Maybe.withDefault ( "", "000" )
-        |> Tuple.second
+    let
+        backgroundTup =
+            List.filter (\x -> Tuple.first x == season) seasonColours
+                |> List.head
+                |> Maybe.withDefault ( "", "000" )
+
+        textHex =
+            if Tuple.first backgroundTup == "summer" then
+                "000"
+
+            else
+                "fff"
+    in
+    [ Css.backgroundColor (Css.hex (Tuple.second backgroundTup))
+    , Css.color (Css.hex textHex)
+    ]

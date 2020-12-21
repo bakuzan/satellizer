@@ -6,7 +6,7 @@ import Components.TableSortHeader as TSH
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
 import Html.Styled exposing (Html, div, h2, li, table, tbody, td, text, thead, tr, ul)
-import Html.Styled.Attributes exposing (class, classList, css, href)
+import Html.Styled.Attributes exposing (class, classList, css, href, title)
 import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Sort, Theme, emptyHistoryDetail)
 import Msgs exposing (Msg)
 import Round
@@ -22,6 +22,7 @@ import Utils.TableFunctions exposing (getBreakdownName)
 type alias DetailTableProps =
     { isYearBreakdown : Bool
     , contentType : String
+    , detailGroup : String
     , breakdown : String
     , theme : Theme
     , sorting : Sort
@@ -93,6 +94,7 @@ viewHistoryDetail model data =
                     { contentType = contentType
                     , breakdown = breakdown
                     , sorting = settings.sorting
+                    , detailGroup = settings.detailGroup
                     , isYearBreakdown = isYearBreakdown
                     , theme = model.theme
                     }
@@ -200,33 +202,45 @@ viewTableRow props tup =
         seasonStr =
             String.toLower item.season
 
+        includeSeasonIdentifiers =
+            props.isYearBreakdown && props.breakdown /= "MONTH"
+
         additonalStyles =
-            if props.isYearBreakdown && props.breakdown /= "MONTH" then
+            if includeSeasonIdentifiers then
                 [ hover
-                    [ backgroundColor (hex (getSeasonColour seasonStr))
-                    , color (hex "fff")
-                    , children
-                        [ typeSelector "td > a"
-                            [ backgroundColor inherit
-                            , color inherit
-                            ]
-                        ]
-                    ]
+                    (getSeasonColour seasonStr
+                        ++ [ children
+                                [ typeSelector "td > a"
+                                    [ backgroundColor inherit
+                                    , color inherit
+                                    ]
+                                ]
+                           ]
+                    )
                 ]
 
             else
                 []
+
+        metaMessage =
+            if includeSeasonIdentifiers then
+                "Series started in " ++ seasonStr ++ " " ++ props.detailGroup
+
+            else
+                ""
     in
     tr
         [ class "history-breakdown-body__row month-breakdown"
         , classList [ ( seasonStr, True ) ]
         , css (Styles.entryHoverHighlight props.theme ++ additonalStyles)
+        , Common.setCustomAttr "aria-label" metaMessage
         ]
         ([ td
             [ css
                 [ padding2 (px 0) (px 4)
                 , textAlign center
                 ]
+            , title metaMessage
             ]
             [ text (String.fromInt (idx + 1) |> String.padLeft 3 '0') ]
          , td

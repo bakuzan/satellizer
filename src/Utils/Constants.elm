@@ -47,7 +47,7 @@ seasons =
     [ { name = "Winter", number = 3 }
     , { name = "Spring", number = 6 }
     , { name = "Summer", number = 9 }
-    , { name = "Fall", number = 12 }
+    , { name = "Autumn", number = 12 }
     ]
 
 

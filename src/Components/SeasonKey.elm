@@ -2,7 +2,7 @@ module Components.SeasonKey exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, div, text)
-import Html.Styled.Attributes exposing (class, classList, css, id)
+import Html.Styled.Attributes exposing (class, classList, css, id, title)
 import Models exposing (Theme)
 import Msgs exposing (Msg)
 import Utils.Colours exposing (seasonColours)
@@ -33,7 +33,7 @@ viewKey theme =
         [ viewKeyEntry "winter"
         , viewKeyEntry "spring"
         , viewKeyEntry "summer"
-        , viewKeyEntry "fall"
+        , viewKeyEntry "autumn"
         ]
 
 
@@ -54,6 +54,7 @@ viewKeyEntry season =
             , margin (px 1)
             , border3 (px 1) solid (hex colour)
             ]
+        , title season
         ]
         [ div
             [ class "colour-block"

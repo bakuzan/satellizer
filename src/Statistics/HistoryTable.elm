@@ -145,9 +145,7 @@ viewHeader theme settings headers =
     let
         colourised season =
             if settings.isSeason && settings.isYear then
-                [ backgroundColor (hex (getSeasonColour season))
-                , color (hex "fff")
-                ]
+                getSeasonColour season
 
             else
                 []

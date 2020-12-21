@@ -2,11 +2,12 @@ module Statistics.HistoryTableDetailYear exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (Html, div, table, tbody, td, text, th, thead, tr)
-import Html.Styled.Attributes exposing (class, classList, css)
+import Html.Styled.Attributes exposing (class, classList, css, title)
 import Models exposing (HistoryYear, HistoryYearData, Model, Settings, Theme)
 import Msgs exposing (Msg)
 import Round
 import Utils.Colours exposing (getSeasonColour)
+import Utils.Common as Common
 import Utils.Constants as Constants
 import Utils.Styles as Styles
 
@@ -57,9 +58,7 @@ viewTableHead settings =
 
         colourised season =
             if isSeason && isYear then
-                [ backgroundColor (hex (getSeasonColour season))
-                , color (hex "fff")
-                ]
+                getSeasonColour season
 
             else
                 []

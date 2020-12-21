@@ -5,12 +5,13 @@ import Components.TableSortHeader as TSH
 import Css exposing (..)
 import Css.Global exposing (children, typeSelector)
 import Html.Styled exposing (Html, div, h2, table, tbody, td, text, thead, tr)
-import Html.Styled.Attributes exposing (class, classList, css, href, id)
+import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
 import Models exposing (EpisodeStatistic, HistoryDetail, HistoryDetailData, Model, Theme)
 import Msgs exposing (Msg)
 import Round
 import Tuple
 import Utils.Colours exposing (getSeasonColour)
+import Utils.Common as Common
 import Utils.Constants as Constants
 import Utils.Sorters as Sorters
 import Utils.Styles as Styles
@@ -86,27 +87,32 @@ viewTableRow theme tup =
 
         seasonStyles =
             [ hover
-                [ backgroundColor (hex (getSeasonColour seasonStr))
-                , color (hex "fff")
-                , children
-                    [ typeSelector "td > a"
-                        [ backgroundColor inherit
-                        , color inherit
-                        ]
-                    ]
-                ]
+                (getSeasonColour seasonStr
+                    ++ [ children
+                            [ typeSelector "td > a"
+                                [ backgroundColor inherit
+                                , important (color inherit)
+                                ]
+                            ]
+                       ]
+                )
             ]
+
+        metaMessage =
+            "Series started in " ++ seasonStr ++ " " ++ String.fromInt item.year
     in
     tr
         [ class "history-breakdown-body__row month-breakdown"
         , classList [ ( seasonStr, True ) ]
         , css (Styles.entryHoverHighlight theme ++ seasonStyles)
+        , Common.setCustomAttr "aria-label" metaMessage
         ]
         ([ td
             [ css
                 [ padding2 (px 0) (px 4)
                 , textAlign center
                 ]
+            , title metaMessage
             ]
             [ text (String.fromInt (idx + 1) |> String.padLeft 3 '0') ]
          , td
