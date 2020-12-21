@@ -212,7 +212,7 @@ viewTableRow props tup =
                         ++ [ children
                                 [ typeSelector "td > a"
                                     [ backgroundColor inherit
-                                    , color inherit
+                                    , important (color inherit)
                                     ]
                                 ]
                            ]
