@@ -150,6 +150,9 @@ initialModel flags =
             else if activeTab == "Tags" then
                 "USAGE COUNT"
 
+            else if activeTab == "Repeated" then
+                "REPEATS"
+
             else
                 "RATING"
     in
