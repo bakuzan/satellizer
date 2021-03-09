@@ -5,6 +5,7 @@ module Utils.Graphql exposing
     , historyYearItemQuery
     , ratingCountQuery
     , ratingItemQuery
+    , repeatHistoryQuery
     , repeatedItemQuery
     , seriesTypesQuery
     , statusCountQuery
@@ -44,6 +45,8 @@ import Models
         , HistoryYearDetail
         , Paging
         , RatingSeriesPage
+        , RepeatHistory
+        , RepeatHistoryResponse
         , RepeatedSeries
         , RepeatedSeriesData
         , Series
@@ -361,6 +364,44 @@ seriesTypesQuery =
                     [ ( "type", Arg.variable typeVar )
                     ]
                     (list string)
+                )
+    in
+    queryDocument queryRoot
+
+
+repeatHistoryQuery : Document Query RepeatHistoryResponse { vars | contentType : String, seriesId : Int }
+repeatHistoryQuery =
+    let
+        repeatHistoryItems =
+            list
+                (object RepeatHistory
+                    |> with (field "repeatInstanceKey" [] string)
+                    |> with (field "start" [] int)
+                    |> with (field "startDateFormatted" [] string)
+                    |> with (field "end" [] int)
+                    |> with (field "endDateFormatted" [] string)
+                    |> with (field "isCurrentRepeat" [] bool)
+                )
+
+        repeatHistoryResponse =
+            object RepeatHistoryResponse
+                |> with (field "hasRepeats" [] bool)
+                |> with (field "items" [] repeatHistoryItems)
+                |> with (field "statType" [] string)
+                |> with (field "seriesId" [] int)
+                |> with (field "seriesTotalParts" [] int)
+                |> with (field "warningMessages" [] (list string))
+
+        seriesIdVar =
+            Var.required "seriesId" .seriesId Var.int
+
+        queryRoot =
+            extract
+                (field "seriesRepeatHistory"
+                    [ ( "type", Arg.variable typeVar )
+                    , ( "seriesId", Arg.variable seriesIdVar )
+                    ]
+                    repeatHistoryResponse
                 )
     in
     queryDocument queryRoot

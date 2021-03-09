@@ -3,8 +3,10 @@ module Update exposing (update)
 import Commands
 import Debounce
 import Debouncers
-import Models exposing (Model, Settings, emptyRatingSeriesPage, emptyTagsSeriesPage, initialHistoryStartIndex)
+import List
+import Models exposing (Model, Settings, emptyRatingSeriesPage, emptyRepeatHistoryResponse, emptyTagsSeriesPage, initialHistoryStartIndex)
 import Msgs exposing (Msg)
+import Utils.Common exposing (toCapital)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -104,6 +106,7 @@ update msg model =
             ( { model
                 | historyDetail = []
                 , historyYear = []
+                , repeatHistory = []
                 , settings = updatedSettings
                 , ratingsFilters =
                     { searchText = ""
@@ -262,6 +265,7 @@ update msg model =
             in
             ( { model
                 | settings = updatedSettings
+                , repeatHistory = []
               }
             , Commands.sendStatusCountsRequest updatedSettings.contentType updatedSettings.isAdult
             )
@@ -526,6 +530,37 @@ update msg model =
             , Commands.sendRatingsSeriesQuery settings.contentType settings.isAdult updatedFilters
             )
 
+        Msgs.ToggleRepeatHistory seriesId ->
+            let
+                statType =
+                    toCapital settings.contentType
+
+                matches =
+                    List.filter (\x -> x.statType == statType && x.seriesId == seriesId) model.repeatHistory
+
+                requiredNew =
+                    List.length matches == 0
+
+                updatedRepeatHistory =
+                    if requiredNew then
+                        model.repeatHistory
+
+                    else
+                        List.filter (\x -> not (x.statType == statType && x.seriesId == seriesId)) model.repeatHistory
+
+                resolvedCmd =
+                    if requiredNew then
+                        Commands.sendRepeatHistoryQuery settings.contentType seriesId
+
+                    else
+                        Cmd.none
+            in
+            ( { model
+                | repeatHistory = updatedRepeatHistory
+              }
+            , resolvedCmd
+            )
+
         Msgs.ReceiveStatusCountsResponse counts ->
             let
                 extractedCounts =
@@ -718,6 +753,20 @@ update msg model =
             in
             ( { model
                 | airingList = extractedList
+              }
+            , Cmd.none
+            )
+
+        Msgs.ReceiveRepeatHistoryResponse repeatHistoryResponse ->
+            let
+                extractedHistory =
+                    Result.withDefault emptyRepeatHistoryResponse repeatHistoryResponse
+
+                combinedHistory =
+                    model.repeatHistory ++ List.singleton extractedHistory
+            in
+            ( { model
+                | repeatHistory = combinedHistory
               }
             , Cmd.none
             )

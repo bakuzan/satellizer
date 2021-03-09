@@ -28,6 +28,10 @@ entryHoverHighlight theme =
             [ typeSelector ".slz-new-tab-link"
                 [ color (hex theme.primaryColour)
                 ]
+            , typeSelector ".slz-times-completed"
+                [ backgroundColor (hex theme.primaryBackground)
+                , color (hex theme.primaryColour)
+                ]
             ]
         ]
     ]

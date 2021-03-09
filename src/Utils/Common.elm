@@ -1,6 +1,7 @@
 module Utils.Common exposing
     ( calculateAverageOfRatings
     , calculateTotalOfValues
+    , denestList
     , divide
     , divideTotalByCount
     , getListFirst
@@ -148,3 +149,8 @@ selectionIcon isSelected =
 
     else
         "☐︎"
+
+
+denestList : List (List a) -> List a
+denestList inp =
+    List.foldr (++) [] inp

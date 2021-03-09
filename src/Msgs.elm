@@ -8,6 +8,7 @@ import Models
         , HistoryDetailData
         , HistoryYearDetail
         , RatingSeriesPage
+        , RepeatHistoryResponse
         , RepeatedSeriesData
         , SeriesTypes
         , TagData
@@ -39,6 +40,7 @@ type Msg
     | ResetSeriesTypeFilter
     | NextTagsSeriesPage
     | NextRatingSeriesPage
+    | ToggleRepeatHistory Int
     | ReceiveStatusCountsResponse (Result GraphQLClient.Error CountData)
     | ReceiveRatingCountsResponse (Result GraphQLClient.Error CountData)
     | ReceiveHistoryCountsResponse (Result GraphQLClient.Error CountData)
@@ -50,3 +52,4 @@ type Msg
     | ReceiveTagsSeriesResponse (Result GraphQLClient.Error TagsSeriesPage)
     | ReceiveAiringSeriesResponse (Result GraphQLClient.Error HistoryDetailData)
     | ReceiveSeriesTypesResponse (Result GraphQLClient.Error SeriesTypes)
+    | ReceiveRepeatHistoryResponse (Result GraphQLClient.Error RepeatHistoryResponse)

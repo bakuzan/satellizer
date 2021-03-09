@@ -1,12 +1,14 @@
 module Statistics.Repeated exposing (view)
 
+import Components.Button as Button
 import Components.ClearableInput
 import Components.NewTabLink
 import Components.TableSortHeader as TSH
 import Css exposing (..)
 import Html.Styled exposing (Html, div, h2, span, table, tbody, td, text, th, thead, tr)
-import Html.Styled.Attributes exposing (class, classList, css, href, id, title)
-import Models exposing (Model, RepeatedFilters, RepeatedSeries, RepeatedSeriesData, Theme)
+import Html.Styled.Attributes exposing (class, classList, colspan, css, href, id, title)
+import Html.Styled.Events exposing (onClick)
+import Models exposing (Model, RepeatHistory, RepeatHistoryResponse, RepeatedFilters, RepeatedSeries, RepeatedSeriesData, Theme, emptyRepeatHistoryResponse)
 import Msgs exposing (Msg)
 import Utils.Common as Common
 import Utils.Constants as Constants
@@ -67,14 +69,22 @@ viewSeriesList model seriesList =
             ]
         , tbody []
             ([]
-                ++ List.map (viewSeriesEntry model.theme model.settings.contentType) sortedSeriesList
+                ++ (List.map (viewSeriesEntry model) sortedSeriesList
+                        |> Common.denestList
+                   )
             )
         ]
 
 
-viewSeriesEntry : Theme -> String -> RepeatedSeries -> Html Msg
-viewSeriesEntry theme contentType entry =
+viewSeriesEntry : Model -> RepeatedSeries -> List (Html Msg)
+viewSeriesEntry model entry =
     let
+        theme =
+            model.theme
+
+        contentType =
+            model.settings.contentType
+
         seriesLink =
             Constants.erzaSeriesLink contentType entry.id
 
@@ -99,7 +109,7 @@ viewSeriesEntry theme contentType entry =
             else
                 "❌︎"
     in
-    tr
+    [ tr
         [ id (String.fromInt entry.id)
         , class "repeated-series-table-row"
         , css (Styles.entryHoverHighlight theme)
@@ -134,9 +144,82 @@ viewSeriesEntry theme contentType entry =
             [ span [] [ text (String.fromInt entry.rating) ]
             ]
         , td [ css [ padding2 (px 0) (px 4), textAlign center ] ]
-            [ span [] [ text (String.fromInt entry.timesCompleted) ]
+            [ Button.view { isPrimary = False, theme = theme }
+                [ onClick (Msgs.ToggleRepeatHistory entry.id)
+                , title "Show repeat history"
+                , Common.setCustomAttr "aria-label" "Show repeat history"
+                , class "slz-times-completed"
+                ]
+                [ span [] [ text (String.fromInt entry.timesCompleted) ] ]
             ]
         , td [ class "date-column", css [ minWidth (px 105), padding2 (px 0) (px 4), textAlign center ] ]
             [ span [] [ text lastRepeatDate ]
             ]
         ]
+    , viewRepeatHistoryRow contentType entry model.repeatHistory
+    ]
+
+
+viewRepeatHistoryRow : String -> RepeatedSeries -> List RepeatHistoryResponse -> Html Msg
+viewRepeatHistoryRow contentType entry data =
+    let
+        seriesId =
+            entry.id
+
+        statType =
+            Common.toCapital contentType
+
+        repeatHistory =
+            List.filter (\x -> x.statType == statType && x.seriesId == seriesId) data
+                |> List.head
+                |> Maybe.withDefault emptyRepeatHistoryResponse
+    in
+    if repeatHistory.hasRepeats then
+        tr []
+            [ td [] []
+            , td [ colspan 4 ]
+                [ table [ css [ width (pct 100) ] ]
+                    [ thead [] [ tr [] [ th [] [] ] ]
+                    , tbody []
+                        ([]
+                            ++ List.map viewWarning repeatHistory.warningMessages
+                            ++ List.map (viewRepeat repeatHistory.seriesTotalParts) repeatHistory.items
+                        )
+                    ]
+                ]
+            ]
+
+    else
+        text ""
+
+
+viewWarning : String -> Html Msg
+viewWarning message =
+    tr [] [ td [] [ text message ] ]
+
+
+viewRepeat : Int -> RepeatHistory -> Html Msg
+viewRepeat seriesTotalParts item =
+    let
+        padNum n =
+            String.fromInt n
+                |> String.padLeft 3 '0'
+
+        from =
+            item.startDateFormatted ++ " (#" ++ padNum item.start ++ ")"
+
+        to =
+            if item.isCurrentRepeat then
+                "Present"
+
+            else
+                item.endDateFormatted ++ " (#" ++ padNum item.end ++ ")"
+
+        repeatText =
+            if seriesTotalParts == 1 then
+                from
+
+            else
+                from ++ " - " ++ to
+    in
+    tr [] [ td [] [ text repeatText ] ]

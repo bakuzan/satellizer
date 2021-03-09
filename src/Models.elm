@@ -14,6 +14,8 @@ module Models exposing
     , Paging
     , RatingFilters
     , RatingSeriesPage
+    , RepeatHistory
+    , RepeatHistoryResponse
     , RepeatedFilters
     , RepeatedSeries
     , RepeatedSeriesData
@@ -35,6 +37,7 @@ module Models exposing
     , emptyHistoryYear
     , emptyHistoryYearDetail
     , emptyRatingSeriesPage
+    , emptyRepeatHistoryResponse
     , emptyTagsSeriesPage
     , initialHistoryStartIndex
     , initialModel
@@ -90,6 +93,7 @@ type alias Model =
     , tagsFilters : TagsFilters
     , airingList : HistoryDetailData
     , seriesTypes : SeriesTypes
+    , repeatHistory : List RepeatHistoryResponse
     , theme : Theme
     }
 
@@ -168,6 +172,7 @@ initialModel flags =
     , tagsSeriesPage = emptyTagsSeriesPage
     , airingList = []
     , seriesTypes = []
+    , repeatHistory = []
     , settings =
         { activeTab = activeTab
         , breakdownType = flags.breakdownType
@@ -371,6 +376,31 @@ emptyRatingSeriesPage =
     , total = 0
     , nodes = []
     }
+
+
+type alias RepeatHistory =
+    { repeatInstanceKey : String
+    , start : Int
+    , startDateFormatted : String
+    , end : Int
+    , endDateFormatted : String
+    , isCurrentRepeat : Bool
+    }
+
+
+type alias RepeatHistoryResponse =
+    { hasRepeats : Bool
+    , items : List RepeatHistory
+    , statType : String
+    , seriesId : Int
+    , seriesTotalParts : Int
+    , warningMessages : List String
+    }
+
+
+emptyRepeatHistoryResponse : RepeatHistoryResponse
+emptyRepeatHistoryResponse =
+    RepeatHistoryResponse False [] "" 0 0 []
 
 
 

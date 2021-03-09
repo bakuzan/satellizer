@@ -6,6 +6,7 @@ module Commands exposing
     , sendHistoryYearSeriesQuery
     , sendRatingCountsRequest
     , sendRatingsSeriesQuery
+    , sendRepeatHistoryQuery
     , sendRepeatedSeriesQuery
     , sendSeriesTypesRequest
     , sendStatusCountsRequest
@@ -15,7 +16,7 @@ module Commands exposing
 
 import GraphQL.Client.Http as GraphQLClient
 import GraphQL.Request.Builder as GraphQLBuilder
-import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, RatingFilters, RatingSeriesPage, RepeatedSeriesData, SeriesTypes, Settings, TagData, TagsFilters, TagsSeriesPage)
+import Models exposing (CountData, HistoryDetailData, HistoryYearDetail, RatingFilters, RatingSeriesPage, RepeatHistoryResponse, RepeatedSeriesData, SeriesTypes, Settings, TagData, TagsFilters, TagsSeriesPage)
 import Msgs exposing (Msg)
 import Task exposing (Task)
 import Utils.Graphql as Graphql
@@ -225,3 +226,22 @@ sendAiringSeriesQuery : Cmd Msg
 sendAiringSeriesQuery =
     sendGraphqlQueryRequest airingSeriesQueryRequest
         |> Task.attempt Msgs.ReceiveAiringSeriesResponse
+
+
+
+-- Repeat History
+
+
+repeatHistoryQueryRequest : String -> Int -> GraphQLBuilder.Request GraphQLBuilder.Query RepeatHistoryResponse
+repeatHistoryQueryRequest contentType seriesId =
+    Graphql.repeatHistoryQuery
+        |> GraphQLBuilder.request
+            { contentType = contentType
+            , seriesId = seriesId
+            }
+
+
+sendRepeatHistoryQuery : String -> Int -> Cmd Msg
+sendRepeatHistoryQuery contentType seriesId =
+    sendGraphqlQueryRequest (repeatHistoryQueryRequest contentType seriesId)
+        |> Task.attempt Msgs.ReceiveRepeatHistoryResponse
