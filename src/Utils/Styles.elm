@@ -21,9 +21,11 @@ import Models exposing (Theme)
 entryHoverHighlight : Theme -> List Css.Style
 entryHoverHighlight theme =
     [ borderSpacing (px 0)
-    , typeSelector ".slz-times-completed"
-        [ width (pct 100)
-        ]
+    , descendants
+        [ typeSelector ".slz-times-completed"
+            [ width (pct 100)
+            ]
+        ]        
     , hover
         [ backgroundColor (hex theme.primaryBackground)
         , color (hex theme.primaryColour)
