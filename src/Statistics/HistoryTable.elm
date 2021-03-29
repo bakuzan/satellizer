@@ -1,11 +1,12 @@
 module Statistics.HistoryTable exposing (view)
 
 import Array
+import Bitwise exposing (or)
 import Components.Button as Button
 import Components.RadioButton exposing (radioGroup)
 import Components.SeasonKey as SeasonKey
 import Css exposing (..)
-import Html.Styled exposing (Html, button, div, table, tbody, td, text, th, thead, tr)
+import Html.Styled exposing (Html, button, div, span, table, tbody, td, text, th, thead, tr)
 import Html.Styled.Attributes exposing (attribute, class, classList, css, disabled, id, style, title)
 import Html.Styled.Events exposing (onClick)
 import Models exposing (Count, CountData, Header, HistoryDetailData, HistoryYearData, Model, Settings, Theme, emptyCount)
@@ -15,6 +16,7 @@ import Statistics.HistoryTableDetailYear
 import Utils.Colours exposing (getSeasonColour)
 import Utils.Common as Common
 import Utils.Constants as Constants
+import Utils.Styles as Styles
 import Utils.TableFunctions exposing (getBreakdownName)
 
 
@@ -23,6 +25,7 @@ type alias TableProps =
     , breakdown : String
     , isYearBreakdown : Bool
     , historyStartIndex : Int
+    , historyUnrestrictedView : Bool
     }
 
 
@@ -31,6 +34,7 @@ type alias HeaderSettings =
     , isYear : Bool
     , startIndex : Int
     , maxIndex : Int
+    , historyUnrestrictedView : Bool
     }
 
 
@@ -53,12 +57,52 @@ view model data detail yearDetail =
             , margin2 (px 5) (px 0)
             ]
         ]
-        [ viewBreakdownToggle model.theme settings
+        [ div [ css [ displayFlex, justifyContent spaceBetween ] ]
+            [ viewBreakdownToggle model.theme settings
+            , div []
+                [ Button.view { isPrimary = False, theme = model.theme }
+                    [ class "unrestricted-label"
+                    , classList [ ( "selected", settings.historyUnrestrictedView ) ]
+                    , css
+                        [ position relative
+                        , displayFlex
+                        , alignItems center
+                        , justifyContent center
+                        , important (minWidth (rem 2))
+                        , height (rem 2)
+                        , paddingLeft (rem 2) |> Css.important
+                        , margin auto
+                        , backgroundColor Css.transparent |> Css.important
+                        ]
+                    , onClick Msgs.ToggleHistoryUnrestrictedView
+                    , Common.setCustomAttr "aria-label" "Toggle unrestricted history view"
+                    ]
+                    [ span
+                        [ css
+                            ([ position absolute
+                             , top (px 2)
+                             , left (px 0)
+                             , displayFlex
+                             , alignItems center
+                             , fontSize (rem 2)
+                             , height (rem 1.5)
+                             , paddingBottom (px 4)
+                             ]
+                                ++ Styles.selectedStyle model.theme settings.historyUnrestrictedView
+                            )
+                        , Common.setCustomAttr "aria-hidden" "true"
+                        ]
+                        [ text (Common.selectionIcon settings.historyUnrestrictedView) ]
+                    , span [] [ text "Unrestricted view" ]
+                    ]
+                ]
+            ]
         , viewTable
             { theme = model.theme
             , breakdown = breakdownType
             , isYearBreakdown = isYearBreakdown
             , historyStartIndex = settings.historyStartIndex
+            , historyUnrestrictedView = settings.historyUnrestrictedView
             }
             data
         , viewTableDetail model detail yearDetail
@@ -117,16 +161,21 @@ viewTable props countData =
             , isYear = props.isYearBreakdown
             , startIndex = props.historyStartIndex
             , maxIndex = List.length (split data)
+            , historyUnrestrictedView = props.historyUnrestrictedView
             }
 
         endIndex =
             props.historyStartIndex + Constants.historyTableDisplayCount
 
         viewableRows =
-            split data
-                |> Array.fromList
-                |> Array.slice props.historyStartIndex endIndex
-                |> Array.toList
+            if props.historyUnrestrictedView then
+                split data
+
+            else
+                split data
+                    |> Array.fromList
+                    |> Array.slice props.historyStartIndex endIndex
+                    |> Array.toList
     in
     table
         [ class "history-breakdown__table"
@@ -165,20 +214,32 @@ viewHeader theme settings headers =
                 []
     in
     thead [ class "history-breakdown-header" ]
-        (tableRowDisplayControls theme headers settings.startIndex settings.maxIndex
+        (tableRowDisplayControls theme settings
             :: List.map displayHeader headers
         )
 
 
-tableRowDisplayControls : Theme -> List Header -> Int -> Int -> Html Msg
-tableRowDisplayControls theme headers startIndex maxIndex =
+tableRowDisplayControls : Theme -> HeaderSettings -> Html Msg
+tableRowDisplayControls theme settings =
+    let
+        isBackwardsDisabled =
+            settings.historyUnrestrictedView
+                || settings.maxIndex
+                - Constants.historyTableDisplayCount
+                == settings.startIndex
+
+        isForwardsDisabled =
+            settings.historyUnrestrictedView
+                || settings.startIndex
+                == 0
+    in
     th [ css [ displayFlex ] ]
         [ Button.view { isPrimary = False, theme = theme }
             [ onClick (Msgs.MoveTableRowDisplay 1)
             , css [ fontWeight bold, Css.important (minWidth (px 0)), width (pct 50) ]
             , title "Move the view backwards years"
             , Common.setCustomAttr "aria-label" "Move the view backwards years"
-            , disabled (maxIndex - Constants.historyTableDisplayCount == startIndex)
+            , Html.Styled.Attributes.disabled isBackwardsDisabled
             ]
             [ text "▼"
             ]
@@ -187,7 +248,7 @@ tableRowDisplayControls theme headers startIndex maxIndex =
             , css [ fontWeight bold, Css.important (minWidth (px 0)), width (pct 50) ]
             , title "Move the view forwards years"
             , Common.setCustomAttr "aria-label" "Move the view forwards years"
-            , disabled (startIndex == 0)
+            , Html.Styled.Attributes.disabled isForwardsDisabled
             ]
             [ text "▲"
             ]

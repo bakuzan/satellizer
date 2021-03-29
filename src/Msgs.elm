@@ -27,6 +27,7 @@ type Msg
     | UpdateSortDirection Bool
     | DisplayHistoryDetail String
     | MoveTableRowDisplay Int
+    | ToggleHistoryUnrestrictedView
     | UpdateIsAdult Bool
     | UpdateContentType String
     | UpdateRequireKey Bool

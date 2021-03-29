@@ -101,6 +101,7 @@ update msg model =
                             , isDesc = True
                             }
                         , historyStartIndex = initialHistoryStartIndex
+                        , historyUnrestrictedView = False
                     }
             in
             ( { model
@@ -137,6 +138,7 @@ update msg model =
                                 | field = ensureValidSortField breakdown model.settings.activeTab
                             }
                         , historyStartIndex = initialHistoryStartIndex
+                        , historyUnrestrictedView = False
                     }
             in
             ( { model
@@ -230,6 +232,7 @@ update msg model =
                             }
                         , activeTab = activeTab
                         , historyStartIndex = initialHistoryStartIndex
+                        , historyUnrestrictedView = False
                     }
             in
             ( { model
@@ -261,6 +264,7 @@ update msg model =
                             }
                         , activeTab = activeTab
                         , historyStartIndex = initialHistoryStartIndex
+                        , historyUnrestrictedView = False
                     }
             in
             ( { model
@@ -288,6 +292,20 @@ update msg model =
                 updatedSettings =
                     { settings
                         | historyStartIndex = settings.historyStartIndex + direction
+                    }
+            in
+            ( { model
+                | settings = updatedSettings
+              }
+            , Cmd.none
+            )
+
+        Msgs.ToggleHistoryUnrestrictedView ->
+            let
+                updatedSettings =
+                    { settings
+                        | historyStartIndex = initialHistoryStartIndex
+                        , historyUnrestrictedView = not settings.historyUnrestrictedView
                     }
             in
             ( { model

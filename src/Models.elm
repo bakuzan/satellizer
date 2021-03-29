@@ -107,6 +107,7 @@ type alias Settings =
     , contentType : String
     , requireKey : Bool
     , historyStartIndex : Int
+    , historyUnrestrictedView : Bool
     }
 
 
@@ -185,6 +186,7 @@ initialModel flags =
         , isAdult = flags.isAdult
         , requireKey = False
         , historyStartIndex = initialHistoryStartIndex
+        , historyUnrestrictedView = False
         }
     , ratingsFilters =
         { searchText = ""
