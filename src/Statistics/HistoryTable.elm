@@ -70,7 +70,7 @@ view model data detail yearDetail =
                         , justifyContent center
                         , important (minWidth (rem 2))
                         , height (rem 2)
-                        , paddingLeft (rem 2) |> Css.important
+                        , paddingLeft (rem 2.1) |> Css.important
                         , margin auto
                         , backgroundColor Css.transparent |> Css.important
                         ]
@@ -80,13 +80,13 @@ view model data detail yearDetail =
                     [ span
                         [ css
                             ([ position absolute
-                             , top (px 2)
-                             , left (px 0)
+                             , top (px 4)
+                             , left (px 4)
                              , displayFlex
                              , alignItems center
                              , fontSize (rem 2)
                              , height (rem 1.5)
-                             , paddingBottom (px 4)
+                             , paddingBottom (px 2)
                              ]
                                 ++ Styles.selectedStyle model.theme settings.historyUnrestrictedView
                             )
